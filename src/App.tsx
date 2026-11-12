@@ -44,6 +44,8 @@ type MapMode =
   | "sitesActive"
   | "sitesPlanned";
 
+type Annotation = { lon: number; lat: number; dx: number; dy: number; lines: [string, string]; anchor?: "start" | "end" };
+
 type FillMode = "none" | "capacity" | "energy" | "people" | "price" | "sitesActive" | "sitesPlanned";
 type Layers = { people: boolean; lines: boolean; clean: boolean; water: boolean };
 const noLayers: Layers = { people: false, lines: false, clean: false, water: false };
@@ -623,6 +625,7 @@ type ScrollStep = {
   highlight?: string;
   body: React.ReactNode;
   hero?: boolean;
+  annotations?: Annotation[];
   wide?: boolean;
 };
 
@@ -651,10 +654,19 @@ function Scrolly(props: {
     {
       mode: "projects",
       hero: true,
+      annotations: [
+        { lon: -114, lat: 56, dx: 40, dy: -200, anchor: "start", lines: ["Most planned data centres", "Alberta: 78% of planned sites"] },
+        { lon: -79.6, lat: 43.9, dx: -170, dy: 20, lines: ["Most running today", "Ontario: 41% of operating sites"] },
+        { lon: -73.6, lat: 45.6, dx: 60, dy: -170, anchor: "start", lines: ["Next most running today", "Quebec: 30% of operating sites"] },
+      ],
       body: (
         <>
           <h1>Canada&apos;s AI Boom</h1>
           <p className="hero-sub">An exploration of where Canada&apos;s AI will get its power</p>
+          <p className="hero-summary">
+            Canada has <strong>194</strong> data centres running. Another <strong>213</strong> are
+            planned, and they would draw about <strong>14 times</strong> the power of the ones running now.
+          </p>
           <p className="hero-byline">By Sabrina Bedjera · November 2026</p>
           <p className="scroll-cue">
             Scroll ↓ <span>or</span>{" "}
@@ -918,7 +930,7 @@ function Scrolly(props: {
   const step = steps[active];
   return (
     <section className="scrolly">
-      <div className="scrolly-graphic">
+      <div className={`scrolly-graphic ${step.wide ? "shift" : ""}`}>
         <SvgMap
           boundaries={props.boundaries}
           powerLines={props.powerLines}
@@ -937,6 +949,7 @@ function Scrolly(props: {
           hideProjects={step.hideProjects}
           highlightProject={step.highlight}
           fadeAll={step.fadeAll}
+          annotations={step.annotations}
         />
       </div>
       <div className="scrolly-steps">
@@ -1192,7 +1205,9 @@ function SvgMap({
   highlightProject,
   fadeAll,
   zoomable,
+  annotations,
 }: {
+  annotations?: Annotation[];
   focusProvince?: string;
   hideProjects?: boolean;
   highlightProject?: string;
@@ -1485,6 +1500,39 @@ function SvgMap({
           );
         })}
       </g>
+      {annotations && annotations.length > 0 && (
+        <g className="svg-annotations" aria-hidden="true">
+          <defs>
+            <marker id="anno-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M1 1 L9 5 L1 9" fill="none" stroke="#172d49" strokeWidth="1.6" strokeLinecap="round" />
+            </marker>
+          </defs>
+          {annotations.map((note) => {
+            const point = projection([note.lon, note.lat]);
+            if (!point) return null;
+            const [px, py] = point;
+            const lx = px + note.dx;
+            const ly = py + note.dy;
+            const anchor = note.anchor ?? (note.dx < 0 ? "end" : "start");
+            // hand-drawn feel: an S-curve from the label to just short of the point
+            const sx = lx + (anchor === "end" ? 6 : -6);
+            const sy = ly + (note.dy < 0 ? 30 : -26);
+            const ex = px - Math.sign(note.dx) * 10;
+            const ey = py - Math.sign(note.dy) * 10;
+            const mx = (sx + ex) / 2;
+            const my = (sy + ey) / 2;
+            const bend = 26;
+            const d = `M${sx} ${sy} C ${sx + (note.dx < 0 ? bend : -bend)} ${my - bend}, ${mx - bend} ${my + bend}, ${mx} ${my} S ${ex + (note.dx < 0 ? -bend : bend) / 2} ${ey - (note.dy < 0 ? bend : -bend) / 2}, ${ex} ${ey}`;
+            return (
+              <g key={note.lines[0]}>
+                <path d={d} className="anno-line" markerEnd="url(#anno-arrow)" />
+                <text x={lx} y={ly} textAnchor={anchor} className="anno-head">{note.lines[0]}</text>
+                <text x={lx} y={ly + 20} textAnchor={anchor} className="anno-sub">{note.lines[1]}</text>
+              </g>
+            );
+          })}
+        </g>
+      )}
       {fill === "price" && (
         <g className="svg-prices">
           {(prices ?? []).map((row) => {

@@ -1918,3 +1918,55 @@ rect.york-planned {
   color: var(--ink);
   font-size: 14px;
 }
+
+/* Cover annotations (key findings at a glance) */
+.svg-annotations .anno-line {
+  fill: none;
+  stroke: #172d49;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+.svg-annotations .anno-head {
+  fill: #c2185b;
+  font-family: var(--serif);
+  font-size: 21px;
+  font-weight: 700;
+  paint-order: stroke;
+  stroke: #e8ebe7;
+  stroke-width: 4px;
+}
+
+.svg-annotations .anno-sub {
+  fill: #172d49;
+  font-family: var(--serif);
+  font-size: 17px;
+  paint-order: stroke;
+  stroke: #e8ebe7;
+  stroke-width: 4px;
+}
+
+.hero-summary {
+  margin-top: 16px;
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+/* Keep wide cards clear of the map */
+.scrolly-graphic .svg-map {
+  transition: left 0.4s ease, width 0.4s ease;
+}
+
+@media (min-width: 1281px) {
+  .scrolly-graphic.shift .svg-map {
+    left: calc(6vw + 530px);
+    width: calc(100% - 6vw - 530px);
+  }
+}
+
+@media (min-width: 801px) and (max-width: 1280px) {
+  .scrolly-graphic.shift .svg-map {
+    left: calc(3vw + 35vw + 24px);
+    width: calc(100% - 38vw - 24px);
+  }
+}
