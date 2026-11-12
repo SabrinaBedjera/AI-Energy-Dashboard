@@ -31,7 +31,20 @@ type Province = {
 };
 
 type EnergyMix = Record<string, string> & { Province: string };
-type MapMode = "capacity" | "power" | "energy" | "clean" | "water";
+type MapMode = "capacity" | "power" | "energy" | "clean" | "water" | "people" | "price";
+
+type PriceRow = {
+  city: string;
+  province: string;
+  utility_per_hq_report: string;
+  cents_per_kwh_50mw: string;
+  cents_per_kwh_5mw: string;
+  note: string;
+  lat: string;
+  lon: string;
+  source: string;
+  source_page: string;
+};
 type PowerLine = {
   province: string;
   length_km: number;
@@ -90,6 +103,33 @@ const cleanColors: Record<string, string> = {
 const drainageColors = ["#d7e6ef", "#c4d9e6", "#b1cbdc", "#e2ecf2"];
 
 const capacityColors = ["#d4ebe6", "#94cdc2", "#3f9e8f", "#0b5f57"];
+
+// People per km² (Statistics Canada 2021 Census, census divisions)
+const peopleColors = ["#f3f1ec", "#d9dde3", "#a9b4c4", "#6b7f9c", "#172d49"];
+const peopleBands = ["Under 1", "1–9", "10–99", "100–999", "1,000+"];
+const peopleColor = (density: number) =>
+  peopleColors[density < 1 ? 0 : density < 10 ? 1 : density < 100 ? 2 : density < 1000 ? 3 : 4];
+
+// Large-customer electricity price, ¢/kWh (Hydro-Québec 2025 comparison, 50,000 kW)
+const priceColors = ["#0b5f57", "#5fb3a6", "#d8d3c8", "#e57aa0", "#c2185b"];
+const priceBands = ["Under 6¢", "6–7.9¢", "8–9.9¢", "10–11.9¢", "12¢+"];
+const priceColor = (cents: number) =>
+  priceColors[cents < 6 ? 0 : cents < 8 ? 1 : cents < 10 ? 2 : cents < 12 ? 3 : 4];
+// Label placement so nearby cities don't overlap: [dx, dy, anchor]
+const priceLabel: Record<string, [number, number, "start" | "end" | "middle"]> = {
+  Vancouver: [-12, 4, "end"],
+  Calgary: [0, 22, "middle"],
+  Edmonton: [0, -13, "middle"],
+  Regina: [0, -13, "middle"],
+  Winnipeg: [0, -13, "middle"],
+  Toronto: [0, 22, "middle"],
+  Ottawa: [-12, 4, "end"],
+  "Montréal": [0, -13, "middle"],
+  Moncton: [-12, -8, "end"],
+  Charlottetown: [6, -14, "middle"],
+  Halifax: [0, 22, "middle"],
+  "St. John's": [0, 22, "middle"],
+};
 
 const fossilColor = (share: number) => fossilScale[Math.min(6, Math.floor((share / 100) * 7))];
 
@@ -173,6 +213,8 @@ function App() {
   const [powerLines, setPowerLines] = useState<any>(null);
   const [cleanStations, setCleanStations] = useState<any>(null);
   const [drainage, setDrainage] = useState<any>(null);
+  const [population, setPopulation] = useState<any>(null);
+  const [prices, setPrices] = useState<PriceRow[]>([]);
   const [mode, setMode] = useState<MapMode>("capacity");
   const [provinceFilter, setProvinceFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
@@ -190,7 +232,11 @@ function App() {
       fetch(dataUrl("power-lines.geojson")).then((response) => response.json()),
       fetch(dataUrl("clean-power-stations.geojson")).then((response) => response.json()),
       fetch(dataUrl("drainage-areas.geojson")).then((response) => response.json()),
-    ]).then(([projectText, provinceText, energyText, boundaryData, powerLineData, cleanData, drainageData]) => {
+      fetch(dataUrl("population-density.geojson")).then((response) => response.json()),
+      fetch(dataUrl("electricity_prices_2025.csv")).then((response) => response.text()),
+    ]).then(([projectText, provinceText, energyText, boundaryData, powerLineData, cleanData, drainageData, populationData, priceText]) => {
+      setPopulation(populationData);
+      setPrices(parseCsv(priceText) as PriceRow[]);
       setCleanStations(cleanData);
       setDrainage(drainageData);
       setProjects(parseCsv(projectText) as Project[]);
@@ -278,6 +324,8 @@ function App() {
         powerLines={powerLines}
         cleanStations={cleanStations}
         drainage={drainage}
+        population={population}
+        prices={prices}
         projects={projects}
         pct={pct}
         albertaShare={albertaShare}
@@ -299,6 +347,8 @@ function App() {
           powerLines={powerLines}
           cleanStations={cleanStations}
           drainage={drainage}
+          population={population}
+          prices={prices}
           projects={filteredProjects}
           focusProvince={provinceFilter === "All" ? undefined : codeToProvince[provinceFilter]}
           mode={mode}
@@ -332,6 +382,12 @@ function App() {
             </button>
             <button className={mode === "water" ? "active" : ""} onClick={() => setMode("water")}>
               Watersheds
+            </button>
+            <button className={mode === "people" ? "active" : ""} onClick={() => setMode("people")}>
+              People
+            </button>
+            <button className={mode === "price" ? "active" : ""} onClick={() => setMode("price")}>
+              Power prices
             </button>
           </div>
           <div className="filters">
@@ -393,7 +449,12 @@ function App() {
                 onProvince={() => setSelectedProject(null)}
               />
             ) : selectedProvinceData ? (
-              <ProvinceDetail province={selectedProvinceData} energy={selectedEnergy} mode={mode} />
+              <ProvinceDetail
+                province={selectedProvinceData}
+                energy={selectedEnergy}
+                mode={mode}
+                prices={prices.filter((row) => row.province === provinceCodes[selectedProvince])}
+              />
             ) : null}
           </aside>
         )}
@@ -423,6 +484,17 @@ function App() {
             OpenStreetMap where a line matched. A &ldquo;confirmed&rdquo; voltage means an official
             source lists that voltage level in the province, not that every line was checked. A
             project near a line is not proof that it connects to it.
+          </p>
+          <p>
+            The people view shows population density by census division from the 2021 Census,
+            exactly as Statistics Canada publishes it. Shapes are simplified for the web.
+          </p>
+          <p>
+            Power prices come from Hydro-Québec&apos;s 2025 comparison of electricity prices in major
+            cities, for a customer using 50,000 kW at 120 kV, on rates in effect April 1, 2025,
+            before taxes. It is one city per province, not a provincial average. Hydro-Québec
+            estimated some bills (Toronto, Charlottetown, Edmonton), and Alberta prices move with its
+            open market.
           </p>
         </div>
         <div className="sources">
@@ -454,6 +526,34 @@ function App() {
           <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">
             OpenStreetMap contributors, voltage data ↗
           </a>
+          <a
+            href="https://geoappext.nrcan.gc.ca/arcgis/rest/services/Energy/CERP_EN/MapServer"
+            target="_blank"
+            rel="noreferrer"
+          >
+            NRCan Clean Energy Resources and Projects ↗
+          </a>
+          <a
+            href="https://geoappext.nrcan.gc.ca/arcgis/rest/services/NRCAN/AtlasWatershedsEN/MapServer"
+            target="_blank"
+            rel="noreferrer"
+          >
+            NRCan Atlas of Canada, drainage areas ↗
+          </a>
+          <a
+            href="https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=9810000701"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Statistics Canada, Table 98-10-0007-01 (2021 Census) ↗
+          </a>
+          <a
+            href="https://www.hydroquebec.com/data/documents-donnees/pdf/comparaison-prix-2025-en.pdf"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Hydro-Québec, Comparison of Electricity Prices 2025 ↗
+          </a>
           <span>Individual project sources are linked in the map.</span>
         </div>
         <footer>
@@ -480,6 +580,8 @@ function Scrolly(props: {
   powerLines: any;
   cleanStations: any;
   drainage: any;
+  population: any;
+  prices: PriceRow[];
   projects: Project[];
   pct: (name: string, column: string) => string;
   albertaShare: number;
@@ -487,6 +589,10 @@ function Scrolly(props: {
   albertaPlannedCount: number;
 }) {
   const { pct } = props;
+  const priceText = (city: string) => {
+    const row = props.prices.find((item) => item.city === city);
+    return row ? Number(row.cents_per_kwh_50mw).toFixed(2) : "…";
+  };
   const [active, setActive] = useState(0);
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -564,6 +670,18 @@ function Scrolly(props: {
       ),
     },
     {
+      mode: "price",
+      body: (
+        <p>
+          It&apos;s also the cheapest power for big customers. In Hydro-Québec&apos;s 2025 price
+          comparison, a large industrial customer paid{" "}
+          <span className="hl hl-teal">{priceText("Winnipeg")}¢/kWh in Winnipeg</span> and{" "}
+          <span className="hl hl-teal">{priceText("Montréal")}¢ in Montréal</span>. In Calgary it
+          was <span className="hl hl-pink">{priceText("Calgary")}¢</span>.
+        </p>
+      ),
+    },
+    {
       mode: "capacity",
       focus: "Alberta",
       highlight: "Wonder Valley",
@@ -600,6 +718,8 @@ function Scrolly(props: {
           powerLines={props.powerLines}
           cleanStations={props.cleanStations}
           drainage={props.drainage}
+          population={props.population}
+          prices={props.prices}
           projects={props.projects}
           mode={step.mode}
           selectedProject={null}
@@ -674,6 +794,8 @@ function SvgMap({
   powerLines,
   cleanStations,
   drainage,
+  population,
+  prices,
   projects,
   mode,
   selectedProject,
@@ -693,6 +815,8 @@ function SvgMap({
   powerLines: any;
   cleanStations: any;
   drainage: any;
+  population?: any;
+  prices?: PriceRow[];
   projects: Project[];
   mode: MapMode;
   selectedProject: Project | null;
@@ -727,7 +851,8 @@ function SvgMap({
   }, [boundaries, focusProvince, pathGenerator]);
 
   const provinceFill = (properties: any) => {
-    if (mode === "power" || mode === "clean" || mode === "water") return "#e8e5df";
+    if (mode === "power" || mode === "clean" || mode === "water" || mode === "price") return "#e8e5df";
+    if (mode === "people") return "none";
     if (mode === "energy")
       return properties.fossil_share === null ? "#e8e5df" : fossilColor(properties.fossil_share);
     if (!properties.has_capacity) return "#e8e5df";
@@ -787,6 +912,31 @@ function SvgMap({
             );
           })}
       </g>
+      {mode === "people" && (
+        <g className="svg-people">
+          {population?.features?.map((feature: any) => {
+            const p = feature.properties;
+            return (
+              <path
+                key={p.cd_uid}
+                d={pathGenerator(feature) ?? undefined}
+                fill={peopleColor(p.density_per_km2)}
+              >
+                <title>
+                  {`${p.name}: ${p.density_per_km2.toLocaleString("en-CA")} people per km² (${p.population_2021.toLocaleString("en-CA")} people, 2021 Census)`}
+                </title>
+              </path>
+            );
+          })}
+          {boundaries?.features?.map((feature: any) => (
+            <path
+              key={feature.properties.name}
+              className="people-province-outline"
+              d={pathGenerator(feature) ?? undefined}
+            />
+          ))}
+        </g>
+      )}
       {mode === "water" && (
         <g className="svg-drainage">
           {drainage?.features?.map((feature: any, index: number) => (
@@ -856,7 +1006,7 @@ function SvgMap({
           })}
         </g>
       )}
-      <g className={`svg-projects ${hideProjects ? "hidden" : ""}`}>
+      <g className={`svg-projects ${hideProjects || mode === "price" ? "hidden" : ""}`}>
         {projects.map((project) => {
           const point = projection([Number(project.lon), Number(project.lat)]) ?? [0, 0];
           const radius = project.reported_mw
@@ -889,6 +1039,26 @@ function SvgMap({
           );
         })}
       </g>
+      {mode === "price" && (
+        <g className="svg-prices">
+          {(prices ?? []).map((row) => {
+            const point = projection([Number(row.lon), Number(row.lat)]);
+            if (!point) return null;
+            const cents = Number(row.cents_per_kwh_50mw);
+            const [dx, dy, anchor] = priceLabel[row.city] ?? [0, -13, "middle"];
+            return (
+              <g key={row.city}>
+                <circle cx={point[0]} cy={point[1]} r={7} fill={priceColor(cents)} />
+                <text x={point[0] + dx} y={point[1] + dy} textAnchor={anchor}>
+                  <tspan className="price-city">{row.city}</tspan>
+                  <tspan className="price-value"> {cents.toFixed(2)}¢</tspan>
+                </text>
+                <title>{`${row.city} (${row.utility_per_hq_report}): ${cents.toFixed(2)}¢/kWh${row.note ? `. ${row.note}` : ""}`}</title>
+              </g>
+            );
+          })}
+        </g>
+      )}
       </g>
     </svg>
   );
@@ -948,6 +1118,38 @@ function MapLegend({ mode }: { mode: MapMode }) {
           <small>
             1,078 operating stations from NRCan&apos;s Clean Energy Resources and Projects map.
             Hover a dot for its name. Pink dots = data centre projects.
+          </small>
+        </>
+      ) : mode === "people" ? (
+        <>
+          <p>People per km² · 2021 Census</p>
+          <div className="capacity-scale">
+            {peopleColors.map((color, index) => (
+              <span key={color}>
+                <i style={{ background: color }} />
+                {peopleBands[index]}
+              </span>
+            ))}
+          </div>
+          <small>
+            Statistics Canada, 2021 Census, by census division. Hover an area for its number. Dots
+            = data centre projects.
+          </small>
+        </>
+      ) : mode === "price" ? (
+        <>
+          <p>Electricity price for a large customer · ¢/kWh</p>
+          <div className="capacity-scale">
+            {priceColors.map((color, index) => (
+              <span key={color}>
+                <i style={{ background: color, borderRadius: "50%" }} />
+                {priceBands[index]}
+              </span>
+            ))}
+          </div>
+          <small>
+            Hydro-Québec&apos;s 2025 price comparison: a 50,000 kW customer, rates on April 1, 2025,
+            before taxes. One city per dot, not a provincial average.
           </small>
         </>
       ) : mode === "water" ? (
@@ -1109,10 +1311,12 @@ function ProvinceDetail({
   province,
   energy,
   mode,
+  prices,
 }: {
   province: Province;
   energy?: EnergyMix;
   mode: MapMode;
+  prices: PriceRow[];
 }) {
   const mixSources = ["Hydro", "Nuclear", "Fossil fuels", "Wind", "Solar", "Biomass"];
   return (
@@ -1152,6 +1356,20 @@ function ProvinceDetail({
               </div>
             );
           })}
+        </div>
+      )}
+      {prices.length > 0 && (
+        <div className="price-detail">
+          <p>Large-customer electricity price, April 2025</p>
+          {prices.map((row) => (
+            <div key={row.city}>
+              <span>{row.city}</span>
+              <strong>{Number(row.cents_per_kwh_50mw).toFixed(2)}¢/kWh</strong>
+            </div>
+          ))}
+          <a href={prices[0].source} target="_blank" rel="noreferrer">
+            Hydro-Québec 2025 comparison, p.17 ↗
+          </a>
         </div>
       )}
       <a

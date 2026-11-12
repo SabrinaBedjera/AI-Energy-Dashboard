@@ -1345,3 +1345,67 @@ mark {
     width: 100%;
   }
 }
+
+/* People view (StatCan 2021 Census density) */
+.svg-people path {
+  stroke: #fbfaf6;
+  stroke-width: 0.35;
+  vector-effect: non-scaling-stroke;
+}
+
+.svg-people .people-province-outline {
+  fill: none;
+  stroke: #172d49;
+  stroke-width: 0.9;
+  pointer-events: none;
+}
+
+/* Power prices view (Hydro-Québec 2025 comparison) */
+.svg-prices circle {
+  stroke: #172d49;
+  stroke-width: 1.4;
+  vector-effect: non-scaling-stroke;
+}
+
+.svg-prices text {
+  font-family: var(--mono);
+  font-size: 11px;
+  fill: #172d49;
+  paint-order: stroke;
+  stroke: #fbfaf6;
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.svg-prices .price-value {
+  font-weight: 700;
+}
+
+.price-detail {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid var(--line);
+}
+
+.price-detail > p {
+  margin-bottom: 9px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.price-detail > div {
+  display: flex;
+  justify-content: space-between;
+  margin: 5px 0;
+  font-size: 12px;
+}
+
+.price-detail > a {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--ink);
+}
