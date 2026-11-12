@@ -404,7 +404,6 @@ function App() {
                   ))}
               </select>
             </label>
-            <b>{filteredProjects.length} projects</b>
           </div>
           <div className="control-group" aria-label="Colour provinces by">
             <span>Colour the map by</span>
@@ -474,14 +473,13 @@ function App() {
                 setPanelOpen(true);
               }}
             />
-            <p className="zoom-hint">Zoom with + / −, double-click, or Ctrl/⌘ + scroll. Drag to move.</p>
             {!panelOpen && (
               <button className="open-panel" onClick={() => setPanelOpen(true)}>
                 View {selectedPowerLine ? "power line" : selectedProject ? "project" : "province"}{" "}
                 details
               </button>
             )}
-            <MapLegend fill={fill} layers={layers} />
+            <MapLegend fill={fill} layers={layers} shown={filteredProjects.length} total={projects.length} />
           </div>
 
           {panelOpen && (
@@ -1532,11 +1530,14 @@ function SvgMap({
   );
 }
 
-function MapLegend({ fill, layers }: { fill: FillMode; layers: Layers }) {
+function MapLegend({ fill, layers, shown, total }: { fill: FillMode; layers: Layers; shown: number; total: number }) {
   return (
     <div className="map-legend">
       <div className="legend-block">
-        <p>Data centre projects</p>
+        <p>
+          Data centre projects · {total} found in public sources
+          {shown !== total ? ` (showing ${shown})` : ""}
+        </p>
         <div className="project-legend">
           {Object.entries(statusColors).map(([label, color]) => (
             <span key={label}>

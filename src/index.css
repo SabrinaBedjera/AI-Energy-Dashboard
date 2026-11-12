@@ -1856,3 +1856,65 @@ rect.york-planned {
   font-weight: 600;
   line-height: 1.3;
 }
+
+/* Explorer controls: bigger, clearer (Babs, Nov 12) */
+.explorer .control-group {
+  padding: 14px 18px;
+  border-right: 0;
+}
+
+.explorer .control-group > span,
+.explorer .filters label span {
+  margin-bottom: 8px;
+  color: var(--ink);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+}
+
+.explorer .chips {
+  gap: 8px;
+}
+
+.explorer .chips button {
+  min-height: 40px;
+  padding: 6px 14px;
+  border: 1.5px solid var(--ink);
+  border-radius: 4px;
+  background: #fdfcf7;
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.explorer .chips button:hover {
+  background: #f1eee6;
+}
+
+.explorer .chips button.active,
+.explorer .chips button.active:hover {
+  background: var(--ink);
+  color: white;
+}
+
+.explorer .chips button.toggle.active,
+.explorer .chips button.toggle.active:hover {
+  background: #fbe6ee;
+  border-color: #e0457b;
+  color: var(--ink);
+}
+
+.explorer .filters {
+  flex: none;
+  min-width: 0;
+  padding: 14px 18px;
+  grid-template-columns: 200px 200px;
+}
+
+.explorer .filters select {
+  height: 40px;
+  padding: 0 10px;
+  border: 1.5px solid var(--ink);
+  border-radius: 4px;
+  background: #fdfcf7;
+  color: var(--ink);
+  font-size: 14px;
+}
