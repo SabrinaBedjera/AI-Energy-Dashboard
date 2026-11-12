@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { geoConicEqualArea, geoPath } from "d3-geo";
 
 type Project = {
@@ -273,46 +273,23 @@ function App() {
 
   return (
     <main>
-      <header className="masthead">
-        <span>Power / Place</span>
-        <span>A data story · November 2026</span>
-        <a href="#methods">Methods</a>
-      </header>
+      <Scrolly
+        boundaries={enrichedBoundaries}
+        powerLines={powerLines}
+        cleanStations={cleanStations}
+        drainage={drainage}
+        projects={projects}
+        pct={pct}
+        albertaShare={albertaShare}
+        plannedCount={plannedCount}
+        albertaPlannedCount={albertaPlannedCount}
+      />
 
-      <section className="lede">
-        <p className="eyebrow">Canada&apos;s AI buildout</p>
-        <h1>
-          Canada&apos;s AI boom is following the <em>power</em>.
-        </h1>
-        <p className="dek">
-          Most of the data centre capacity planned in Canada sits in one province. Here&apos;s
-          where it&apos;s going, and why.
-        </p>
-        <p className="byline">By Sabrina Bedjera</p>
-
-        <div className="lede-body">
-          <p>
-            Researchers at York University counted <strong>213 planned data centre sites</strong>{" "}
-            across Canada in 2026, adding up to about <strong>22.2 gigawatts</strong>.{" "}
-            <mark>{albertaShare.toFixed(0)}% of that planned capacity is in Alberta.</mark>
-          </p>
-          <ProvinceBar provinces={provinces} />
-          <p>
-            Those totals include sites that aren&apos;t public. So I built my own list of{" "}
-            <strong>{projects.length} named projects</strong> that I could trace to a public
-            source, from government listings and grid operators to company releases and city
-            planning files. Of the {plannedCount} that are planned or under construction,{" "}
-            <strong>{albertaPlannedCount} are in Alberta</strong>.
-          </p>
-        </div>
-      </section>
-
-      <div className="map-intro">
-        <p className="step">Explore the map</p>
-        <h2>Every named project, and the grid around it</h2>
+      <div className="explore-intro">
+        <h2>Your turn.</h2>
         <p>
-          Click a dot for its source and what its number measures. Switch views to see power lines
-          and each province&apos;s electricity mix.
+          Click any dot for its source and what its number actually measures. Flip between views to
+          see the power lines, each province&apos;s grid, clean power stations and watersheds.
         </p>
       </div>
 
@@ -421,84 +398,6 @@ function App() {
         )}
       </section>
 
-      <section className="findings">
-        <article className="chapter">
-          <span className="chapter-number">01</span>
-          <div className="chapter-body">
-            <h3>Alberta&apos;s rule: bring your own power</h3>
-            <p>
-              Alberta&apos;s grid operator capped new large loads at 1,200 MW in its first phase,
-              and both slots are already taken (970 MW and 230 MW). A 2025 law, Bill 8, puts data
-              centres that bring their own power first in line.
-            </p>
-            <p>
-              So the biggest Alberta projects plan their own gas plants. Wonder Valley&apos;s first
-              phase is a <mark>1.4 GW</mark> off-grid power system. Malachite One plans 1 GW of
-              on-site gas, and Beacon&apos;s Heartland hub 920 MW.
-            </p>
-          </div>
-          <aside className="sidenote">
-            Sources:{" "}
-            <a href="https://www.aeso.ca/grid/connecting-to-the-grid/large-load-projects" target="_blank" rel="noreferrer">AESO</a>
-            ,{" "}
-            <a href="https://www.bennettjones.com/Insights/Blogs/2026/01/Alberta-Advances-Regulatory-Changes-to-Facilitate-Data-Centre-Development" target="_blank" rel="noreferrer">Bennett Jones</a>
-            ,{" "}
-            <a href="https://majorprojects.alberta.ca/" target="_blank" rel="noreferrer">Gov of Alberta Major Projects</a>
-            . Wonder Valley&apos;s company says the full build-out could reach 7.5 GW.
-          </aside>
-        </article>
-
-        <article className="chapter">
-          <span className="chapter-number">02</span>
-          <div className="chapter-body">
-            <h3>The cleanest grids are rationing power</h3>
-            <p>
-              Quebec, British Columbia and Manitoba run on hydro ({pct("Quebec", "Hydro %")}%,{" "}
-              {pct("British Columbia", "Hydro %")}% and {pct("Manitoba", "Hydro %")}% of 2025
-              generation). They are also the provinces putting limits on data centres.
-            </p>
-            <p>
-              BC opened a competitive process for up to <mark>400 MW</mark> over two years, with a
-              cap of 145 MW per project. In Quebec, powering a data centre now needs the
-              minister&apos;s authorization. Manitoba has proposed its own rate class for data
-              centres.
-            </p>
-          </div>
-          <aside className="sidenote">
-            Sources:{" "}
-            <a href="https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=2510001501" target="_blank" rel="noreferrer">Statistics Canada</a>
-            ,{" "}
-            <a href="https://news.gov.bc.ca/releases/2026ECS0005-000095" target="_blank" rel="noreferrer">BC government</a>
-            ,{" "}
-            <a href="https://www.blg.com/en/insights/2026/07/data-centre-regulation-in-quebec-from-honeyed-promise-to-iron-control" target="_blank" rel="noreferrer">BLG</a>
-            ,{" "}
-            <a href="https://web2.gov.mb.ca/bills/43-3/pdf/b039.pdf" target="_blank" rel="noreferrer">Manitoba Bill 39</a>
-            . Bill 39&apos;s status is unclear.
-          </aside>
-        </article>
-
-        <article className="chapter">
-          <span className="chapter-number">03</span>
-          <div className="chapter-body">
-            <h3>So the AI buildout leans on gas</h3>
-            <p>
-              In 2025, <mark>{pct("Alberta", "Fossil fuels %")}%</mark> of Alberta&apos;s
-              electricity came from fossil fuels, compared with {pct("Quebec", "Fossil fuels %")}% in
-              Quebec. Switch the map to <em>Energy source</em> to see how the planned projects line
-              up with each province&apos;s grid.
-            </p>
-            <p>
-              Outside Alberta, the projects to watch are on the east coast: a 420 MW campus at Point
-              Tupper, Nova Scotia, and a 390 MW site in Saint John, New Brunswick.
-            </p>
-          </div>
-          <aside className="sidenote">
-            Source: Statistics Canada, Table 25-10-0015-01. Project sources are linked on each dot
-            in the map.
-          </aside>
-        </article>
-      </section>
-
       <section id="methods" className="about">
         <div>
           <p className="eyebrow">Methods</p>
@@ -565,6 +464,171 @@ function App() {
   );
 }
 
+type ScrollStep = {
+  mode: MapMode;
+  focus?: string;
+  hideProjects?: boolean;
+  fadeAll?: boolean;
+  highlight?: string;
+  body: React.ReactNode;
+  hero?: boolean;
+};
+
+function Scrolly(props: {
+  boundaries: any;
+  powerLines: any;
+  cleanStations: any;
+  drainage: any;
+  projects: Project[];
+  pct: (name: string, column: string) => string;
+  albertaShare: number;
+  plannedCount: number;
+  albertaPlannedCount: number;
+}) {
+  const { pct } = props;
+  const [active, setActive] = useState(0);
+  const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  const steps: ScrollStep[] = [
+    {
+      mode: "power",
+      hideProjects: true,
+      fadeAll: true,
+      hero: true,
+      body: (
+        <>
+          <h1>
+            Canada is about to plug a lot of AI into its power grid. Most of it is heading to one
+            province.
+          </h1>
+          <p className="hero-byline">By Sabrina Bedjera · November 2026</p>
+          <p className="scroll-cue">Scroll ↓</p>
+        </>
+      ),
+    },
+    {
+      mode: "power",
+      hideProjects: true,
+      body: (
+        <p className="placeholder">
+          [Your hook goes here: one or two sentences, in your words, on why you got curious about
+          where Canada&apos;s data centres are going.]
+        </p>
+      ),
+    },
+    {
+      mode: "capacity",
+      body: (
+        <p>
+          I went looking for every data centre project in Canada I could trace to a public source.
+          I found <strong>{props.projects.length}</strong>. The{" "}
+          <span className="hl hl-pink">pink dots</span> are still plans, the{" "}
+          <span className="hl hl-navy">navy</span> ones are being built, and the{" "}
+          <span className="hl hl-white">white</span> ones are already running.
+        </p>
+      ),
+    },
+    {
+      mode: "capacity",
+      focus: "Alberta",
+      body: (
+        <p>
+          Of the {props.plannedCount} that are planned or under construction,{" "}
+          <strong>{props.albertaPlannedCount} are in Alberta</strong>. Researchers at York
+          University, counting sites that aren&apos;t public too, put Alberta at{" "}
+          <span className="hl hl-teal">{props.albertaShare.toFixed(0)}% of all planned capacity</span>{" "}
+          in the country.
+        </p>
+      ),
+    },
+    {
+      mode: "energy",
+      body: (
+        <p>
+          That&apos;s surprising, because Alberta&apos;s grid leans hard on fossil fuels. In 2025,{" "}
+          <span className="hl hl-pink">{pct("Alberta", "Fossil fuels %")}%</span> of its
+          electricity came from fossil fuels. In Quebec it was{" "}
+          <span className="hl hl-teal">{pct("Quebec", "Fossil fuels %")}%</span>.
+        </p>
+      ),
+    },
+    {
+      mode: "clean",
+      body: (
+        <p>
+          The hydro provinces have the clean power. They&apos;re just not handing it out. BC caps
+          new data centres at <strong>400 MW</strong> over two years. Quebec needs a minister to
+          sign off. Manitoba has proposed a special rate for them.
+        </p>
+      ),
+    },
+    {
+      mode: "capacity",
+      focus: "Alberta",
+      highlight: "Wonder Valley",
+      body: (
+        <p>
+          Alberta took a different route: <strong>bring your own power</strong>. Its grid only had
+          room for 1,200 MW of big new loads, and that&apos;s taken. So projects like{" "}
+          <span className="hl hl-pink">Wonder Valley</span> are planning their own power plants.
+          Its first phase alone is a 1.4 GW gas and geothermal system.
+        </p>
+      ),
+    },
+  ];
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) setActive(Number((entry.target as HTMLElement).dataset.step));
+        }
+      },
+      { rootMargin: "-45% 0px -45% 0px" },
+    );
+    stepRefs.current.forEach((element) => element && observer.observe(element));
+    return () => observer.disconnect();
+  }, []);
+
+  const step = steps[active];
+  return (
+    <section className="scrolly">
+      <div className="scrolly-graphic">
+        <SvgMap
+          boundaries={props.boundaries}
+          powerLines={props.powerLines}
+          cleanStations={props.cleanStations}
+          drainage={props.drainage}
+          projects={props.projects}
+          mode={step.mode}
+          selectedProject={null}
+          onSelectProject={() => {}}
+          onSelectProvince={() => {}}
+          onSelectPowerLine={() => {}}
+          focusProvince={step.focus}
+          hideProjects={step.hideProjects}
+          highlightProject={step.highlight}
+          fadeAll={step.fadeAll}
+        />
+      </div>
+      <div className="scrolly-steps">
+        {steps.map((item, index) => (
+          <div
+            key={index}
+            ref={(element) => {
+              stepRefs.current[index] = element;
+            }}
+            data-step={index}
+            className={`scrolly-step ${item.hero ? "hero" : ""} ${index === active ? "is-active" : ""}`}
+          >
+            <div className="step-card">{item.body}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function ProvinceBar({ provinces }: { provinces: Province[] }) {
   const rows = provinces
     .filter((province) => Number(province.planned_mw) > 0)
@@ -615,7 +679,15 @@ function SvgMap({
   onSelectProject,
   onSelectProvince,
   onSelectPowerLine,
+  focusProvince,
+  hideProjects,
+  highlightProject,
+  fadeAll,
 }: {
+  focusProvince?: string;
+  hideProjects?: boolean;
+  highlightProject?: string;
+  fadeAll?: boolean;
   boundaries: any;
   powerLines: any;
   cleanStations: any;
@@ -640,6 +712,18 @@ function SvgMap({
     return nextProjection;
   }, [boundaries]);
   const pathGenerator = useMemo(() => geoPath(projection), [projection]);
+
+  const zoomTransform = useMemo(() => {
+    const feature = boundaries?.features?.find(
+      (item: any) => item.properties.name === focusProvince,
+    );
+    if (!feature) return "translate(0px, 0px) scale(1)";
+    const [[x0, y0], [x1, y1]] = pathGenerator.bounds(feature);
+    const scale = Math.min((0.75 * 1000) / (x1 - x0), (0.8 * 600) / (y1 - y0), 4);
+    const tx = 560 - scale * ((x0 + x1) / 2);
+    const ty = 300 - scale * ((y0 + y1) / 2);
+    return `translate(${tx}px, ${ty}px) scale(${scale})`;
+  }, [boundaries, focusProvince, pathGenerator]);
 
   const provinceFill = (properties: any) => {
     if (mode === "power" || mode === "clean" || mode === "water") return "#e8e5df";
@@ -669,12 +753,14 @@ function SvgMap({
       aria-label="Interactive map of Canadian data centre projects"
     >
       <rect width="1000" height="600" fill="#e8ebe7" />
+      <g className={`zoom-layer ${fadeAll ? "faded" : ""}`} style={{ transform: zoomTransform }}>
       <g className="svg-provinces">
         {boundaries?.features?.map((feature: any) => (
           <path
             key={feature.properties.name}
             d={pathGenerator(feature) ?? undefined}
             fill={provinceFill(feature.properties)}
+            opacity={focusProvince && feature.properties.name !== focusProvince ? 0.45 : 1}
             onClick={() => onSelectProvince(feature.properties.name)}
           />
         ))}
@@ -759,7 +845,7 @@ function SvgMap({
           })}
         </g>
       )}
-      <g className="svg-projects">
+      <g className={`svg-projects ${hideProjects ? "hidden" : ""}`}>
         {projects.map((project) => {
           const point = projection([Number(project.lon), Number(project.lat)]) ?? [0, 0];
           const radius = project.reported_mw
@@ -774,6 +860,9 @@ function SvgMap({
                 onSelectProject(project);
               }}
             >
+              {highlightProject && project.name.startsWith(highlightProject) && (
+                <circle cx={point[0]} cy={point[1]} r={radius + 7} className="pulse-ring" />
+              )}
               {lowerConfidence && (
                 <circle cx={point[0]} cy={point[1]} r={radius + 2.5} className="confidence-ring" />
               )}
@@ -788,6 +877,7 @@ function SvgMap({
             </g>
           );
         })}
+      </g>
       </g>
     </svg>
   );
