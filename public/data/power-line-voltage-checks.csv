@@ -1,0 +1,9 @@
+province,voltage_levels_confirmed_kv,what_the_source_says,source
+Alberta,500 / 240 / 144 / 138,"Government of Alberta transmission assessment: 69/72, 138/144, 240 and 500 kV in use",https://open.alberta.ca/dataset/ae27a761-faaf-4862-813d-0c4c5ec00792/resource/2d436500-db4f-4e01-950d-e174736bdd53/download/transmissionassessmentsummaryfinal.pdf
+British Columbia,500 / 360 / 287 / 230 / 138,"BC Hydro transmission system info and diagram: 500, 360, 287, 230, 138 kV",https://www.bchydro.com/content/dam/BCHydro/customer-portal/documents/corporate/independent-power-producers-calls-for-power/call-for-power/2025-cfp-transmission-system-info.pdf
+Manitoba,500 / 230 / 138 / 115,"Manitoba government: major lines at 115, 138, 230 and 500 kV; Manitoba Hydro Bipole III EIS: +/-500 kV DC",https://www.hydro.mb.ca/docs/projects/bipole3/eis/download/chapter1_introduction.pdf
+Ontario,500 / 230 / 115,"IESO: grid includes 115, 230 and 500 kV lines",https://www.ieso.ca/ontarioenergymap/
+Quebec,735 / 450 / 315 / 230 / 120,"Hydro-Quebec: 735 kV backbone, +/-450 kV DC line, 315/230/120 kV regional",https://hydroquebec.com/systemupgrade/transmission-system.html
+Saskatchewan,230 / 138 / 115 / 110,SaskPower system map: 230 kV and 138/115/110 kV,https://saskpower.com/-/media/saskpower/our-power-future/our-electricity/map-ourpowerfuture-systemmap.pdf
+Newfoundland and Labrador,350,NL Hydro / GE Vernova: Labrador-Island Link +/-350 kV DC,https://nlhydro.com/wp-content/uploads/2024/08/Hydro-Labrador-Island-Link.pdf
+Yukon Territory,138,Yukon Energy: Whitehorse grid at 138 kV,https://yukonenergy.ca/energy-in-yukon/projects-facilities/whitehorse-power-centres
