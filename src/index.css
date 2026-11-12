@@ -941,7 +941,7 @@
 }
 
 .lede h1 em {
-  font-style: italic;
+  font-style: normal;
   color: var(--pink);
 }
 
@@ -1265,7 +1265,7 @@ mark {
 
 .scrolly-step.hero h1 {
   font-family: var(--display);
-  font-style: italic;
+  font-style: normal;
   font-size: clamp(40px, 5.4vw, 76px);
   line-height: 1.08;
   letter-spacing: -0.01em;
@@ -1287,7 +1287,7 @@ mark {
 
 .placeholder {
   color: #8a5a6a;
-  font-style: italic;
+  font-style: normal;
 }
 
 .hl {
@@ -1321,7 +1321,7 @@ mark {
 
 .explore-intro h2 {
   font-family: var(--display);
-  font-style: italic;
+  font-style: normal;
   font-size: 64px;
   line-height: 1;
 }
