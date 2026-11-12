@@ -1142,3 +1142,9 @@ mark {
   opacity: 0.85;
   vector-effect: non-scaling-stroke;
 }
+
+.lede-body .bar-note {
+  font-size: 11px;
+  line-height: 1.5;
+  margin-top: 10px;
+}
