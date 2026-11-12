@@ -39,6 +39,7 @@ type MapMode =
   | "water"
   | "people"
   | "grid"
+  | "projects"
   | "price"
   | "sitesActive"
   | "sitesPlanned";
@@ -51,6 +52,7 @@ const noLayers: Layers = { people: false, lines: false, clean: false, water: fal
 function viewFor(mode: MapMode): { fill: FillMode; layers: Layers } {
   if (mode === "power") return { fill: "none", layers: { ...noLayers, lines: true } };
   if (mode === "clean") return { fill: "none", layers: { ...noLayers, clean: true } };
+  if (mode === "projects") return { fill: "none", layers: noLayers };
   if (mode === "grid") return { fill: "none", layers: { ...noLayers, lines: true, clean: true } };
   if (mode === "people") return { fill: "none", layers: { ...noLayers, people: true } };
   if (mode === "water") return { fill: "none", layers: { ...noLayers, water: true } };
@@ -648,9 +650,7 @@ function Scrolly(props: {
 
   const steps: ScrollStep[] = [
     {
-      mode: "power",
-      hideProjects: true,
-      fadeAll: true,
+      mode: "projects",
       hero: true,
       body: (
         <>
