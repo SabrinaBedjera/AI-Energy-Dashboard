@@ -300,6 +300,7 @@ function App() {
           cleanStations={cleanStations}
           drainage={drainage}
           projects={filteredProjects}
+          focusProvince={provinceFilter === "All" ? undefined : codeToProvince[provinceFilter]}
           mode={mode}
           selectedProject={selectedProject}
           onSelectProject={selectProject}
@@ -737,6 +738,13 @@ function SvgMap({
     return capacityColors[0];
   };
 
+  const voltageWidth = (voltage: number | null) => {
+    if (!voltage) return 0.7;
+    if (voltage >= 450) return 2.4;
+    if (voltage >= 200) return 1.5;
+    return 0.9;
+  };
+
   const voltageColor = (voltage: number | null) => {
     if (!voltage) return voltageColors.unknown;
     if (voltage >= 450) return voltageColors.highest;
@@ -826,7 +834,9 @@ function SvgMap({
       )}
       {mode === "power" && (
         <g className="svg-power-lines">
-          {powerLines?.features?.map((feature: any) => {
+          {[...(powerLines?.features ?? [])]
+            .sort((a: any, b: any) => (a.properties.voltage_kv ?? 0) - (b.properties.voltage_kv ?? 0))
+            .map((feature: any) => {
             const properties = feature.properties as PowerLine;
             const unverified =
               properties.voltage_status === "Voltage from OpenStreetMap, not verified";
@@ -835,6 +845,7 @@ function SvgMap({
                 key={feature.properties.canvec_id}
                 d={pathGenerator(feature) ?? undefined}
                 stroke={voltageColor(properties.voltage_kv)}
+                style={{ strokeWidth: voltageWidth(properties.voltage_kv) }}
                 strokeDasharray={unverified ? "3 3" : undefined}
                 onClick={(event) => {
                   event.stopPropagation();

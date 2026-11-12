@@ -52,7 +52,7 @@
 }
 
 .map-experience {
-  height: 780px;
+  height: max(780px, 100vh);
   border-top: 1px solid var(--ink);
   border-bottom: 1px solid var(--ink);
   position: relative;
@@ -1178,7 +1178,7 @@ mark {
 }
 
 .zoom-layer.faded .svg-power-lines {
-  opacity: 0.55;
+  opacity: 0.85;
 }
 
 .zoom-layer.faded .svg-provinces path {
