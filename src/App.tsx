@@ -701,8 +701,8 @@ function Scrolly(props: {
             driver.
           </p>
           <p>
-            Closer to home, York University researchers estimate that one typical planned Canadian
-            data centre (<strong>122 MW</strong>) would use as much electricity in a year as{" "}
+            Closer to home, York University researchers estimate that one average announced
+            Canadian data centre (<strong>122 MW</strong>) would use as much electricity in a year as{" "}
             <span className="hl hl-pink">49,000 to 78,000 Canadian homes</span>.
           </p>
           <p className="york-source">
@@ -741,8 +741,8 @@ function Scrolly(props: {
           Data centres aren&apos;t new. They&apos;ve run websites, email, online banking,
           streaming and cloud storage for years, and most still do. York flags only{" "}
           <strong>5 of the 194</strong> data centres running in Canada as AI-related, and{" "}
-          <strong>49 of the 213</strong> planned ones. AI is a growing slice, but the boom is
-          about all kinds of computing.
+          <strong>49 of the 213</strong> planned ones. York calls these a lower bound, since a site only counts when its
+          plans mention AI. AI is a growing slice, but the boom is about all kinds of computing.
         </p>
       ),
     },
