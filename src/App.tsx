@@ -663,28 +663,42 @@ function Scrolly(props: {
       mode: "power",
       hideProjects: true,
       fadeAll: true,
-      wide: true,
       body: (
         <>
           <p>
-            Canada&apos;s data centre build-out is small next to the US, but it&apos;s growing fast.
-            York University researchers count <strong>194 data centres running in Canada</strong>{" "}
-            (1.6 GW) and <strong>1,989 in the US</strong> (46.8 GW). The projects announced or
-            being built in Canada add up to <span className="hl hl-pink">22.2 GW</span>, almost{" "}
-            <strong>14 times</strong> what runs today.
-          </p>
-          <p>
-            The new ones are also much bigger. An announced Canadian data centre averages{" "}
-            <span className="hl hl-pink">122 MW</span>, more than ten times the size of one
-            running today, and bigger than the US average.
+            AI runs in data centres: buildings full of computers that run day and night, and need
+            a lot of electricity to do it. York University researchers estimate that one typical
+            planned Canadian data centre (<strong>122 MW</strong>) would use about as much
+            electricity in a year as <span className="hl hl-pink">49,000 to 78,000 Canadian
+            homes</span>.
           </p>
           <p className="york-note">
             Not every data centre is built for AI. York flags <strong>5 of the 194</strong> running
             in Canada as AI-related, and <strong>49 of the 213</strong> planned ones. The rest are
             cloud, storage and hosting.
           </p>
-          <YorkComparison />
+          <p className="york-source">
+            Source:{" "}
+            <a href={yorkUrl} target="_blank" rel="noreferrer">
+              Carlo &amp; Rolheiser, York University (2026)
+            </a>
+            , section 2.2 and Table 1. Homes range assumes the data centre runs at 50% to 80% of its
+            capacity.
+          </p>
         </>
+      ),
+    },
+    {
+      mode: "capacity",
+      hideProjects: true,
+      body: (
+        <p>
+          Canada has <strong>194 data centres running</strong> today, using about{" "}
+          <strong>1.6 GW</strong>. Another <strong>213</strong> are announced or being built. Together
+          they add up to <span className="hl hl-pink">22.2 GW</span>, almost{" "}
+          <strong>14 times</strong> what runs now. And the new ones are bigger: a planned site
+          averages <strong>122 MW</strong>, compared with 11 MW for one running today.
+        </p>
       ),
     },
     {
@@ -705,31 +719,20 @@ function Scrolly(props: {
     },
     {
       mode: "capacity",
-      body: (
-        <p>
-          I went looking for every data centre project in Canada I could trace to a public source.
-          I found <strong>{props.projects.length}</strong>. The{" "}
-          <span className="hl hl-pink">pink dots</span> are still plans, the{" "}
-          <span className="hl hl-yellow">yellow</span> ones are being built, and the{" "}
-          <span className="hl hl-white">white</span> ones are already running.
-        </p>
-      ),
-    },
-    {
-      mode: "capacity",
       focus: "Alberta",
+      hideProjects: true,
       body: (
         <p>
-          Of the {props.plannedCount} that are planned or under construction,{" "}
-          <strong>{props.albertaPlannedCount} are in Alberta</strong>. Researchers at York
-          University, counting sites that aren&apos;t public too, put Alberta at{" "}
-          <span className="hl hl-teal">{props.albertaShare.toFixed(0)}% of all planned capacity</span>{" "}
-          in the country.
+          By capacity it&apos;s even more lopsided. York puts Alberta at{" "}
+          <span className="hl hl-teal">{props.albertaShare.toFixed(0)}% of all planned data centre
+          MW</span>{" "}
+          in Canada.
         </p>
       ),
     },
     {
       mode: "energy",
+      hideProjects: true,
       body: (
         <p>
           That&apos;s surprising, because Alberta&apos;s grid leans hard on fossil fuels. In 2025,{" "}
@@ -741,6 +744,7 @@ function Scrolly(props: {
     },
     {
       mode: "clean",
+      hideProjects: true,
       body: (
         <p>
           The hydro provinces have the clean power. They&apos;re just not handing it out. BC caps
@@ -751,6 +755,7 @@ function Scrolly(props: {
     },
     {
       mode: "price",
+      hideProjects: true,
       body: (
         <p>
           It&apos;s also the cheapest power for big customers. In Hydro-Québec&apos;s 2025 price
@@ -771,6 +776,37 @@ function Scrolly(props: {
           room for 1,200 MW of big new loads, and that&apos;s taken. So projects like{" "}
           <span className="hl hl-pink">Wonder Valley</span> are planning their own power plants.
           Its first phase alone is a 1.4 GW gas and geothermal system.
+        </p>
+      ),
+    },
+    {
+      mode: "power",
+      hideProjects: true,
+      fadeAll: true,
+      wide: true,
+      body: (
+        <>
+          <p>
+            Zoom out, and Canada is still small. York counts <strong>1,989 data centres running in
+            the US</strong> (46.8 GW), against 194 in Canada. But Canada&apos;s planned projects are
+            bigger on average than the US ones: <span className="hl hl-pink">122 MW vs 95 MW</span>.
+          </p>
+          <YorkComparison />
+        </>
+      ),
+    },
+    {
+      mode: "capacity",
+      body: (
+        <p>
+          The numbers so far come from an industry database. I wanted to see the projects anyone can
+          check. So I went looking for every data centre project in Canada I could trace to a
+          public source, and found <strong>{props.projects.length}</strong>. The{" "}
+          <span className="hl hl-pink">pink dots</span> are still plans, the{" "}
+          <span className="hl hl-yellow">yellow</span> ones are being built, and the{" "}
+          <span className="hl hl-white">white</span> ones are already running.{" "}
+          {props.albertaPlannedCount} of the {props.plannedCount} planned or under construction are
+          in Alberta.
         </p>
       ),
     },
