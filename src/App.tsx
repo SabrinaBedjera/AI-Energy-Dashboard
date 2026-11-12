@@ -31,16 +31,28 @@ type Province = {
 };
 
 type EnergyMix = Record<string, string> & { Province: string };
-type MapMode = "capacity" | "power" | "energy" | "clean" | "water" | "people" | "price";
+type MapMode =
+  | "capacity"
+  | "power"
+  | "energy"
+  | "clean"
+  | "water"
+  | "people"
+  | "grid"
+  | "price"
+  | "sitesActive"
+  | "sitesPlanned";
 
-type FillMode = "none" | "capacity" | "energy" | "people" | "price";
-type Layers = { lines: boolean; clean: boolean; water: boolean };
-const noLayers: Layers = { lines: false, clean: false, water: false };
+type FillMode = "none" | "capacity" | "energy" | "people" | "price" | "sitesActive" | "sitesPlanned";
+type Layers = { people: boolean; lines: boolean; clean: boolean; water: boolean };
+const noLayers: Layers = { people: false, lines: false, clean: false, water: false };
 
 // Scrolly steps still describe one "mode"; turn it into a fill + overlays
 function viewFor(mode: MapMode): { fill: FillMode; layers: Layers } {
   if (mode === "power") return { fill: "none", layers: { ...noLayers, lines: true } };
   if (mode === "clean") return { fill: "none", layers: { ...noLayers, clean: true } };
+  if (mode === "grid") return { fill: "none", layers: { ...noLayers, lines: true, clean: true } };
+  if (mode === "people") return { fill: "none", layers: { ...noLayers, people: true } };
   if (mode === "water") return { fill: "none", layers: { ...noLayers, water: true } };
   return { fill: mode as FillMode, layers: noLayers };
 }
@@ -115,6 +127,11 @@ const cleanColors: Record<string, string> = {
 const drainageColors = ["#d7e6ef", "#c4d9e6", "#b1cbdc", "#e2ecf2"];
 
 const capacityColors = ["#d4ebe6", "#94cdc2", "#3f9e8f", "#0b5f57"];
+
+// Share of York's data centre sites (Appendix Table A2), used in the story only
+const siteShareColors = ["#e8e5df", "#f6d3df", "#ec97b5", "#d6457b", "#8f1f4f"];
+const siteShareColor = (share: number) =>
+  siteShareColors[share === 0 ? 0 : share < 5 ? 1 : share < 15 ? 2 : share < 35 ? 3 : 4];
 
 // People per km² (Statistics Canada 2021 Census, census divisions)
 const peopleColors = ["#e2ded5", "#d0d6de", "#a9b4c4", "#6b7f9c", "#172d49"];
@@ -350,57 +367,25 @@ function App() {
         <h2>Your turn.</h2>
         <p>
           Click any dot for its source and what its number actually measures. Colour the map by one
-          measure, then add power lines, clean power stations or watersheds on top.
+          measure (click it again to turn it off), then add power lines, clean power stations or watersheds on top.
         </p>
       </div>
 
       <section className="map-experience explorer">
         <div className="map-controls explorer-controls">
-          <div className="control-group" aria-label="Colour provinces by">
-            <span>Colour the map by</span>
-            <div className="chips">
-              {(
-                [
-                  ["none", "Nothing"],
-                  ["capacity", "Planned MW"],
-                  ["energy", "Energy source"],
-                  ["people", "People"],
-                  ["price", "Power prices"],
-                ] as [FillMode, string][]
-              ).map(([value, label]) => (
-                <button
-                  key={value}
-                  className={fill === value ? "active" : ""}
-                  onClick={() => setFill(value)}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="control-group" aria-label="Add layers">
-            <span>Add to the map</span>
-            <div className="chips">
-              {(
-                [
-                  ["lines", "Power lines"],
-                  ["clean", "Clean power stations"],
-                  ["water", "Watersheds"],
-                ] as [keyof Layers, string][]
-              ).map(([key, label]) => (
-                <button
-                  key={key}
-                  className={`toggle ${layers[key] ? "active" : ""}`}
-                  aria-pressed={layers[key]}
-                  onClick={() => setLayers((current) => ({ ...current, [key]: !current[key] }))}
-                >
-                  <i aria-hidden="true">{layers[key] ? "✓" : "+"}</i>
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
           <div className="filters">
+            <label>
+              <span>Status</span>
+              <select
+                value={statusFilter}
+                onChange={(event) => setStatusFilter(event.target.value)}
+              >
+                <option value="All">All statuses</option>
+                <option>Operating</option>
+                <option>Under construction</option>
+                <option>Proposed</option>
+              </select>
+            </label>
             <label>
               <span>Province</span>
               <select
@@ -417,19 +402,51 @@ function App() {
                   ))}
               </select>
             </label>
-            <label>
-              <span>Status</span>
-              <select
-                value={statusFilter}
-                onChange={(event) => setStatusFilter(event.target.value)}
-              >
-                <option value="All">All statuses</option>
-                <option>Operating</option>
-                <option>Under construction</option>
-                <option>Proposed</option>
-              </select>
-            </label>
             <b>{filteredProjects.length} projects</b>
+          </div>
+          <div className="control-group" aria-label="Colour provinces by">
+            <span>Colour the map by</span>
+            <div className="chips">
+              {(
+                [
+                  ["capacity", "Planned MW"],
+                  ["energy", "Energy source"],
+                  ["price", "Power prices"],
+                ] as [FillMode, string][]
+              ).map(([value, label]) => (
+                <button
+                  key={value}
+                  className={fill === value ? "active" : ""}
+                  aria-pressed={fill === value}
+                  onClick={() => setFill(fill === value ? "none" : value)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="control-group" aria-label="Add layers">
+            <span>Add to the map</span>
+            <div className="chips">
+              {(
+                [
+                  ["people", "Where people live"],
+                  ["lines", "Power lines"],
+                  ["clean", "Clean power stations"],
+                  ["water", "Watersheds"],
+                ] as [keyof Layers, string][]
+              ).map(([key, label]) => (
+                <button
+                  key={key}
+                  className={`toggle ${layers[key] ? "active" : ""}`}
+                  aria-pressed={layers[key]}
+                  onClick={() => setLayers((current) => ({ ...current, [key]: !current[key] }))}
+                >
+                  <i aria-hidden="true">{layers[key] ? "✓" : "+"}</i>
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -666,52 +683,83 @@ function Scrolly(props: {
       body: (
         <>
           <p>
-            AI runs in data centres: buildings full of computers that run day and night, and need
-            a lot of electricity to do it. York University researchers estimate that one typical
-            planned Canadian data centre (<strong>122 MW</strong>) would use about as much
-            electricity in a year as <span className="hl hl-pink">49,000 to 78,000 Canadian
-            homes</span>.
+            AI runs in data centres: buildings full of computers that run day and night. Worldwide,
+            data centres used about <strong>1.5% of all electricity</strong> in 2024. The
+            International Energy Agency expects that to more than double by 2030, to about as much
+            as <span className="hl hl-pink">all of Japan uses today</span>. AI is the biggest
+            driver.
           </p>
-          <p className="york-note">
-            Not every data centre is built for AI. York flags <strong>5 of the 194</strong> running
-            in Canada as AI-related, and <strong>49 of the 213</strong> planned ones. The rest are
-            cloud, storage and hosting.
+          <p>
+            Closer to home, York University researchers estimate that one typical planned Canadian
+            data centre (<strong>122 MW</strong>) would use as much electricity in a year as{" "}
+            <span className="hl hl-pink">49,000 to 78,000 Canadian homes</span>.
           </p>
           <p className="york-source">
-            Source:{" "}
+            Sources:{" "}
+            <a href={ieaUrl} target="_blank" rel="noreferrer">
+              IEA, Energy and AI (2025)
+            </a>
+            , executive summary;{" "}
             <a href={yorkUrl} target="_blank" rel="noreferrer">
               Carlo &amp; Rolheiser, York University (2026)
             </a>
-            , section 2.2 and Table 1. Homes range assumes the data centre runs at 50% to 80% of its
-            capacity.
+            , section 2.2. The homes range assumes the data centre runs at 50% to 80% of capacity.
           </p>
         </>
       ),
     },
     {
-      mode: "capacity",
+      mode: "grid",
       hideProjects: true,
       body: (
         <p>
-          Canada has <strong>194 data centres running</strong> today, using about{" "}
-          <strong>1.6 GW</strong>. Another <strong>213</strong> are announced or being built. Together
-          they add up to <span className="hl hl-pink">22.2 GW</span>, almost{" "}
-          <strong>14 times</strong> what runs now. And the new ones are bigger: a planned site
-          averages <strong>122 MW</strong>, compared with 11 MW for one running today.
+          Where does that power come from? A data centre can plug into the{" "}
+          <strong>grid</strong> like any other big customer. It can also get its power more
+          directly from <span className="hl hl-teal">clean energy projects</span>, by signing a
+          long-term deal with a wind, solar or hydro project or by building its own. That&apos;s
+          why this map shows power lines and clean power stations alongside the data centres.
         </p>
       ),
     },
     {
-      mode: "capacity",
+      mode: "power",
+      hideProjects: true,
+      fadeAll: true,
+      body: (
+        <p>
+          Data centres aren&apos;t new. They&apos;ve run websites, email, online banking,
+          streaming and cloud storage for years, and most still do. York flags only{" "}
+          <strong>5 of the 194</strong> data centres running in Canada as AI-related, and{" "}
+          <strong>49 of the 213</strong> planned ones. AI is a growing slice, but the boom is
+          about all kinds of computing.
+        </p>
+      ),
+    },
+    {
+      mode: "sitesActive",
+      hideProjects: true,
+      body: (
+        <p>
+          Canada has <strong>194 data centres running</strong> today, using about{" "}
+          <strong>1.6 GW</strong>. Most sit in three provinces: <strong>Ontario</strong> (41%),{" "}
+          <strong>Quebec</strong> (30%) and <strong>BC</strong> (14%), close to big cities. Half of
+          them are within about <strong>4 km of a downtown</strong>.
+        </p>
+      ),
+    },
+    {
+      mode: "sitesPlanned",
       hideProjects: true,
       wide: true,
       body: (
         <>
           <p>
-            Today, most of Canada&apos;s data centres sit in three provinces:{" "}
-            <strong>Ontario</strong> (41% of the 194 running), <strong>Quebec</strong> (30%) and{" "}
-            <strong>BC</strong> (14%). The plans point somewhere else.{" "}
-            <span className="hl hl-pink">167 of the 213 planned sites, or 78%, are in Alberta</span>.
+            Another <strong>213</strong> are announced or being built, adding up to{" "}
+            <span className="hl hl-pink">22.2 GW</span>, almost <strong>14 times</strong> what runs
+            today. And they point somewhere else:{" "}
+            <span className="hl hl-pink">167 of the 213, or 78%, are in Alberta</span>, and
+            they&apos;re farther out. Half of the announced sites are more than{" "}
+            <strong>48 km from a downtown</strong>.
           </p>
           <ProvinceShift />
         </>
@@ -722,11 +770,42 @@ function Scrolly(props: {
       focus: "Alberta",
       hideProjects: true,
       body: (
+        <>
+          <p>
+            By capacity it&apos;s even more lopsided. York puts Alberta at{" "}
+            <span className="hl hl-teal">
+              {props.albertaShare.toFixed(0)}% of all planned data centre MW
+            </span>{" "}
+            in Canada.
+          </p>
+          <p>
+            Alberta&apos;s own numbers point the same way. Companies have asked to connect about{" "}
+            <strong>19,565 MW</strong> of new data centre load to its grid. That&apos;s more than
+            the most power the whole province has ever used in one hour (about 12,800 MW).
+          </p>
+          <p className="york-source">
+            Sources: York University (2026), Figure 3b;{" "}
+            <a href="https://www.alberta.ca/datacentres/grid" target="_blank" rel="noreferrer">
+              Government of Alberta
+            </a>
+            , citing the AESO connection list of July 30, 2026.
+          </p>
+        </>
+      ),
+    },
+    {
+      mode: "capacity",
+      body: (
         <p>
-          By capacity it&apos;s even more lopsided. York puts Alberta at{" "}
-          <span className="hl hl-teal">{props.albertaShare.toFixed(0)}% of all planned data centre
-          MW</span>{" "}
-          in Canada.
+          Those numbers come from a commercial database I can&apos;t access, so I can&apos;t see
+          which sites they are. I wanted the projects anyone can check. I looked for every data
+          centre project in Canada I could trace to a public source and found{" "}
+          <strong>{props.projects.length}</strong>. The{" "}
+          <span className="hl hl-pink">pink dots</span> are still plans, the{" "}
+          <span className="hl hl-yellow">yellow</span> ones are being built, and the{" "}
+          <span className="hl hl-white">white</span> ones are already running.{" "}
+          {props.albertaPlannedCount} of the {props.plannedCount} planned or under construction are
+          in Alberta too.
         </p>
       ),
     },
@@ -761,8 +840,8 @@ function Scrolly(props: {
           It&apos;s also the cheapest power for big customers. In Hydro-Québec&apos;s 2025 price
           comparison, a large industrial customer paid{" "}
           <strong>{priceText("Winnipeg")}¢/kWh in Winnipeg</strong> and{" "}
-          <strong>{priceText("Montréal")}¢ in Montréal</strong>. In Calgary it
-          was <strong>{priceText("Calgary")}¢</strong>.
+          <strong>{priceText("Montréal")}¢ in Montréal</strong>. In Calgary it was{" "}
+          <strong>{priceText("Calgary")}¢</strong>.
         </p>
       ),
     },
@@ -787,27 +866,34 @@ function Scrolly(props: {
       body: (
         <>
           <p>
-            Zoom out, and Canada is still small. York counts <strong>1,989 data centres running in
-            the US</strong> (46.8 GW), against 194 in Canada. But Canada&apos;s planned projects are
-            bigger on average than the US ones: <span className="hl hl-pink">122 MW vs 95 MW</span>.
+            Zoom out, and Canada is still small. York counts <strong>1,989 data centres running
+            in the US</strong> (46.8 GW), against 194 in Canada. But Canada&apos;s planned projects
+            are bigger on average: <span className="hl hl-pink">122 MW vs 95 MW</span>.
           </p>
           <YorkComparison />
         </>
       ),
     },
     {
-      mode: "capacity",
+      mode: "power",
+      hideProjects: true,
+      fadeAll: true,
       body: (
-        <p>
-          The numbers so far come from an industry database. I wanted to see the projects anyone can
-          check. So I went looking for every data centre project in Canada I could trace to a
-          public source, and found <strong>{props.projects.length}</strong>. The{" "}
-          <span className="hl hl-pink">pink dots</span> are still plans, the{" "}
-          <span className="hl hl-yellow">yellow</span> ones are being built, and the{" "}
-          <span className="hl hl-white">white</span> ones are already running.{" "}
-          {props.albertaPlannedCount} of the {props.plannedCount} planned or under construction are
-          in Alberta.
-        </p>
+        <>
+          <p>
+            Worldwide, the US used <strong>45%</strong> of all data centre electricity in 2024,
+            China <strong>25%</strong> and Europe <strong>15%</strong>. In the US, data centres
+            make up nearly <strong>half of all the growth in electricity demand</strong> expected
+            by 2030. Canada is a small player, but a fast-growing one.
+          </p>
+          <p className="york-source">
+            Source:{" "}
+            <a href={ieaUrl} target="_blank" rel="noreferrer">
+              IEA, Energy and AI (2025)
+            </a>
+            , executive summary.
+          </p>
+        </>
       ),
     },
   ];
@@ -909,6 +995,7 @@ function ProvinceBar({ provinces }: { provinces: Province[] }) {
 // York University paper (Carlo & Rolheiser 2026, SSRN 6464099), Table 1, data downloaded June 8, 2026.
 // Checked against the paper PDF on Nov 12, 2026. "Planned" = announcement + construction stages.
 const yorkUrl = "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6464099";
+const ieaUrl = "https://www.iea.org/reports/energy-and-ai";
 const yorkTable1 = {
   Canada: { activeCount: 194, activeGW: 1.6, annGW: 21.7, constGW: 0.5, activeAvgMW: 11.3, annAvgMW: 122.0 },
   "United States": { activeCount: 1989, activeGW: 46.8, annGW: 303.0, constGW: 62.4, activeAvgMW: 24.9, annAvgMW: 95.4 },
@@ -1116,6 +1203,11 @@ function SvgMap({
   }, [zoomable]);
 
   const scale = view.k * focus.k;
+  const siteShare = (name: string, which: FillMode) => {
+    const row = yorkTableA2.find(([province]) => province === name);
+    if (!row) return null;
+    return which === "sitesActive" ? (row[1] / 194) * 100 : (row[2] / 213) * 100;
+  };
   const r = (radius: number) => radius / Math.sqrt(scale);
 
   const pricesByProvince = useMemo(() => {
@@ -1125,7 +1217,10 @@ function SvgMap({
   }, [prices]);
 
   const provinceFill = (properties: any) => {
-    if (fill === "people") return peopleColors[0];
+    if (fill === "sitesActive" || fill === "sitesPlanned") {
+      const share = siteShare(properties.name, fill);
+      return share === null ? "#e8e5df" : siteShareColor(share);
+    }
     if (fill === "price") {
       const rows = pricesByProvince[provinceCodes[properties.name]];
       return rows ? priceColor(Number(rows[0].cents_per_kwh_50mw)) : "#dcd9d2";
@@ -1154,7 +1249,7 @@ function SvgMap({
         zoomAt(1.6, x, y);
       }}
       onPointerDown={(event) => {
-        if (!zoomable || view.k === 1) return;
+        if (!zoomable) return;
         drag.current = { x: event.clientX, y: event.clientY, vx: view.x, vy: view.y };
       }}
       onPointerMove={(event) => {
@@ -1184,9 +1279,9 @@ function SvgMap({
           />
         ))}
       </g>
-      {fill === "people" && (
+      {layers.people && (
         <g className="svg-people">
-          {population?.features?.map((feature: any) => {
+          {population?.features?.filter((feature: any) => feature.properties.density_per_km2 >= 10).map((feature: any) => {
             const p = feature.properties;
             return (
               <path
@@ -1209,7 +1304,7 @@ function SvgMap({
           ))}
         </g>
       )}
-      {fill !== "price" && fill !== "people" && (
+      {fill !== "price" && !layers.people && (
         <g className="svg-province-labels" aria-hidden="true">
           {boundaries?.features
             ?.filter((feature: any) =>
@@ -1217,9 +1312,20 @@ function SvgMap({
             )
             .map((feature: any) => {
               const [x, y] = pathGenerator.centroid(feature);
+              const share =
+                fill === "sitesActive" || fill === "sitesPlanned"
+                  ? siteShare(feature.properties.name, fill)
+                  : null;
               return (
-                <text key={feature.properties.name} x={x} y={y} style={{ fontSize: 9 / Math.sqrt(scale) }}>
+                <text
+                  key={feature.properties.name}
+                  x={x}
+                  y={y}
+                  className={share !== null ? "share-label" : ""}
+                  style={{ fontSize: (share !== null ? 15 : 9) / Math.sqrt(scale) }}
+                >
                   {provinceCodes[feature.properties.name]}
+                  {share !== null ? ` ${Math.round(share)}%` : ""}
                 </text>
               );
             })}
@@ -1416,18 +1522,18 @@ function MapLegend({ fill, layers }: { fill: FillMode; layers: Layers }) {
           <small>Teal = cleaner grid, pink = more fossil fuels. Statistics Canada.</small>
         </div>
       )}
-      {fill === "people" && (
+      {layers.people && (
         <div className="legend-block">
           <p>People per km² · 2021 Census</p>
           <div className="capacity-scale">
-            {peopleColors.map((color, index) => (
+            {peopleColors.slice(2).map((color, index) => (
               <span key={color}>
                 <i style={{ background: color }} />
-                {peopleBands[index]}
+                {peopleBands[index + 2]}
               </span>
             ))}
           </div>
-          <small>Statistics Canada, by census division. Hover an area for its number.</small>
+          <small>Statistics Canada, by census division. Areas under 10 people per km² are left clear. Hover an area for its number.</small>
         </div>
       )}
       {fill === "price" && (

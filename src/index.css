@@ -1798,3 +1798,11 @@ rect.york-today {
 rect.york-planned {
   fill: #e0457b;
 }
+
+.svg-province-labels text.share-label {
+  fill: var(--ink);
+  font-weight: 700;
+  paint-order: stroke;
+  stroke: #fbfaf6;
+  stroke-width: 3px;
+}
