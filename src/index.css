@@ -1823,3 +1823,36 @@ rect.york-planned {
     max-width: 35vw;
   }
 }
+
+/* Charts section under the explorer */
+.charts-section {
+  padding: 80px max(24px, calc((100vw - 1160px) / 2)) 90px;
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+}
+
+.charts-section h2 {
+  margin-top: 12px;
+  font-family: var(--display);
+  font-size: clamp(34px, 3.4vw, 50px);
+  line-height: 1.05;
+}
+
+.charts-grid {
+  margin-top: 36px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.chart-card {
+  padding: 24px;
+  background: #fdfcf7;
+  border: 1px solid rgba(23, 45, 73, 0.18);
+}
+
+.chart-card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+}

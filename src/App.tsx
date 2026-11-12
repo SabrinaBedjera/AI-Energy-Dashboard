@@ -413,7 +413,6 @@ function App() {
                 [
                   ["capacity", "Planned MW"],
                   ["energy", "Energy source"],
-                  ["price", "Power prices"],
                 ] as [FillMode, string][]
               ).map(([value, label]) => (
                 <button
@@ -513,6 +512,8 @@ function App() {
           )}
         </div>
       </section>
+
+      <ChartsSection prices={prices ?? []} />
 
       <section id="methods" className="about">
         <div>
@@ -833,9 +834,12 @@ function Scrolly(props: {
       ),
     },
     {
-      mode: "price",
+      mode: "projects",
       hideProjects: true,
+      fadeAll: true,
+      wide: true,
       body: (
+        <>
         <p>
           It&apos;s also the cheapest power for big customers. In Hydro-Québec&apos;s 2025 price
           comparison, a large industrial customer paid{" "}
@@ -843,6 +847,8 @@ function Scrolly(props: {
           <strong>{priceText("Montréal")}¢ in Montréal</strong>. In Calgary it was{" "}
           <strong>{priceText("Calgary")}¢</strong>.
         </p>
+        <PriceChart prices={props.prices} />
+        </>
       ),
     },
     {
@@ -1062,6 +1068,68 @@ const yorkTableA2: [string, number, number][] = [
   ["New Brunswick", 2, 5],
   ["Nova Scotia", 1, 0],
 ];
+
+function PriceChart({ prices }: { prices: PriceRow[] }) {
+  const rows = [...prices]
+    .filter((row) => row.cents_per_kwh_50mw)
+    .sort((a, b) => Number(a.cents_per_kwh_50mw) - Number(b.cents_per_kwh_50mw));
+  const max = Math.max(...rows.map((row) => Number(row.cents_per_kwh_50mw)), 1);
+  const w = (value: number) => (value / max) * 230;
+  return (
+    <div className="york-charts">
+      <figure>
+        <figcaption>Price for a large (50 MW) customer · ¢/kWh · April 2025</figcaption>
+        <svg viewBox={`0 0 440 ${rows.length * 24 + 8}`} role="img" aria-label="Electricity price for a 50 MW customer by city">
+          {rows.map((row, index) => {
+            const value = Number(row.cents_per_kwh_50mw);
+            const y = 4 + index * 24;
+            const alberta = row.province === "AB";
+            return (
+              <g key={row.city}>
+                <text className="york-country" x={0} y={y + 12}>{`${row.city}, ${row.province}`}</text>
+                <rect className={alberta ? "york-planned" : "york-today"} x={150} y={y + 2} width={w(value)} height={13} rx={2}>
+                  <title>{`${row.city}: ${value.toFixed(2)}¢/kWh (${row.utility_per_hq_report})`}</title>
+                </rect>
+                <text className={`york-value ${alberta ? "strong" : ""}`} x={156 + w(value)} y={y + 12}>{`${value.toFixed(2)}¢`}</text>
+              </g>
+            );
+          })}
+        </svg>
+      </figure>
+      <p className="york-source">
+        Source:{" "}
+        <a href="https://www.hydroquebec.com/data/documents-donnees/pdf/comparaison-prix-2025-en.pdf" target="_blank" rel="noreferrer">
+          Hydro-Québec, Comparison of Electricity Prices 2025, p.17
+        </a>
+        . Hydro-Québec&apos;s estimate for one city per province, before taxes. Montréal and Winnipeg checked
+        against the utilities&apos; own rates. Alberta in pink.
+      </p>
+    </div>
+  );
+}
+
+function ChartsSection({ prices }: { prices: PriceRow[] }) {
+  return (
+    <section className="charts-section" id="charts">
+      <p className="eyebrow">From the story</p>
+      <h2>Charts</h2>
+      <div className="charts-grid">
+        <div className="chart-card">
+          <h3>Where data centres are, and where they&apos;re planned</h3>
+          <ProvinceShift />
+        </div>
+        <div className="chart-card">
+          <h3>What big customers pay for power</h3>
+          <PriceChart prices={prices} />
+        </div>
+        <div className="chart-card">
+          <h3>Canada and the US</h3>
+          <YorkComparison />
+        </div>
+      </div>
+    </section>
+  );
+}
 
 function ProvinceShift() {
   const activeTotal = 194;
