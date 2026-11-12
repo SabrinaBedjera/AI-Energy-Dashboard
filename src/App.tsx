@@ -704,8 +704,8 @@ function SvgMap({
     if (boundaries)
       nextProjection.fitExtent(
         [
-          [55, 72],
-          [945, 548],
+          [12, 12],
+          [988, 588],
         ],
         boundaries,
       );
