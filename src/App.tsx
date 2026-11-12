@@ -33,6 +33,18 @@ type Province = {
 type EnergyMix = Record<string, string> & { Province: string };
 type MapMode = "capacity" | "power" | "energy" | "clean" | "water" | "people" | "price";
 
+type FillMode = "none" | "capacity" | "energy" | "people" | "price";
+type Layers = { lines: boolean; clean: boolean; water: boolean };
+const noLayers: Layers = { lines: false, clean: false, water: false };
+
+// Scrolly steps still describe one "mode"; turn it into a fill + overlays
+function viewFor(mode: MapMode): { fill: FillMode; layers: Layers } {
+  if (mode === "power") return { fill: "none", layers: { ...noLayers, lines: true } };
+  if (mode === "clean") return { fill: "none", layers: { ...noLayers, clean: true } };
+  if (mode === "water") return { fill: "none", layers: { ...noLayers, water: true } };
+  return { fill: mode as FillMode, layers: noLayers };
+}
+
 type PriceRow = {
   city: string;
   province: string;
@@ -78,13 +90,13 @@ const codeToProvince = Object.fromEntries(
 // Palette: teal map, hot pink accent, navy ink (chosen Nov 12, 2026)
 const statusColors = {
   Operating: "#ffffff",
-  "Under construction": "#172d49",
+  "Under construction": "#f5c242",
   Proposed: "#e0457b",
 };
 
 const statusStroke = {
   Operating: "#172d49",
-  "Under construction": "#ffffff",
+  "Under construction": "#172d49",
   Proposed: "#ffffff",
 };
 
@@ -105,16 +117,16 @@ const drainageColors = ["#d7e6ef", "#c4d9e6", "#b1cbdc", "#e2ecf2"];
 const capacityColors = ["#d4ebe6", "#94cdc2", "#3f9e8f", "#0b5f57"];
 
 // People per km² (Statistics Canada 2021 Census, census divisions)
-const peopleColors = ["#f3f1ec", "#d9dde3", "#a9b4c4", "#6b7f9c", "#172d49"];
+const peopleColors = ["#e2ded5", "#d0d6de", "#a9b4c4", "#6b7f9c", "#172d49"];
 const peopleBands = ["Under 1", "1–9", "10–99", "100–999", "1,000+"];
 const peopleColor = (density: number) =>
   peopleColors[density < 1 ? 0 : density < 10 ? 1 : density < 100 ? 2 : density < 1000 ? 3 : 4];
 
 // Large-customer electricity price, ¢/kWh (Hydro-Québec 2025 comparison, 50,000 kW)
-const priceColors = ["#0b5f57", "#5fb3a6", "#d8d3c8", "#e57aa0", "#c2185b"];
-const priceBands = ["Under 6¢", "6–7.9¢", "8–9.9¢", "10–11.9¢", "12¢+"];
+const priceColors = ["#fbefc4", "#efc46a", "#b5617a", "#5a2a55"];
+const priceBands = ["Under 6¢", "6–8.99¢", "9–11.99¢", "12¢ and up"];
 const priceColor = (cents: number) =>
-  priceColors[cents < 6 ? 0 : cents < 8 ? 1 : cents < 10 ? 2 : cents < 12 ? 3 : 4];
+  priceColors[cents < 6 ? 0 : cents < 9 ? 1 : cents < 12 ? 2 : 3];
 // Label placement so nearby cities don't overlap: [dx, dy, anchor]
 const priceLabel: Record<string, [number, number, "start" | "end" | "middle"]> = {
   Vancouver: [-12, 4, "end"],
@@ -215,7 +227,8 @@ function App() {
   const [drainage, setDrainage] = useState<any>(null);
   const [population, setPopulation] = useState<any>(null);
   const [prices, setPrices] = useState<PriceRow[]>([]);
-  const [mode, setMode] = useState<MapMode>("capacity");
+  const [fill, setFill] = useState<FillMode>("none");
+  const [layers, setLayers] = useState<Layers>(noLayers);
   const [provinceFilter, setProvinceFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -333,62 +346,59 @@ function App() {
         albertaPlannedCount={albertaPlannedCount}
       />
 
-      <div className="explore-intro">
+      <div className="explore-intro" id="explore">
         <h2>Your turn.</h2>
         <p>
-          Click any dot for its source and what its number actually measures. Flip between views to
-          see the power lines, each province&apos;s grid, clean power stations and watersheds.
+          Click any dot for its source and what its number actually measures. Colour the map by one
+          measure, then add power lines, clean power stations or watersheds on top.
         </p>
       </div>
 
-      <section className="map-experience">
-        <SvgMap
-          boundaries={enrichedBoundaries}
-          powerLines={powerLines}
-          cleanStations={cleanStations}
-          drainage={drainage}
-          population={population}
-          prices={prices}
-          projects={filteredProjects}
-          focusProvince={provinceFilter === "All" ? undefined : codeToProvince[provinceFilter]}
-          mode={mode}
-          selectedProject={selectedProject}
-          onSelectProject={selectProject}
-          onSelectProvince={selectProvince}
-          onSelectPowerLine={(line) => {
-            setSelectedPowerLine(line);
-            setSelectedProject(null);
-            setPanelOpen(true);
-          }}
-        />
-
-        <div className="map-controls">
-          <div className="mode-switcher" aria-label="Map view">
-            <span>View</span>
-            <button
-              className={mode === "capacity" ? "active" : ""}
-              onClick={() => setMode("capacity")}
-            >
-              Data centres
-            </button>
-            <button className={mode === "power" ? "active" : ""} onClick={() => setMode("power")}>
-              Power lines
-            </button>
-            <button className={mode === "energy" ? "active" : ""} onClick={() => setMode("energy")}>
-              Energy source
-            </button>
-            <button className={mode === "clean" ? "active" : ""} onClick={() => setMode("clean")}>
-              Clean power
-            </button>
-            <button className={mode === "water" ? "active" : ""} onClick={() => setMode("water")}>
-              Watersheds
-            </button>
-            <button className={mode === "people" ? "active" : ""} onClick={() => setMode("people")}>
-              People
-            </button>
-            <button className={mode === "price" ? "active" : ""} onClick={() => setMode("price")}>
-              Power prices
-            </button>
+      <section className="map-experience explorer">
+        <div className="map-controls explorer-controls">
+          <div className="control-group" aria-label="Colour provinces by">
+            <span>Colour the map by</span>
+            <div className="chips">
+              {(
+                [
+                  ["none", "Nothing"],
+                  ["capacity", "Planned MW"],
+                  ["energy", "Energy source"],
+                  ["people", "People"],
+                  ["price", "Power prices"],
+                ] as [FillMode, string][]
+              ).map(([value, label]) => (
+                <button
+                  key={value}
+                  className={fill === value ? "active" : ""}
+                  onClick={() => setFill(value)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="control-group" aria-label="Add layers">
+            <span>Add to the map</span>
+            <div className="chips">
+              {(
+                [
+                  ["lines", "Power lines"],
+                  ["clean", "Clean power stations"],
+                  ["water", "Watersheds"],
+                ] as [keyof Layers, string][]
+              ).map(([key, label]) => (
+                <button
+                  key={key}
+                  className={`toggle ${layers[key] ? "active" : ""}`}
+                  aria-pressed={layers[key]}
+                  onClick={() => setLayers((current) => ({ ...current, [key]: !current[key] }))}
+                >
+                  <i aria-hidden="true">{layers[key] ? "✓" : "+"}</i>
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
           <div className="filters">
             <label>
@@ -423,41 +433,66 @@ function App() {
           </div>
         </div>
 
-        <MapLegend mode={mode} />
+        <div className={`explorer-stage ${panelOpen ? "with-panel" : ""}`}>
+          <div className="explorer-map">
+            <SvgMap
+              boundaries={enrichedBoundaries}
+              powerLines={powerLines}
+              cleanStations={cleanStations}
+              drainage={drainage}
+              population={population}
+              prices={prices}
+              projects={filteredProjects}
+              focusProvince={provinceFilter === "All" ? undefined : codeToProvince[provinceFilter]}
+              fill={fill}
+              layers={layers}
+              zoomable
+              selectedProject={selectedProject}
+              onSelectProject={selectProject}
+              onSelectProvince={selectProvince}
+              onSelectPowerLine={(line) => {
+                setSelectedPowerLine(line);
+                setSelectedProject(null);
+                setPanelOpen(true);
+              }}
+            />
+            <p className="zoom-hint">Zoom with + / −, double-click, or Ctrl/⌘ + scroll. Drag to move.</p>
+            {!panelOpen && (
+              <button className="open-panel" onClick={() => setPanelOpen(true)}>
+                View {selectedPowerLine ? "power line" : selectedProject ? "project" : "province"}{" "}
+                details
+              </button>
+            )}
+            <MapLegend fill={fill} layers={layers} />
+          </div>
 
-        {!panelOpen && (
-          <button className="open-panel" onClick={() => setPanelOpen(true)}>
-            View {selectedPowerLine ? "power line" : selectedProject ? "project" : "province"}{" "}
-            details
-          </button>
-        )}
-
-        {panelOpen && (
-          <aside className="detail-drawer" aria-live="polite">
-            <button
-              className="drawer-close"
-              onClick={() => setPanelOpen(false)}
-              aria-label="Close details"
-            >
-              ×
-            </button>
-            {selectedPowerLine ? (
-              <PowerLineDetail line={selectedPowerLine} />
-            ) : selectedProject ? (
-              <ProjectDetail
-                project={selectedProject}
-                onProvince={() => setSelectedProject(null)}
-              />
-            ) : selectedProvinceData ? (
-              <ProvinceDetail
-                province={selectedProvinceData}
-                energy={selectedEnergy}
-                mode={mode}
-                prices={prices.filter((row) => row.province === provinceCodes[selectedProvince])}
-              />
-            ) : null}
-          </aside>
-        )}
+          {panelOpen && (
+            <aside className="detail-drawer" aria-live="polite">
+              <button
+                className="drawer-close"
+                onClick={() => setPanelOpen(false)}
+                aria-label="Close details"
+              >
+                ×
+              </button>
+              {selectedPowerLine ? (
+                <PowerLineDetail line={selectedPowerLine} />
+              ) : selectedProject ? (
+                <ProjectDetail
+                  project={selectedProject}
+                  onProvince={() => setSelectedProject(null)}
+                />
+              ) : selectedProvinceData ? (
+                <ProvinceDetail
+                  province={selectedProvinceData}
+                  energy={selectedEnergy}
+                  mode={fill === "capacity" || fill === "none" ? "capacity" : "energy"}
+                  prices={prices.filter((row) => row.province === provinceCodes[selectedProvince])}
+                />
+              ) : null}
+            </aside>
+          )}
+        </div>
       </section>
 
       <section id="methods" className="about">
@@ -471,7 +506,8 @@ function App() {
             describe IT load, total project capability, grid demand, or on-site generation. Open a
             project to see exactly what its number measures. The project list and the York
             paper&apos;s provincial estimates are separate datasets with different coverage, so
-            their totals don&apos;t match. All project pins are approximate. Six rows I couldn&apos;t
+            their totals don&apos;t match. The list includes every kind of data centre (cloud,
+            hosting and AI), not only AI ones. All project pins are approximate. Six rows I couldn&apos;t
             open at the source are marked as lower confidence.
           </p>
           <p>
@@ -480,21 +516,20 @@ function App() {
             project reports its own on-site power.
           </p>
           <p>
-            Power-line shapes come from NRCan CanVec at 1:250,000 scale. Voltage was added from
-            OpenStreetMap where a line matched. A &ldquo;confirmed&rdquo; voltage means an official
-            source lists that voltage level in the province, not that every line was checked. A
-            project near a line is not proof that it connects to it.
+            Power lines come from NRCan CanVec at 1:250,000 scale, mostly high-voltage transmission
+            lines. A project near a line is not proof that it connects to it.
           </p>
           <p>
             The people view shows population density by census division from the 2021 Census,
             exactly as Statistics Canada publishes it. Shapes are simplified for the web.
           </p>
           <p>
-            Power prices come from Hydro-Québec&apos;s 2025 comparison of electricity prices in major
-            cities, for a customer using 50,000 kW at 120 kV, on rates in effect April 1, 2025,
+            Power prices are Hydro-Québec&apos;s estimates from its 2025 comparison of electricity
+            prices in major cities, for a customer using 50,000 kW at 120 kV, on rates in effect April 1, 2025,
             before taxes. It is one city per province, not a provincial average. Hydro-Québec
             estimated some bills (Toronto, Charlottetown, Edmonton), and Alberta prices move with its
-            open market.
+            open market. I checked the Montréal and Winnipeg prices against Hydro-Québec&apos;s and
+            Manitoba Hydro&apos;s own published rates, and both matched to the cent.
           </p>
         </div>
         <div className="sources">
@@ -522,9 +557,6 @@ function App() {
             rel="noreferrer"
           >
             NRCan CanVec 1:250K power lines ↗
-          </a>
-          <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">
-            OpenStreetMap contributors, voltage data ↗
           </a>
           <a
             href="https://geoappext.nrcan.gc.ca/arcgis/rest/services/Energy/CERP_EN/MapServer"
@@ -573,6 +605,7 @@ type ScrollStep = {
   highlight?: string;
   body: React.ReactNode;
   hero?: boolean;
+  wide?: boolean;
 };
 
 function Scrolly(props: {
@@ -604,12 +637,15 @@ function Scrolly(props: {
       hero: true,
       body: (
         <>
-          <h1>
-            Canada is about to plug a lot of AI into its power grid. Most of it is heading to one
-            province.
-          </h1>
+          <h1>Canada&apos;s AI Boom</h1>
+          <p className="hero-sub">An exploration of where Canada&apos;s AI will get its power</p>
           <p className="hero-byline">By Sabrina Bedjera · November 2026</p>
-          <p className="scroll-cue">Scroll ↓</p>
+          <p className="scroll-cue">
+            Scroll ↓ <span>or</span>{" "}
+            <a className="skip-link" href="#explore">
+              skip to the interactive map
+            </a>
+          </p>
         </>
       ),
     },
@@ -624,13 +660,41 @@ function Scrolly(props: {
       ),
     },
     {
+      mode: "power",
+      hideProjects: true,
+      fadeAll: true,
+      wide: true,
+      body: (
+        <>
+          <p>
+            Canada&apos;s data centre build-out is small next to the US, but it&apos;s growing fast.
+            York University researchers count <strong>194 data centres running in Canada</strong>{" "}
+            (1.6 GW) and <strong>1,989 in the US</strong> (46.8 GW). The projects announced or
+            being built in Canada add up to <span className="hl hl-pink">22.2 GW</span>, almost{" "}
+            <strong>14 times</strong> what runs today.
+          </p>
+          <p>
+            The new ones are also much bigger. An announced Canadian data centre averages{" "}
+            <span className="hl hl-pink">122 MW</span>, more than ten times the size of one
+            running today, and bigger than the US average.
+          </p>
+          <p className="york-note">
+            Not every data centre is built for AI. York flags <strong>5 of the 194</strong> running
+            in Canada as AI-related, and <strong>49 of the 213</strong> planned ones. The rest are
+            cloud, storage and hosting.
+          </p>
+          <YorkComparison />
+        </>
+      ),
+    },
+    {
       mode: "capacity",
       body: (
         <p>
           I went looking for every data centre project in Canada I could trace to a public source.
           I found <strong>{props.projects.length}</strong>. The{" "}
           <span className="hl hl-pink">pink dots</span> are still plans, the{" "}
-          <span className="hl hl-navy">navy</span> ones are being built, and the{" "}
+          <span className="hl hl-yellow">yellow</span> ones are being built, and the{" "}
           <span className="hl hl-white">white</span> ones are already running.
         </p>
       ),
@@ -675,9 +739,9 @@ function Scrolly(props: {
         <p>
           It&apos;s also the cheapest power for big customers. In Hydro-Québec&apos;s 2025 price
           comparison, a large industrial customer paid{" "}
-          <span className="hl hl-teal">{priceText("Winnipeg")}¢/kWh in Winnipeg</span> and{" "}
-          <span className="hl hl-teal">{priceText("Montréal")}¢ in Montréal</span>. In Calgary it
-          was <span className="hl hl-pink">{priceText("Calgary")}¢</span>.
+          <strong>{priceText("Winnipeg")}¢/kWh in Winnipeg</strong> and{" "}
+          <strong>{priceText("Montréal")}¢ in Montréal</strong>. In Calgary it
+          was <strong>{priceText("Calgary")}¢</strong>.
         </p>
       ),
     },
@@ -721,7 +785,8 @@ function Scrolly(props: {
           population={props.population}
           prices={props.prices}
           projects={props.projects}
-          mode={step.mode}
+          fill={viewFor(step.mode).fill}
+          layers={viewFor(step.mode).layers}
           selectedProject={null}
           onSelectProject={() => {}}
           onSelectProvince={() => {}}
@@ -740,7 +805,7 @@ function Scrolly(props: {
               stepRefs.current[index] = element;
             }}
             data-step={index}
-            className={`scrolly-step ${item.hero ? "hero" : ""} ${index === active ? "is-active" : ""}`}
+            className={`scrolly-step ${item.hero ? "hero" : ""} ${item.wide ? "wide" : ""} ${index === active ? "is-active" : ""}`}
           >
             <div className="step-card">{item.body}</div>
           </div>
@@ -789,6 +854,63 @@ function ProvinceBar({ provinces }: { provinces: Province[] }) {
   );
 }
 
+// York University paper (Carlo & Rolheiser 2026, SSRN 6464099), Table 1, data downloaded June 8, 2026.
+// Checked against the paper PDF on Nov 12, 2026. "Planned" = announcement + construction stages.
+const yorkUrl = "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6464099";
+const yorkTable1 = {
+  Canada: { activeCount: 194, activeGW: 1.6, annGW: 21.7, constGW: 0.5, activeAvgMW: 11.3, annAvgMW: 122.0 },
+  "United States": { activeCount: 1989, activeGW: 46.8, annGW: 303.0, constGW: 62.4, activeAvgMW: 24.9, annAvgMW: 95.4 },
+};
+
+function YorkComparison() {
+  const rows = Object.entries(yorkTable1) as [string, (typeof yorkTable1)["Canada"]][];
+  const maxMW = 130;
+  const x = (mw: number) => 118 + (mw / maxMW) * 300;
+  return (
+    <div className="york-charts">
+      <figure>
+        <figcaption>Average size of one data centre (MW)</figcaption>
+        <svg viewBox="0 0 440 128" role="img" aria-label="Average data centre size, operating versus announced, Canada and US">
+          {[0, 50, 100].map((tick) => (
+            <g key={tick} className="york-grid">
+              <line x1={x(tick)} x2={x(tick)} y1={18} y2={104} />
+              <text x={x(tick)} y={120}>{tick}</text>
+            </g>
+          ))}
+          {rows.map(([country, d], index) => {
+            const y = 40 + index * 48;
+            return (
+              <g key={country}>
+                <text className="york-country" x={0} y={y + 4}>{country === "United States" ? "United States" : "Canada"}</text>
+                <line className="york-link" x1={x(d.activeAvgMW)} x2={x(d.annAvgMW)} y1={y} y2={y} />
+                <circle className="york-today" cx={x(d.activeAvgMW)} cy={y} r={6}>
+                  <title>{`${country}, operating: ${d.activeAvgMW} MW average`}</title>
+                </circle>
+                <circle className="york-planned" cx={x(d.annAvgMW)} cy={y} r={6}>
+                  <title>{`${country}, announced: ${d.annAvgMW} MW average`}</title>
+                </circle>
+                <text className="york-value" x={x(d.activeAvgMW)} y={y - 11} textAnchor="middle">{d.activeAvgMW}</text>
+                <text className="york-value strong" x={x(d.annAvgMW)} y={y - 11} textAnchor="middle">{d.annAvgMW.toFixed(1)}</text>
+              </g>
+            );
+          })}
+        </svg>
+        <div className="york-key">
+          <span><i className="york-today" /> Operating today</span>
+          <span><i className="york-planned" /> Announced</span>
+        </div>
+      </figure>
+      <p className="york-source">
+        Source:{" "}
+        <a href={yorkUrl} target="_blank" rel="noreferrer">
+          Carlo &amp; Rolheiser, York University (2026), Table 1
+        </a>
+        , using Aterio data to June 8, 2026. Averages only count sites with a reported capacity.
+      </p>
+    </div>
+  );
+}
+
 function SvgMap({
   boundaries,
   powerLines,
@@ -797,7 +919,8 @@ function SvgMap({
   population,
   prices,
   projects,
-  mode,
+  fill,
+  layers,
   selectedProject,
   onSelectProject,
   onSelectProvince,
@@ -806,11 +929,13 @@ function SvgMap({
   hideProjects,
   highlightProject,
   fadeAll,
+  zoomable,
 }: {
   focusProvince?: string;
   hideProjects?: boolean;
   highlightProject?: string;
   fadeAll?: boolean;
+  zoomable?: boolean;
   boundaries: any;
   powerLines: any;
   cleanStations: any;
@@ -818,7 +943,8 @@ function SvgMap({
   population?: any;
   prices?: PriceRow[];
   projects: Project[];
-  mode: MapMode;
+  fill: FillMode;
+  layers: Layers;
   selectedProject: Project | null;
   onSelectProject: (project: Project) => void;
   onSelectProvince: (name: string) => void;
@@ -838,24 +964,66 @@ function SvgMap({
   }, [boundaries]);
   const pathGenerator = useMemo(() => geoPath(projection), [projection]);
 
-  const zoomTransform = useMemo(() => {
+  const focus = useMemo(() => {
     const feature = boundaries?.features?.find(
       (item: any) => item.properties.name === focusProvince,
     );
-    if (!feature) return "translate(0px, 0px) scale(1)";
+    if (!feature) return { k: 1, x: 0, y: 0 };
     const [[x0, y0], [x1, y1]] = pathGenerator.bounds(feature);
-    const scale = Math.min((0.75 * 1000) / (x1 - x0), (0.8 * 600) / (y1 - y0), 4);
-    const tx = 560 - scale * ((x0 + x1) / 2);
-    const ty = 300 - scale * ((y0 + y1) / 2);
-    return `translate(${tx}px, ${ty}px) scale(${scale})`;
+    const k = Math.min((0.75 * 1000) / (x1 - x0), (0.8 * 600) / (y1 - y0), 4);
+    return { k, x: 560 - k * ((x0 + x1) / 2), y: 300 - k * ((y0 + y1) / 2) };
   }, [boundaries, focusProvince, pathGenerator]);
 
+  // User zoom (explorer only): buttons, double-click, Ctrl/⌘ + scroll, drag to pan
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const [view, setView] = useState({ k: 1, x: 0, y: 0 });
+  const drag = useRef<{ x: number; y: number; vx: number; vy: number } | null>(null);
+  useEffect(() => setView({ k: 1, x: 0, y: 0 }), [focusProvince]);
+  const toSvg = (clientX: number, clientY: number) => {
+    const svg = svgRef.current;
+    const ctm = svg?.getScreenCTM();
+    if (!svg || !ctm) return { x: 500, y: 300 };
+    const point = new DOMPoint(clientX, clientY).matrixTransform(ctm.inverse());
+    return { x: point.x, y: point.y };
+  };
+  const zoomAt = (factor: number, cx = 500, cy = 300) =>
+    setView((current) => {
+      const k = Math.min(12, Math.max(1, current.k * factor));
+      if (k === 1) return { k: 1, x: 0, y: 0 };
+      const ratio = k / current.k;
+      return { k, x: cx - (cx - current.x) * ratio, y: cy - (cy - current.y) * ratio };
+    });
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg || !zoomable) return;
+    const onWheel = (event: WheelEvent) => {
+      if (!event.ctrlKey && !event.metaKey) return;
+      event.preventDefault();
+      const { x, y } = toSvg(event.clientX, event.clientY);
+      zoomAt(event.deltaY < 0 ? 1.25 : 0.8, x, y);
+    };
+    svg.addEventListener("wheel", onWheel, { passive: false });
+    return () => svg.removeEventListener("wheel", onWheel);
+  }, [zoomable]);
+
+  const scale = view.k * focus.k;
+  const r = (radius: number) => radius / Math.sqrt(scale);
+
+  const pricesByProvince = useMemo(() => {
+    const out: Record<string, PriceRow[]> = {};
+    (prices ?? []).forEach((row) => (out[row.province] = [...(out[row.province] ?? []), row]));
+    return out;
+  }, [prices]);
+
   const provinceFill = (properties: any) => {
-    if (mode === "power" || mode === "clean" || mode === "water" || mode === "price") return "#e8e5df";
-    if (mode === "people") return "none";
-    if (mode === "energy")
+    if (fill === "people") return peopleColors[0];
+    if (fill === "price") {
+      const rows = pricesByProvince[provinceCodes[properties.name]];
+      return rows ? priceColor(Number(rows[0].cents_per_kwh_50mw)) : "#dcd9d2";
+    }
+    if (fill === "energy")
       return properties.fossil_share === null ? "#e8e5df" : fossilColor(properties.fossil_share);
-    if (!properties.has_capacity) return "#e8e5df";
+    if (fill !== "capacity" || !properties.has_capacity) return "#e8e5df";
     const capacity = Number(properties.planned_mw);
     if (capacity >= 10000) return capacityColors[3];
     if (capacity >= 500) return capacityColors[2];
@@ -863,30 +1031,39 @@ function SvgMap({
     return capacityColors[0];
   };
 
-  const voltageWidth = (voltage: number | null) => {
-    if (!voltage) return 0.7;
-    if (voltage >= 450) return 2.4;
-    if (voltage >= 200) return 1.5;
-    return 0.9;
-  };
-
-  const voltageColor = (voltage: number | null) => {
-    if (!voltage) return voltageColors.unknown;
-    if (voltage >= 450) return voltageColors.highest;
-    if (voltage >= 200) return voltageColors.high;
-    return voltageColors.lower;
-  };
-
   return (
     <svg
-      className="map-canvas svg-map"
+      ref={svgRef}
+      className={`map-canvas svg-map ${zoomable ? "zoomable" : ""}`}
       viewBox="0 0 1000 600"
       preserveAspectRatio="xMidYMid meet"
       role="img"
       aria-label="Interactive map of Canadian data centre projects"
+      onDoubleClick={(event) => {
+        if (!zoomable) return;
+        const { x, y } = toSvg(event.clientX, event.clientY);
+        zoomAt(1.6, x, y);
+      }}
+      onPointerDown={(event) => {
+        if (!zoomable || view.k === 1) return;
+        drag.current = { x: event.clientX, y: event.clientY, vx: view.x, vy: view.y };
+      }}
+      onPointerMove={(event) => {
+        if (!drag.current) return;
+        const start = toSvg(drag.current.x, drag.current.y);
+        const now = toSvg(event.clientX, event.clientY);
+        const { vx, vy } = drag.current;
+        setView((current) => ({ ...current, x: vx + now.x - start.x, y: vy + now.y - start.y }));
+      }}
+      onPointerUp={() => (drag.current = null)}
+      onPointerLeave={() => (drag.current = null)}
     >
       <rect width="1000" height="600" fill="#e8ebe7" />
-      <g className={`zoom-layer ${fadeAll ? "faded" : ""}`} style={{ transform: zoomTransform }}>
+      <g transform={`translate(${view.x} ${view.y}) scale(${view.k})`}>
+      <g
+        className={`zoom-layer ${fadeAll ? "faded" : ""}`}
+        style={{ transform: `translate(${focus.x}px, ${focus.y}px) scale(${focus.k})` }}
+      >
       <g className="svg-provinces">
         {boundaries?.features?.map((feature: any) => (
           <path
@@ -898,21 +1075,7 @@ function SvgMap({
           />
         ))}
       </g>
-      <g className="svg-province-labels" aria-hidden="true">
-        {boundaries?.features
-          ?.filter((feature: any) =>
-            ["BC", "AB", "SK", "MB", "ON", "QC"].includes(provinceCodes[feature.properties.name]),
-          )
-          .map((feature: any) => {
-            const [x, y] = pathGenerator.centroid(feature);
-            return (
-              <text key={feature.properties.name} x={x} y={y}>
-                {provinceCodes[feature.properties.name]}
-              </text>
-            );
-          })}
-      </g>
-      {mode === "people" && (
+      {fill === "people" && (
         <g className="svg-people">
           {population?.features?.map((feature: any) => {
             const p = feature.properties;
@@ -937,28 +1100,54 @@ function SvgMap({
           ))}
         </g>
       )}
-      {mode === "water" && (
+      {fill !== "price" && fill !== "people" && (
+        <g className="svg-province-labels" aria-hidden="true">
+          {boundaries?.features
+            ?.filter((feature: any) =>
+              ["BC", "AB", "SK", "MB", "ON", "QC"].includes(provinceCodes[feature.properties.name]),
+            )
+            .map((feature: any) => {
+              const [x, y] = pathGenerator.centroid(feature);
+              return (
+                <text key={feature.properties.name} x={x} y={y} style={{ fontSize: 9 / Math.sqrt(scale) }}>
+                  {provinceCodes[feature.properties.name]}
+                </text>
+              );
+            })}
+        </g>
+      )}
+      {layers.water && (
         <g className="svg-drainage">
-          {drainage?.features?.map((feature: any, index: number) => (
-            <path
-              key={feature.properties.name}
-              d={pathGenerator(feature) ?? undefined}
-              fill={drainageColors[index % drainageColors.length]}
-            >
+          {drainage?.features?.map((feature: any) => (
+            <path key={feature.properties.name} d={pathGenerator(feature) ?? undefined}>
               <title>{feature.properties.name}</title>
             </path>
           ))}
           {drainage?.features?.map((feature: any) => {
             const [x, y] = pathGenerator.centroid(feature);
             return (
-              <text key={feature.properties.name} x={x} y={y}>
+              <text key={feature.properties.name} x={x} y={y} style={{ fontSize: 8 / Math.sqrt(scale) }}>
                 {feature.properties.name}
               </text>
             );
           })}
         </g>
       )}
-      {mode === "clean" && (
+      {layers.lines && (
+        <g className="svg-power-lines">
+          {(powerLines?.features ?? []).map((feature: any) => (
+            <path
+              key={feature.properties.canvec_id}
+              d={pathGenerator(feature) ?? undefined}
+              onClick={(event) => {
+                event.stopPropagation();
+                onSelectPowerLine(feature.properties as PowerLine);
+              }}
+            />
+          ))}
+        </g>
+      )}
+      {layers.clean && (
         <g className="svg-clean">
           {[...(cleanStations?.features ?? [])]
             .sort((a: any, b: any) => (b.properties.mw ?? 0) - (a.properties.mw ?? 0))
@@ -971,7 +1160,7 @@ function SvgMap({
                   key={index}
                   cx={point[0]}
                   cy={point[1]}
-                  r={1.4 + Math.sqrt(p.mw ?? 0) / 14}
+                  r={r(1.4 + Math.sqrt(p.mw ?? 0) / 14)}
                   fill={cleanColors[p.type] ?? "#9a8f7a"}
                 >
                   <title>
@@ -982,36 +1171,12 @@ function SvgMap({
             })}
         </g>
       )}
-      {mode === "power" && (
-        <g className="svg-power-lines">
-          {[...(powerLines?.features ?? [])]
-            .sort((a: any, b: any) => (a.properties.voltage_kv ?? 0) - (b.properties.voltage_kv ?? 0))
-            .map((feature: any) => {
-            const properties = feature.properties as PowerLine;
-            const unverified =
-              properties.voltage_status === "Voltage from OpenStreetMap, not verified";
-            return (
-              <path
-                key={feature.properties.canvec_id}
-                d={pathGenerator(feature) ?? undefined}
-                stroke={voltageColor(properties.voltage_kv)}
-                style={{ strokeWidth: voltageWidth(properties.voltage_kv) }}
-                strokeDasharray={unverified ? "3 3" : undefined}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  onSelectPowerLine(properties);
-                }}
-              />
-            );
-          })}
-        </g>
-      )}
-      <g className={`svg-projects ${hideProjects || mode === "price" ? "hidden" : ""}`}>
+      <g className={`svg-projects ${hideProjects ? "hidden" : ""}`}>
         {projects.map((project) => {
           const point = projection([Number(project.lon), Number(project.lat)]) ?? [0, 0];
-          const radius = project.reported_mw
-            ? 3.2 + Math.min(Number(project.reported_mw) / 230, 5.8)
-            : 3.2;
+          const radius = r(
+            project.reported_mw ? 3.2 + Math.min(Number(project.reported_mw) / 230, 5.8) : 3.2,
+          );
           const lowerConfidence = project.check_status === "From tracker, not yet opened by me";
           return (
             <g
@@ -1025,31 +1190,37 @@ function SvgMap({
                 <circle cx={point[0]} cy={point[1]} r={radius + 7} className="pulse-ring" />
               )}
               {lowerConfidence && (
-                <circle cx={point[0]} cy={point[1]} r={radius + 2.5} className="confidence-ring" />
+                <circle cx={point[0]} cy={point[1]} r={radius + r(2.5)} className="confidence-ring" />
               )}
               <circle
                 cx={point[0]}
                 cy={point[1]}
                 r={radius}
-                fill={mode === "energy" ? "#ffffff" : statusColors[project.status]}
-                style={{ stroke: mode === "energy" ? "#172d49" : statusStroke[project.status] }}
+                fill={statusColors[project.status]}
+                style={{ stroke: statusStroke[project.status] }}
                 className={selectedProject?.id === project.id ? "selected-point" : ""}
               />
             </g>
           );
         })}
       </g>
-      {mode === "price" && (
+      {fill === "price" && (
         <g className="svg-prices">
           {(prices ?? []).map((row) => {
             const point = projection([Number(row.lon), Number(row.lat)]);
             if (!point) return null;
             const cents = Number(row.cents_per_kwh_50mw);
             const [dx, dy, anchor] = priceLabel[row.city] ?? [0, -13, "middle"];
+            const s = 1 / Math.sqrt(scale);
             return (
               <g key={row.city}>
-                <circle cx={point[0]} cy={point[1]} r={7} fill={priceColor(cents)} />
-                <text x={point[0] + dx} y={point[1] + dy} textAnchor={anchor}>
+                <circle cx={point[0]} cy={point[1]} r={2.6 * s} />
+                <text
+                  x={point[0] + dx * s}
+                  y={point[1] + dy * s}
+                  textAnchor={anchor}
+                  style={{ fontSize: 11 * s }}
+                >
                   <tspan className="price-city">{row.city}</tspan>
                   <tspan className="price-value"> {cents.toFixed(2)}¢</tspan>
                 </text>
@@ -1060,16 +1231,52 @@ function SvgMap({
         </g>
       )}
       </g>
+      </g>
+      {zoomable && (
+        <foreignObject x="934" y="12" width="54" height="120">
+          <div
+            className="zoom-buttons"
+            onPointerDown={(event) => event.stopPropagation()}
+            onDoubleClick={(event) => event.stopPropagation()}
+          >
+            <button aria-label="Zoom in" onClick={() => zoomAt(1.5)}>+</button>
+            <button aria-label="Zoom out" onClick={() => zoomAt(1 / 1.5)}>−</button>
+            <button aria-label="Reset zoom" onClick={() => setView({ k: 1, x: 0, y: 0 })}>⟲</button>
+          </div>
+        </foreignObject>
+      )}
     </svg>
   );
 }
 
-function MapLegend({ mode }: { mode: MapMode }) {
+function MapLegend({ fill, layers }: { fill: FillMode; layers: Layers }) {
   return (
     <div className="map-legend">
-      {mode === "capacity" ? (
-        <>
-          <p>Provincial planned MW · York paper estimate</p>
+      <div className="legend-block">
+        <p>Data centre projects</p>
+        <div className="project-legend">
+          {Object.entries(statusColors).map(([label, color]) => (
+            <span key={label}>
+              <i
+                style={{
+                  background: color,
+                  borderColor: statusStroke[label as keyof typeof statusStroke],
+                }}
+              />
+              {label}
+            </span>
+          ))}
+          <span className="confidence-key">
+            <i />
+            Outline: lower confidence
+          </span>
+        </div>
+        <small>Dot size = reported MW. All pins are approximate.</small>
+      </div>
+
+      {fill === "capacity" && (
+        <div className="legend-block">
+          <p>Planned MW by province · York University estimate</p>
           <div className="capacity-scale">
             {[
               ["#e8e5df", "Not disclosed"],
@@ -1084,84 +1291,10 @@ function MapLegend({ mode }: { mode: MapMode }) {
               </span>
             ))}
           </div>
-          <p className="project-legend-title">Projects</p>
-          <div className="project-legend">
-            {Object.entries(statusColors).map(([label, color]) => (
-              <span key={label}>
-                <i
-                  style={{
-                    background: color,
-                    borderColor: statusStroke[label as keyof typeof statusStroke],
-                  }}
-                />
-                {label}
-              </span>
-            ))}
-            <span className="confidence-key">
-              <i />
-              Outline: lower confidence
-            </span>
-          </div>
-          <small>All project pins are approximate.</small>
-        </>
-      ) : mode === "clean" ? (
-        <>
-          <p>Clean power stations (NRCan) · dot size = MW</p>
-          <div className="energy-legend">
-            {Object.entries(cleanColors).map(([label, color]) => (
-              <span key={label}>
-                <i style={{ background: color, borderRadius: "50%" }} />
-                {label}
-              </span>
-            ))}
-          </div>
-          <small>
-            1,078 operating stations from NRCan&apos;s Clean Energy Resources and Projects map.
-            Hover a dot for its name. Pink dots = data centre projects.
-          </small>
-        </>
-      ) : mode === "people" ? (
-        <>
-          <p>People per km² · 2021 Census</p>
-          <div className="capacity-scale">
-            {peopleColors.map((color, index) => (
-              <span key={color}>
-                <i style={{ background: color }} />
-                {peopleBands[index]}
-              </span>
-            ))}
-          </div>
-          <small>
-            Statistics Canada, 2021 Census, by census division. Hover an area for its number. Dots
-            = data centre projects.
-          </small>
-        </>
-      ) : mode === "price" ? (
-        <>
-          <p>Electricity price for a large customer · ¢/kWh</p>
-          <div className="capacity-scale">
-            {priceColors.map((color, index) => (
-              <span key={color}>
-                <i style={{ background: color, borderRadius: "50%" }} />
-                {priceBands[index]}
-              </span>
-            ))}
-          </div>
-          <small>
-            Hydro-Québec&apos;s 2025 price comparison: a 50,000 kW customer, rates on April 1, 2025,
-            before taxes. One city per dot, not a provincial average.
-          </small>
-        </>
-      ) : mode === "water" ? (
-        <>
-          <p>Major drainage areas (watersheds)</p>
-          <small>
-            Natural Resources Canada, Atlas of Canada. Shows which river system each region drains
-            into. A first step toward a water layer: it does not show water use or stress.
-          </small>
-        </>
-      ) : mode === "energy" ? (
-        <>
+        </div>
+      )}
+      {fill === "energy" && (
+        <div className="legend-block">
           <p>Share of 2025 electricity from fossil fuels</p>
           <div className="capacity-scale">
             {fossilScale.map((color, index) => (
@@ -1171,88 +1304,110 @@ function MapLegend({ mode }: { mode: MapMode }) {
               </span>
             ))}
           </div>
-          <small>Teal = cleaner grid, pink = more fossil fuels. White pins = data centre projects.</small>
-        </>
-      ) : (
-        <>
-          <p>Approximate voltage band</p>
-          <div className="power-legend">
-            {[
-              [voltageColors.highest, "450 kV+"],
-              [voltageColors.high, "200–449 kV"],
-              [voltageColors.lower, "Under 200 kV"],
-              [voltageColors.unknown, "Unknown"],
-            ].map(([color, label]) => (
-              <span key={label}>
+          <small>Teal = cleaner grid, pink = more fossil fuels. Statistics Canada.</small>
+        </div>
+      )}
+      {fill === "people" && (
+        <div className="legend-block">
+          <p>People per km² · 2021 Census</p>
+          <div className="capacity-scale">
+            {peopleColors.map((color, index) => (
+              <span key={color}>
                 <i style={{ background: color }} />
-                {label}
+                {peopleBands[index]}
               </span>
             ))}
-            <span className="dashed-key">
-              <i />
-              Dashed: not verified
+          </div>
+          <small>Statistics Canada, by census division. Hover an area for its number.</small>
+        </div>
+      )}
+      {fill === "price" && (
+        <div className="legend-block">
+          <p>Electricity price for a 50 MW customer · ¢/kWh</p>
+          <div className="capacity-scale">
+            {priceColors.map((color, index) => (
+              <span key={color}>
+                <i style={{ background: color }} />
+                {priceBands[index]}
+              </span>
+            ))}
+            <span>
+              <i style={{ background: "#dcd9d2" }} />
+              No data
             </span>
           </div>
           <small>
-            Lines: NRCan CanVec. Voltage: © OpenStreetMap contributors. Proximity does not prove a
-            grid connection.
+            Hydro-Québec 2025 estimate (rates on April 1, 2025, before taxes), one city per
+            province. Montréal and Winnipeg checked against the utilities&apos; own rates.
           </small>
-        </>
+        </div>
+      )}
+      {layers.lines && (
+        <div className="legend-block">
+          <p>Power lines</p>
+          <div className="power-legend">
+            <span>
+              <i />
+              Transmission lines (NRCan CanVec)
+            </span>
+          </div>
+          <small>Being near a line does not mean a project connects to it.</small>
+        </div>
+      )}
+      {layers.clean && (
+        <div className="legend-block">
+          <p>Clean power stations (NRCan) · size = MW</p>
+          <div className="energy-legend">
+            {Object.entries(cleanColors).map(([label, color]) => (
+              <span key={label}>
+                <i style={{ background: color, borderRadius: "50%" }} />
+                {label}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+      {layers.water && (
+        <div className="legend-block">
+          <p>Watersheds</p>
+          <small>
+            Major drainage areas, NRCan Atlas of Canada. Shows which river system an area drains
+            into, not water use or stress.
+          </small>
+        </div>
       )}
     </div>
   );
 }
 
 function PowerLineDetail({ line }: { line: PowerLine }) {
-  const isConfirmed =
-    line.voltage_status === "Voltage from OpenStreetMap, level confirmed by grid operator";
-  const isUnverified = line.voltage_status === "Voltage from OpenStreetMap, not verified";
   return (
     <>
       <p className="drawer-kicker">Power infrastructure</p>
-      <h2>{line.voltage_kv ? `${line.voltage_kv} kV line` : "Voltage unknown"}</h2>
+      <h2>Transmission line</h2>
       <p className="operator">{line.province}</p>
-      <p
-        className={`line-status ${isConfirmed ? "confirmed" : isUnverified ? "unverified" : "unknown"}`}
-      >
-        {isConfirmed
-          ? "Voltage level confirmed in this province"
-          : isUnverified
-            ? "OpenStreetMap voltage · not verified"
-            : "NRCan line · no voltage match"}
-      </p>
       <dl>
         <div>
           <dt>Mapped length</dt>
           <dd>{Number(line.length_km).toLocaleString("en-CA")} km</dd>
         </div>
         <div>
-          <dt>Line geometry</dt>
+          <dt>Source</dt>
           <dd>Natural Resources Canada, CanVec 1:250K</dd>
         </div>
-        {line.osm_operator && (
-          <div>
-            <dt>OSM operator</dt>
-            <dd>{line.osm_operator}</dd>
-          </div>
-        )}
-        {line.osm_line_name && (
-          <div>
-            <dt>OSM line name</dt>
-            <dd>{line.osm_line_name}</dd>
-          </div>
-        )}
       </dl>
       <p className="detail-note">
-        The voltage was spatially matched from OpenStreetMap. A confirmed status means that an
-        official source lists this voltage level in the province; it does not verify this individual
-        line.
+        Being near a line does not mean a data centre connects to it, or that the line has room for
+        more load.
       </p>
-      {line.check_source && (
-        <a className="primary-link" href={line.check_source} target="_blank" rel="noreferrer">
-          View provincial voltage source ↗
-        </a>
-      )}
+      <a
+        className="primary-link"
+        href="https://open.canada.ca/data/en/dataset/92dbea79-f644-4a62-b25e-8eb993ca0264"
+        target="_blank"
+        rel="noreferrer"
+      >
+        View NRCan CanVec source ↗
+      </a>
     </>
   );
 }

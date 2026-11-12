@@ -1409,3 +1409,384 @@ mark {
   font-size: 11px;
   color: var(--ink);
 }
+
+/* ===== Nov 12 round 2: layered explorer ===== */
+
+/* Lines and outlines (no voltage styling) */
+.svg-power-lines path {
+  stroke: #5b6e8c;
+  stroke-width: 0.9;
+  stroke-opacity: 0.75;
+}
+
+.svg-power-lines path:hover {
+  stroke: #172d49;
+  stroke-width: 2.2;
+  stroke-opacity: 1;
+}
+
+.svg-drainage path {
+  fill: none;
+  stroke: #2e6d8a;
+  stroke-width: 1.3;
+  stroke-dasharray: 5 3;
+  stroke-opacity: 0.8;
+}
+
+.svg-drainage text {
+  fill: #2e5470;
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: #fbfaf6;
+  stroke-width: 3px;
+}
+
+.svg-people .people-province-outline {
+  stroke: #fbfaf6;
+  stroke-width: 1.2;
+}
+
+.svg-prices circle {
+  fill: #172d49;
+  stroke: #fbfaf6;
+  stroke-width: 1;
+}
+
+.hl-yellow {
+  background: #f5c242;
+}
+
+/* Hero title + skip link */
+.hero-sub {
+  margin-top: 18px;
+  font-family: var(--serif);
+  font-size: clamp(18px, 2vw, 24px);
+  color: var(--ink);
+}
+
+.scroll-cue span {
+  margin: 0 6px;
+  color: var(--muted);
+}
+
+.skip-link {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: #e0457b;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+#explore {
+  scroll-margin-top: 0;
+}
+
+/* Explorer layout: controls on top, map + legend, side panel never overlaps */
+.map-experience.explorer {
+  height: max(820px, 100vh);
+  display: flex;
+  flex-direction: column;
+  background: #e8ebe7;
+}
+
+.explorer .explorer-controls {
+  position: static;
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  border: 0;
+  border-bottom: 1px solid rgba(23, 45, 73, 0.22);
+}
+
+.explorer .control-group {
+  padding: 12px 16px;
+  border-right: 1px solid var(--line);
+}
+
+.explorer .control-group > span {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.explorer .chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.explorer .chips button {
+  min-height: 34px;
+  padding: 5px 12px;
+  border: 1px solid var(--line);
+  background: transparent;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.explorer .chips button.active {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: white;
+}
+
+.explorer .chips button.toggle.active {
+  background: #fbe6ee;
+  border-color: #e0457b;
+  color: var(--ink);
+}
+
+.explorer .chips button.toggle i {
+  display: inline-block;
+  width: 12px;
+  margin-right: 5px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.explorer .filters {
+  flex: 1;
+  min-width: 360px;
+  padding: 12px 16px;
+}
+
+.explorer-stage {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.explorer-stage.with-panel {
+  grid-template-columns: 1fr 320px;
+}
+
+.explorer-map {
+  position: relative;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.explorer .svg-map {
+  position: static;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  height: auto;
+}
+
+.explorer .svg-map.zoomable {
+  cursor: grab;
+}
+
+.explorer .svg-map.zoomable:active {
+  cursor: grabbing;
+}
+
+.zoom-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.zoom-buttons button {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(23, 45, 73, 0.3);
+  background: rgba(247, 244, 237, 0.96);
+  color: var(--ink);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.zoom-buttons button:hover {
+  background: var(--ink);
+  color: white;
+}
+
+.zoom-hint {
+  position: absolute;
+  top: 8px;
+  left: 14px;
+  margin: 0;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 10px;
+  pointer-events: none;
+}
+
+.explorer .map-legend {
+  position: static;
+  flex: none;
+  height: auto;
+  min-height: 92px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 34px;
+  border-right: 0;
+}
+
+.explorer .legend-block {
+  min-width: 220px;
+  max-width: 420px;
+}
+
+.explorer .power-legend i {
+  width: 24px;
+  height: 2px;
+  background: #5b6e8c;
+}
+
+.explorer .open-panel {
+  top: 8px;
+  right: 60px;
+  bottom: auto;
+}
+
+.explorer .detail-drawer {
+  position: relative;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  left: auto;
+  width: auto;
+  max-height: none;
+  overflow-y: auto;
+  border: 0;
+  border-left: 1px solid rgba(23, 45, 73, 0.22);
+  box-shadow: none;
+}
+
+/* York comparison chart (scrolly step) */
+.scrolly-step.wide .step-card {
+  max-width: 500px;
+}
+
+.step-card p + p {
+  margin-top: 12px;
+}
+
+.york-charts {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.york-charts figure {
+  margin: 0;
+}
+
+.york-charts figcaption {
+  margin-bottom: 4px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.york-charts svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.york-grid line {
+  stroke: rgba(23, 45, 73, 0.12);
+  stroke-width: 1;
+}
+
+.york-grid text {
+  font-family: var(--mono);
+  font-size: 10px;
+  fill: var(--muted);
+  text-anchor: middle;
+}
+
+.york-country {
+  font-family: var(--serif);
+  font-size: 13px;
+  fill: var(--ink);
+}
+
+.york-link {
+  stroke: rgba(23, 45, 73, 0.3);
+  stroke-width: 2;
+}
+
+circle.york-today {
+  fill: #172d49;
+  stroke: #fffdf8;
+  stroke-width: 2;
+}
+
+circle.york-planned {
+  fill: #e0457b;
+  stroke: #fffdf8;
+  stroke-width: 2;
+}
+
+.york-value {
+  font-family: var(--mono);
+  font-size: 11px;
+  fill: #4f5c68;
+}
+
+.york-value.strong {
+  fill: var(--ink);
+  font-weight: 700;
+}
+
+.york-key {
+  display: flex;
+  gap: 16px;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #4f5c68;
+}
+
+.york-key i {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 5px;
+  border-radius: 50%;
+  vertical-align: -1px;
+}
+
+.york-key i.york-today {
+  background: #172d49;
+}
+
+.york-key i.york-planned {
+  background: #e0457b;
+}
+
+.york-source {
+  margin-top: 10px !important;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.york-source a {
+  color: var(--ink);
+}
+
+.step-card .york-note {
+  font-size: 15px;
+  color: #3d4a57;
+}
