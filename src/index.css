@@ -1790,3 +1790,11 @@ circle.york-planned {
   font-size: 15px;
   color: #3d4a57;
 }
+
+rect.york-today {
+  fill: #172d49;
+}
+
+rect.york-planned {
+  fill: #e0457b;
+}

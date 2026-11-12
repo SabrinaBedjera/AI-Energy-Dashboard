@@ -689,6 +689,22 @@ function Scrolly(props: {
     },
     {
       mode: "capacity",
+      hideProjects: true,
+      wide: true,
+      body: (
+        <>
+          <p>
+            Today, most of Canada&apos;s data centres sit in three provinces:{" "}
+            <strong>Ontario</strong> (41% of the 194 running), <strong>Quebec</strong> (30%) and{" "}
+            <strong>BC</strong> (14%). The plans point somewhere else.{" "}
+            <span className="hl hl-pink">167 of the 213 planned sites, or 78%, are in Alberta</span>.
+          </p>
+          <ProvinceShift />
+        </>
+      ),
+    },
+    {
+      mode: "capacity",
       body: (
         <p>
           I went looking for every data centre project in Canada I could trace to a public source.
@@ -906,6 +922,63 @@ function YorkComparison() {
           Carlo &amp; Rolheiser, York University (2026), Table 1
         </a>
         , using Aterio data to June 8, 2026. Averages only count sites with a reported capacity.
+      </p>
+    </div>
+  );
+}
+
+// York University paper, Appendix Table A2 (page 42): number of data centres by province and stage.
+// Planned = announcement + construction. Checked against the paper PDF on Nov 12, 2026.
+const yorkTableA2: [string, number, number][] = [
+  ["Ontario", 79, 16],
+  ["Quebec", 59, 7],
+  ["British Columbia", 27, 8],
+  ["Alberta", 20, 167],
+  ["Saskatchewan", 4, 8],
+  ["Manitoba", 2, 2],
+  ["New Brunswick", 2, 5],
+  ["Nova Scotia", 1, 0],
+];
+
+function ProvinceShift() {
+  const activeTotal = 194;
+  const plannedTotal = 213;
+  const w = (share: number) => (share / 100) * 250;
+  return (
+    <div className="york-charts">
+      <figure>
+        <figcaption>Share of data centre sites by province</figcaption>
+        <svg viewBox="0 0 440 300" role="img" aria-label="Share of operating and planned data centre sites by province">
+          {yorkTableA2.map(([province, active, planned], index) => {
+            const y = 14 + index * 35;
+            const aShare = (active / activeTotal) * 100;
+            const pShare = (planned / plannedTotal) * 100;
+            return (
+              <g key={province}>
+                <text className="york-country" x={0} y={y + 12}>{province}</text>
+                <rect className="york-today" x={128} y={y} width={Math.max(w(aShare), 1.5)} height={11} rx={2}>
+                  <title>{`${province}: ${active} of ${activeTotal} operating sites`}</title>
+                </rect>
+                <text className="york-value" x={134 + w(aShare)} y={y + 9}>{`${aShare.toFixed(1)}%`}</text>
+                <rect className="york-planned" x={128} y={y + 13} width={Math.max(w(pShare), 1.5)} height={11} rx={2}>
+                  <title>{`${province}: ${planned} of ${plannedTotal} planned sites`}</title>
+                </rect>
+                <text className="york-value strong" x={134 + w(pShare)} y={y + 22}>{`${pShare.toFixed(1)}%`}</text>
+              </g>
+            );
+          })}
+        </svg>
+        <div className="york-key">
+          <span><i className="york-today" /> Operating (194 sites)</span>
+          <span><i className="york-planned" /> Planned (213 sites)</span>
+        </div>
+      </figure>
+      <p className="york-source">
+        Source:{" "}
+        <a href={yorkUrl} target="_blank" rel="noreferrer">
+          Carlo &amp; Rolheiser, York University (2026), Appendix Table A2
+        </a>
+        . Planned = announced or under construction. Counts sites, not MW.
       </p>
     </div>
   );
