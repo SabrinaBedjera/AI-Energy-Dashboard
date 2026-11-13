@@ -256,6 +256,7 @@ function App() {
   const [provinceFilter, setProvinceFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
   const [minMw, setMinMw] = useState(0);
+  const [useFilter, setUseFilter] = useState<"" | "ai" | "other">("");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedPowerLine, setSelectedPowerLine] = useState<PowerLine | null>(null);
   const [selectedProvince, setSelectedProvince] = useState("Alberta");
@@ -320,9 +321,13 @@ function App() {
         (project) =>
           (provinceFilter === "All" || project.province === provinceFilter) &&
           (statusFilter === "All" || project.status === statusFilter) &&
-          (minMw === 0 || Number(project.reported_mw || 0) >= minMw),
+          (minMw === 0 || Number(project.reported_mw || 0) >= minMw) &&
+          (useFilter === "" ||
+            (useFilter === "ai"
+              ? project.ai_use === "AI" || project.ai_use === "Mixed"
+              : project.ai_use === "General cloud" || project.ai_use === "Not AI")),
       ),
-    [projects, provinceFilter, statusFilter, minMw],
+    [projects, provinceFilter, statusFilter, minMw, useFilter],
   );
 
   const selectedProvinceData = provinceByName[selectedProvince];
@@ -423,6 +428,26 @@ function App() {
                   onClick={() => setMinMw(minMw === value ? 0 : value)}
                 >
                   {value} MW+
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="control-group" aria-label="Use">
+            <span>Use</span>
+            <div className="chips">
+              {(
+                [
+                  ["ai", "AI"],
+                  ["other", "Other uses"],
+                ] as ["ai" | "other", string][]
+              ).map(([value, label]) => (
+                <button
+                  key={value}
+                  className={useFilter === value ? "active" : ""}
+                  aria-pressed={useFilter === value}
+                  onClick={() => setUseFilter(useFilter === value ? "" : value)}
+                >
+                  {label}
                 </button>
               ))}
             </div>
