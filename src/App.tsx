@@ -135,7 +135,7 @@ const drainageColors = ["#d7e6ef", "#c4d9e6", "#b1cbdc", "#e2ecf2"];
 
 const capacityColors = ["#d4ebe6", "#94cdc2", "#3f9e8f", "#0b5f57"];
 
-// Share of York's data centre sites (Appendix Table A2), used in the story only
+// Share of York's data center sites (Appendix Table A2), used in the story only
 const siteShareColors = ["#e8e5df", "#f6d3df", "#ec97b5", "#d6457b", "#8f1f4f"];
 const siteShareColor = (share: number) =>
   siteShareColors[share === 0 ? 0 : share < 5 ? 1 : share < 15 ? 2 : share < 35 ? 3 : 4];
@@ -529,13 +529,13 @@ function App() {
             describe IT load, total project capability, grid demand, or on-site generation. Open a
             project to see exactly what its number measures. The project list and the York
             paper&apos;s provincial estimates are separate datasets with different coverage, so
-            their totals don&apos;t match. The list includes every kind of data centre (cloud,
+            their totals don&apos;t match. The list includes every kind of data center (cloud,
             hosting and AI), not only AI ones. All project pins are approximate. Six rows I couldn&apos;t
             open at the source are marked as lower confidence.
           </p>
           <p>
             The energy view shows each province&apos;s share of 2025 electricity generated from
-            fossil fuels. It does not claim that a data centre uses that exact mix, especially when a
+            fossil fuels. It does not claim that a data center uses that exact mix, especially when a
             project reports its own on-site power.
           </p>
           <p>
@@ -658,7 +658,7 @@ function Scrolly(props: {
       mode: "projects",
       hero: true,
       annotations: [
-        { lon: -114, lat: 56, dx: 40, dy: -200, anchor: "start", lines: ["Most planned data centres", "Alberta: 78% of planned sites"] },
+        { lon: -114, lat: 56, dx: 40, dy: -200, anchor: "start", lines: ["Most planned data centers", "Alberta: 78% of planned sites"] },
         { lon: -79.6, lat: 43.9, dx: -170, dy: 20, lines: ["Most running today", "Ontario: 41% of operating sites"] },
         { lon: -73.6, lat: 45.6, dx: 60, dy: -170, anchor: "start", lines: ["Next most running today", "Quebec: 30% of operating sites"] },
       ],
@@ -667,7 +667,7 @@ function Scrolly(props: {
           <h1>Canada&apos;s AI Boom</h1>
           <p className="hero-sub">An exploration of where Canada&apos;s AI will get its power</p>
           <p className="hero-summary">
-            Canada has <strong>194</strong> data centres running. Another <strong>213</strong> are
+            Canada has <strong>194</strong> data centers running. Another <strong>213</strong> are
             planned, and they would draw about <strong>14 times</strong> the power of the ones running now.
           </p>
           <p className="hero-byline">By Sabrina Bedjera · November 2026</p>
@@ -686,7 +686,7 @@ function Scrolly(props: {
       body: (
         <p className="placeholder">
           [Your hook goes here: one or two sentences, in your words, on why you got curious about
-          where Canada&apos;s data centres are going.]
+          where Canada&apos;s data centers are going.]
         </p>
       ),
     },
@@ -697,15 +697,15 @@ function Scrolly(props: {
       body: (
         <>
           <p>
-            AI runs in data centres: buildings full of computers that run day and night. Worldwide,
-            data centres used about <strong>1.5% of all electricity</strong> in 2024. The
+            AI runs in data centers: buildings full of computers that run day and night. Worldwide,
+            data centers used about <strong>1.5% of all electricity</strong> in 2024. The
             International Energy Agency expects that to more than double by 2030, to about as much
             as <span className="hl hl-pink">all of Japan uses today</span>. AI is the biggest
             driver.
           </p>
           <p>
             Closer to home, York University researchers estimate that one average announced
-            Canadian data centre (<strong>122 MW</strong>) would use as much electricity in a year as{" "}
+            Canadian data center (<strong>122 MW</strong>) would use as much electricity in a year as{" "}
             <span className="hl hl-pink">49,000 to 78,000 Canadian homes</span>.
           </p>
           <p className="york-source">
@@ -717,7 +717,7 @@ function Scrolly(props: {
             <a href={yorkUrl} target="_blank" rel="noreferrer">
               Carlo &amp; Rolheiser, York University (2026)
             </a>
-            , section 2.2. The homes range assumes the data centre runs at 50% to 80% of capacity.
+            , section 2.2. The homes range assumes the data center runs at 50% to 80% of capacity.
           </p>
         </>
       ),
@@ -728,11 +728,11 @@ function Scrolly(props: {
       body: (
         <>
         <p>
-          Where a data centre gets its power matters as much as where it&apos;s built. Some plug
+          Where a data center gets its power matters as much as where it&apos;s built. Some plug
           into the grid. Others sign deals for clean power or build their own. In BC, TELUS has
           secured <strong>85 MW</strong> of clean, renewable power from BC Hydro, and Bell
           describes its BC sites as hydroelectric-powered. In Nova Scotia, EverWind plans to run its
-          data centre on wind, with <strong>$2 billion</strong> for new wind projects. In Alberta,
+          data center on wind, with <strong>$2 billion</strong> for new wind projects. In Alberta,
           most projects that name a fuel plan their own natural gas plants, some with carbon
           capture.
         </p>
@@ -754,9 +754,9 @@ function Scrolly(props: {
       fadeAll: true,
       body: (
         <p>
-          Data centres aren&apos;t new. They&apos;ve run websites, email, online banking,
+          Data centers aren&apos;t new. They&apos;ve run websites, email, online banking,
           streaming and cloud storage for years, and most still do. York flags only{" "}
-          <strong>5 of the 194</strong> data centres running in Canada as AI-related, and{" "}
+          <strong>5 of the 194</strong> data centers running in Canada as AI-related, and{" "}
           <strong>49 of the 213</strong> planned ones. York calls these a lower bound, since a site only counts when its
           plans mention AI. AI is a growing slice, but the boom is about all kinds of computing.
         </p>
@@ -767,7 +767,7 @@ function Scrolly(props: {
       hideProjects: true,
       body: (
         <p>
-          Canada has <strong>194 data centres running</strong> today, using about{" "}
+          Canada has <strong>194 data centers running</strong> today, using about{" "}
           <strong>1.6 GW</strong>. Most sit in three provinces: <strong>Ontario</strong> (41%),{" "}
           <strong>Quebec</strong> (30%) and <strong>BC</strong> (14%), close to big cities. Half of
           them are within about <strong>4 km of a downtown</strong>.
@@ -801,13 +801,13 @@ function Scrolly(props: {
           <p>
             By capacity it&apos;s even more lopsided. York puts Alberta at{" "}
             <span className="hl hl-teal">
-              {props.albertaShare.toFixed(0)}% of all planned data centre MW
+              {props.albertaShare.toFixed(0)}% of all planned data center MW
             </span>{" "}
             in Canada.
           </p>
           <p>
             Alberta&apos;s own numbers point the same way. Companies have asked to connect about{" "}
-            <strong>19,565 MW</strong> of new data centre load to its grid. That&apos;s more than
+            <strong>19,565 MW</strong> of new data center load to its grid. That&apos;s more than
             the most power the whole province has ever used in one hour (about 12,800 MW).
           </p>
           <p className="york-source">
@@ -826,7 +826,7 @@ function Scrolly(props: {
         <p>
           Those numbers come from a commercial database I can&apos;t access, so I can&apos;t see
           which sites they are. I wanted the projects anyone can check. I looked for every data
-          centre project in Canada I could trace to a public source and found{" "}
+          center project in Canada I could trace to a public source and found{" "}
           <strong>{props.projects.length}</strong>. The{" "}
           <span className="hl hl-pink">pink dots</span> are still plans, the{" "}
           <span className="hl hl-yellow">yellow</span> ones are being built, and the{" "}
@@ -902,7 +902,7 @@ function Scrolly(props: {
       body: (
         <>
           <p>
-            Zoom out, and Canada is still small. York counts <strong>1,989 data centres running
+            Zoom out, and Canada is still small. York counts <strong>1,989 data centers running
             in the US</strong> (46.8 GW), against 194 in Canada. But Canada&apos;s planned projects
             are bigger on average: <span className="hl hl-pink">122 MW vs 95 MW</span>.
           </p>
@@ -917,8 +917,8 @@ function Scrolly(props: {
       body: (
         <>
           <p>
-            Worldwide, the US used <strong>45%</strong> of all data centre electricity in 2024,
-            China <strong>25%</strong> and Europe <strong>15%</strong>. In the US, data centres
+            Worldwide, the US used <strong>45%</strong> of all data center electricity in 2024,
+            China <strong>25%</strong> and Europe <strong>15%</strong>. In the US, data centers
             make up nearly <strong>half of all the growth in electricity demand</strong> expected
             by 2030. Canada is a small player, but a fast-growing one.
           </p>
@@ -1001,7 +1001,7 @@ function ProvinceBar({ provinces }: { provinces: Province[] }) {
   const restTotal = rest.reduce((sum, row) => sum + row.mw, 0);
   return (
     <figure className="province-bar">
-      <figcaption>Planned data centre capacity by province (MW), York University estimate</figcaption>
+      <figcaption>Planned data center capacity by province (MW), York University estimate</figcaption>
       <div className="bar-track">
         <div className="bar-segment lead" style={{ width: `${(top.mw / total) * 100}%` }}>
           <span>
@@ -1045,8 +1045,8 @@ function YorkComparison() {
   return (
     <div className="york-charts">
       <figure>
-        <figcaption>Average size of one data centre (MW)</figcaption>
-        <svg viewBox="0 0 440 128" role="img" aria-label="Average data centre size, operating versus announced, Canada and US">
+        <figcaption>Average size of one data center (MW)</figcaption>
+        <svg viewBox="0 0 440 128" role="img" aria-label="Average data center size, operating versus announced, Canada and US">
           {[0, 50, 100].map((tick) => (
             <g key={tick} className="york-grid">
               <line x1={x(tick)} x2={x(tick)} y1={18} y2={104} />
@@ -1087,7 +1087,7 @@ function YorkComparison() {
   );
 }
 
-// York University paper, Appendix Table A2 (page 42): number of data centres by province and stage.
+// York University paper, Appendix Table A2 (page 42): number of data centers by province and stage.
 // Planned = announcement + construction. Checked against the paper PDF on Nov 12, 2026.
 const yorkTableA2: [string, number, number][] = [
   ["Ontario", 79, 16],
@@ -1146,7 +1146,7 @@ function ChartsSection({ prices }: { prices: PriceRow[] }) {
       <h2>Charts</h2>
       <div className="charts-grid">
         <div className="chart-card">
-          <h3>Where data centres are, and where they&apos;re planned</h3>
+          <h3>Where data centers are, and where they&apos;re planned</h3>
           <ProvinceShift />
         </div>
         <div className="chart-card">
@@ -1167,13 +1167,13 @@ function ChartsSection({ prices }: { prices: PriceRow[] }) {
 }
 
 const rulesRows: [string, string, string][] = [
-  ["Alberta", "Grid capped at 1,200 MW for big new loads (all allocated). Bill 8 fast-tracks data centres that bring their own power.", "https://www.aeso.ca/grid/connecting-to-the-grid/large-load-projects"],
-  ["British Columbia", "Competitive process: up to 300 MW for AI and 100 MW for other data centres over two years, 145 MW max per project.", "https://news.gov.bc.ca/releases/2026ECS0005-000095"],
-  ["Quebec", "A minister must authorize power for any data centre of 5 MW or more (Bill 69).", "https://www.blg.com/en/insights/2026/07/data-centre-regulation-in-quebec-from-honeyed-promise-to-iron-control"],
+  ["Alberta", "Grid capped at 1,200 MW for big new loads (all allocated). Bill 8 fast-tracks data centers that bring their own power.", "https://www.aeso.ca/grid/connecting-to-the-grid/large-load-projects"],
+  ["British Columbia", "Competitive process: up to 300 MW for AI and 100 MW for other data centers over two years, 145 MW max per project.", "https://news.gov.bc.ca/releases/2026ECS0005-000095"],
+  ["Quebec", "A minister must authorize power for any data center of 5 MW or more (Bill 69).", "https://www.blg.com/en/insights/2026/07/data-centre-regulation-in-quebec-from-honeyed-promise-to-iron-control"],
   ["Ontario", "The government decides which large loads can connect, and weighs economic benefit (Bill 40).", "https://www.torys.com/en/our-latest-thinking/publications/2025/12/key-takeaways-and-next-steps-on-new-energy-law"],
-  ["Manitoba", "Proposed a separate rate class for data centres (Bill 39). Not yet clear if it's in force.", "https://web2.gov.mb.ca/bills/43-3/pdf/b039.pdf"],
-  ["Saskatchewan", "No data centre cap. Big projects can bring their own power.", "https://www.cp24.com/news/canada/2026/09/15/bell-ai-data-centre-project-near-regina-to-quadruple-in-size/"],
-  ["Nova Scotia, New Brunswick", "Standard grid connection, no data centre rules yet.", "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6464099"],
+  ["Manitoba", "Proposed a separate rate class for data centers (Bill 39). Not yet clear if it's in force.", "https://web2.gov.mb.ca/bills/43-3/pdf/b039.pdf"],
+  ["Saskatchewan", "No data center cap. Big projects can bring their own power.", "https://www.cp24.com/news/canada/2026/09/15/bell-ai-data-centre-project-near-regina-to-quadruple-in-size/"],
+  ["Nova Scotia, New Brunswick", "Standard grid connection, no data center rules yet.", "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6464099"],
 ];
 
 function RulesTable() {
@@ -1209,8 +1209,8 @@ function ProvinceShift() {
   return (
     <div className="york-charts">
       <figure>
-        <figcaption>Share of data centre sites by province</figcaption>
-        <svg viewBox="0 0 440 300" role="img" aria-label="Share of operating and planned data centre sites by province">
+        <figcaption>Share of data center sites by province</figcaption>
+        <svg viewBox="0 0 440 300" role="img" aria-label="Share of operating and planned data center sites by province">
           {yorkTableA2.map(([province, active, planned], index) => {
             const y = 14 + index * 35;
             const aShare = (active / activeTotal) * 100;
@@ -1383,7 +1383,7 @@ function SvgMap({
       viewBox="0 0 1000 600"
       preserveAspectRatio="xMidYMid meet"
       role="img"
-      aria-label="Interactive map of Canadian data centre projects"
+      aria-label="Interactive map of Canadian data center projects"
       onDoubleClick={(event) => {
         if (!zoomable) return;
         const { x, y } = toSvg(event.clientX, event.clientY);
@@ -1643,7 +1643,7 @@ function MapLegend({ fill, layers, shown, total }: { fill: FillMode; layers: Lay
     <div className="map-legend">
       <div className="legend-block">
         <p>
-          Data centre projects · {total} found in public sources
+          Data center projects · {total} found in public sources
           {shown !== total ? ` (showing ${shown})` : ""}
         </p>
         <div className="project-legend">
@@ -1789,7 +1789,7 @@ function PowerLineDetail({ line }: { line: PowerLine }) {
         </div>
       </dl>
       <p className="detail-note">
-        Being near a line does not mean a data centre connects to it, or that the line has room for
+        Being near a line does not mean a data center connects to it, or that the line has room for
         more load.
       </p>
       <a
