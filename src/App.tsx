@@ -567,6 +567,18 @@ function App() {
         </div>
         <div className="about-copy">
           <p>
+            In my analysis, I pull together public data from research papers, news articles,
+            government sources, utility websites, company websites and more! One interesting finding:
+            a lot of data center information sits behind paywalls, either in a private data
+            firm&apos;s database or in a news article. Companies also don&apos;t always publish
+            details about their sites, possibly because the information is proprietary.
+          </p>
+          <p>
+            The biggest gap was water. Only 12 of the 125 sites I found say how they cool their
+            buildings or how much water they use. 98 don&apos;t name a power source beyond the grid,
+            and 40 don&apos;t publish their size in MW.
+          </p>
+          <p>
             Project capacity appears only when a public source reports it. Different figures can
             describe IT load, total project capability, grid demand, or on-site generation. Open a
             project to see exactly what its number measures. The project list and the York
@@ -707,7 +719,7 @@ function Scrolly(props: {
       body: (
         <>
           <h1>Canada&apos;s AI Boom</h1>
-          <p className="hero-sub">An exploration of where Canada&apos;s AI will get its power</p>
+          <p className="hero-sub">A study of how data centers are growing in Canada, and where they will get their power</p>
           <p className="hero-summary">
             Canada has <strong>194</strong> data centers running. Another <strong>213</strong> are
             planned, and they would draw about <strong>14 times</strong> the power of the ones running now.
@@ -726,10 +738,26 @@ function Scrolly(props: {
       mode: "power",
       hideProjects: true,
       body: (
-        <p className="placeholder">
-          [Your hook goes here: one or two sentences, in your words, on why you got curious about
-          where Canada&apos;s data centers are going.]
-        </p>
+        <>
+          <p>
+            You may have noticed it: AI is everywhere. It&apos;s in almost every news source I read,
+            and people have so many questions. How is AI being used? How do we regulate it? What
+            does AI art do to our creative process? And why are data centers being built everywhere,
+            and where do they get their power?
+          </p>
+          <p>
+            I&apos;m a scientist and engineer who loves data and making complex topics accessible,
+            and as an energy nerd I had my own questions. What does the data center ecosystem look
+            like in Canada? Where do these data centers get their energy? How do things differ
+            across provinces and territories?
+          </p>
+          <p>
+            I found a lot of resources that looked at these questions, but I couldn&apos;t find an
+            interactive map that pulled it all together, so I decided to build one! I stuck to
+            public information that isn&apos;t behind a paywall, so anyone can explore my data and
+            fact-check my sources.
+          </p>
+        </>
       ),
     },
     {
@@ -739,16 +767,23 @@ function Scrolly(props: {
       body: (
         <>
           <p>
-            AI runs in data centers: buildings full of computers that run day and night. Worldwide,
-            data centers used about <strong>1.5% of all electricity</strong> in 2024. The
-            International Energy Agency expects that to more than double by 2030, to about as much
-            as <span className="hl hl-pink">all of Japan uses today</span>. AI is the biggest
-            driver.
+            AI is growing fast and showing up in everyday life, from writing emails and searching
+            for jobs to vibe coding a website or doing research. It took off over the last few years
+            thanks to more powerful computer chips and better AI models.
           </p>
           <p>
-            Closer to home, York University researchers estimate that one average announced
-            Canadian data center (<strong>122 MW</strong>) would use as much electricity in a year as{" "}
-            <span className="hl hl-pink">49,000 to 78,000 Canadian homes</span>.
+            AI models need data centers to learn and to run. A data center is a building full of
+            computers and storage that run day and night. Think of all the books and research an AI
+            model learns from, and all the questions people ask it every day. A laptop couldn&apos;t
+            hold that, so it lives in data centers.
+          </p>
+          <p>
+            A typical AI-focused data center uses as much electricity as{" "}
+            <strong>100,000 households</strong>. The biggest ones being built today will use{" "}
+            <span className="hl hl-pink">20 times as much</span>. Closer to home, York University
+            researchers estimate that one average announced Canadian data center (
+            <strong>122 MW</strong>) would use as much electricity in a year as 49,000 to 78,000
+            Canadian homes.
           </p>
           <p className="york-source">
             Sources:{" "}
@@ -760,6 +795,80 @@ function Scrolly(props: {
               Carlo &amp; Rolheiser, York University (2026)
             </a>
             , section 2.2. The homes range assumes the data center runs at 50% to 80% of capacity.
+          </p>
+        </>
+      ),
+    },
+    {
+      mode: "power",
+      hideProjects: true,
+      fadeAll: true,
+      body: (
+        <>
+          <p>
+            Data centers need electricity to run, and the more servers they hold, the more they use.
+            The International Energy Agency found that data centers used about{" "}
+            <strong>1.5% of the world&apos;s electricity</strong> in 2024. It expects that to
+            roughly double to about 3% by 2030, slightly more than{" "}
+            <span className="hl hl-pink">all of Japan uses today</span>.
+          </p>
+          <p>
+            Most data centers running today are well under 100 MW. Canada&apos;s federal government
+            and the IEA call a site large-scale, or hyperscale, once it uses more than{" "}
+            <strong>100 MW</strong>, and many of the new AI builds are aiming for that size.
+          </p>
+          <p>
+            To meet this demand, companies are looking at many energy sources: renewables (wind,
+            solar, hydro), nuclear, natural gas and coal. The IEA expects renewables and natural gas
+            to meet most of the new demand. Companies can plug into the grid if one is close by and
+            has room, sign a deal with a nearby renewable project, or build their own power plant if
+            they&apos;re far from the grid.
+          </p>
+          <figure className="iea-figure">
+            <figcaption>
+              <strong>Sources of global electricity generation for data centres, Base Case, 2020-2035</strong>{" "}
+              (TWh)
+            </figcaption>
+            <img
+              src={`${import.meta.env.BASE_URL}images/iea-data-centre-electricity-sources-2020-2035.png`}
+              alt="Stacked area chart of electricity generation for data centres worldwide, 2020 to 2035, by source, rising from about 300 TWh to about 1,330 TWh."
+            />
+            <ul className="iea-legend">
+              <li><span style={{ background: "#76ddfe" }} />Coal</li>
+              <li><span style={{ background: "#6b9bdc" }} />Natural gas</li>
+              <li><span style={{ background: "#8ff5a8" }} />Nuclear</li>
+              <li><span style={{ background: "#3fbfb6" }} />Solar PV</li>
+              <li><span style={{ background: "#fff584" }} />Wind</li>
+              <li><span style={{ background: "#ffc773" }} />Other renewables</li>
+              <li><span style={{ background: "#f4733f" }} />Other</li>
+            </ul>
+            <p className="york-source">
+              Source:{" "}
+              <a href="https://www.iea.org/data-and-statistics/charts/sources-of-global-electricity-generation-for-data-centres-base-case-2020-2035" target="_blank" rel="noreferrer">
+                IEA (2025), Sources of global electricity generation for data centres, Base Case,
+                2020-2035, IEA, Paris
+              </a>
+              . Licence:{" "}
+              <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">
+                CC BY 4.0
+              </a>
+              .
+            </p>
+          </figure>
+          <p className="york-source">
+            Source:{" "}
+            <a href={ieaUrl} target="_blank" rel="noreferrer">
+              IEA, Energy and AI (2025)
+            </a>
+            ;{" "}
+            <a href="https://ised-isde.canada.ca/site/ised/en/enabling-large-scale-sovereign-ai-data-centres" target="_blank" rel="noreferrer">
+              ISED, large-scale AI data centres
+            </a>
+            ;{" "}
+            <a href={yorkUrl} target="_blank" rel="noreferrer">
+              York University (2026)
+            </a>
+            , Table A1: none of Canada&apos;s 194 running sites is 100 MW or more.
           </p>
         </>
       ),
