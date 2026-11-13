@@ -586,18 +586,15 @@ function App() {
       <ChartsSection prices={prices ?? []} />
 
       <section id="methods" className="about">
-        <h2>About me and methods</h2>
+        <h2>About my methods</h2>
         <div className="about-copy">
           <p>
-            You may have noticed it, AI is everywhere. It&apos;s in almost every news source I read,
-            and people have so many questions. How is AI being used? How do we regulate it? Why are
-            data centers being built everywhere, and where do they get their power?
-          </p>
-          <p>
-            I&apos;m a scientist and engineer who loves data and making complex topics accessible,
-            and as an energy nerd I had my own questions. What does the data center ecosystem look
-            like in Canada? Where do these data centers get their energy? How do things differ
-            across provinces and territories?
+            AI is everywhere. It&apos;s in almost every news source I read, and people have so many
+            questions. How is AI being used? How do we regulate it? Why are data centers being built
+            everywhere, and where do they get their power? I&apos;m a scientist and engineer who loves
+            data and making complex topics accessible, and I had my own questions. What does the data
+            center ecosystem look like in Canada? Where do these data centers get their energy? How do
+            trends differ across provinces and territories?
           </p>
           <p>
             I found a lot of resources that looked at these questions, but I couldn&apos;t find an
@@ -606,25 +603,18 @@ function App() {
             fact-check my sources.
           </p>
           <p>
-            AI is rapidly growing and being used in many aspects of everyday life, from writing
-            emails and searching for jobs to vibe coding a website or doing research. AI has
-            experienced a boom over the last few years due to improvements in computing power (e.g.
-            computer chips), and AI models. A data center is a building full of computers and storage
-            that AI companies use to train their models and run their systems.
-          </p>
-          <p>
             In my analysis, I pull together publicly accessible data from research papers, news
             articles, government sources, utility websites, company websites and more! An interesting
-            finding is that a good amount of data center information is behind paywalls, either
-            through a private data firm or a news article. And sometimes industry does not want to
-            publish a lot of information on their data centers, potentially due to proprietary
-            information. Key information gaps were water use and power sources: only 12 of the 125
-            sites I found share anything about cooling or water, and 98 don&apos;t say where their
-            power comes from.
+            finding is that a decent amount of data center information is behind paywalls, either
+            through a private data firm or a news article. Key information gaps were water use and
+            power sources. For example, only 12 of the 125 sites I found share anything about cooling
+            or water, and 98 don&apos;t say where their power comes from.
           </p>
           <p>
-            Sizes come straight from each source, and don&apos;t always measure the same thing. My list
-            and the York study are separate, so their totals differ.
+            A few notes on the data. Each map layer has its own notes and sources under its legend.
+            Sizes (MW) are what each source reports, and they don&apos;t always measure the same thing.
+            Some count only the computers, some the whole site, some the power plant next door, and
+            some only the first phase. All pins are approximate.
           </p>
         </div>
         <div className="sources">
@@ -632,6 +622,7 @@ function App() {
           <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6464099" target="_blank" rel="noreferrer">Carlo &amp; Rolheiser, York University (2026), data centers in Canada</a>
           <a href="https://www.iea.org/reports/energy-and-ai" target="_blank" rel="noreferrer">IEA, Energy and AI (2025)</a>
           <a href="https://www.iea.org/data-and-statistics/charts/sources-of-global-electricity-generation-for-data-centres-base-case-2020-2035" target="_blank" rel="noreferrer">IEA, Sources of global electricity generation for data centres (chart, CC BY 4.0)</a>
+          <a href="https://www.iea.org/data-and-statistics/charts/global-data-centre-electricity-consumption-by-equipment-base-case-2020-2030" target="_blank" rel="noreferrer">IEA, Global data centre electricity consumption, by equipment (chart, CC BY 4.0)</a>
           <a href="https://www.iea.org/news/ai-is-set-to-drive-surging-electricity-demand-from-data-centres-while-offering-the-potential-to-transform-how-the-energy-sector-works" target="_blank" rel="noreferrer">IEA news release on Energy and AI (2025)</a>
           <a href="https://angusreid.org/wp-content/uploads/2026/06/2026.06.01_AI_Policy_data_centres.pdf" target="_blank" rel="noreferrer">Angus Reid Institute, AI policy and data centres (2026)</a>
           <p className="sources-group">Government strategies and rules</p>
@@ -742,8 +733,19 @@ function Scrolly(props: {
       body: (
         <>
           <p>
-            Data centers aren&apos;t just used for AI. They&apos;ve been around for years to
-            run websites, email, online banking, streaming and cloud storage. In a York University
+            AI is rapidly growing and being used in many aspects of everyday life, from writing
+            emails and searching for jobs to vibe coding a website or doing research. AI has
+            experienced a boom over the last few years due to improvements in computing power (e.g.
+            computer chips), and AI models.
+          </p>
+          <p>
+            A data center is a building full of computers and storage that AI companies use to train
+            their models and run their systems. Data centers
+            aren&apos;t just used for AI. They&apos;ve been around for years to run websites, email,
+            online banking, streaming and cloud storage.
+          </p>
+          <p>
+            In a York University
             study (
             <a href={yorkUrl} target="_blank" rel="noreferrer">
               Carlo &amp; Rolheiser, 2026
@@ -781,6 +783,34 @@ function Scrolly(props: {
             expects renewable energy and natural gas will lead until 2035 due to their availability
             and lower costs (
             <a href="https://www.iea.org/news/ai-is-set-to-drive-surging-electricity-demand-from-data-centres-while-offering-the-potential-to-transform-how-the-energy-sector-works" target="_blank" rel="noreferrer">
+              IEA, 2025
+            </a>
+            ).
+          </p>
+        </>
+      ),
+    },
+    {
+      mode: "power",
+      hideProjects: true,
+      fadeAll: true,
+      backdrop: <IeaEquipmentChart />,
+      body: (
+        <>
+          <p>
+            So what is all that electricity used for? Most of it runs the servers, the computers
+            themselves. The IEA says servers use around 60% of the electricity in a modern data
+            center, and the rest goes to storage, network equipment, cooling and the building (
+            <a href="https://www.iea.org/reports/energy-and-ai/energy-demand-from-ai" target="_blank" rel="noreferrer">
+              IEA, 2025
+            </a>
+            ).
+          </p>
+          <p>
+            The fastest-growing part is accelerated servers, the AI chips. The IEA expects their
+            electricity use to grow about 30% a year to 2030, compared with about 9% for regular
+            servers (
+            <a href="https://www.iea.org/reports/energy-and-ai/energy-demand-from-ai" target="_blank" rel="noreferrer">
               IEA, 2025
             </a>
             ).
@@ -1135,6 +1165,40 @@ function IeaChart() {
         <a href="https://www.iea.org/data-and-statistics/charts/sources-of-global-electricity-generation-for-data-centres-base-case-2020-2035" target="_blank" rel="noreferrer">
           IEA (2025), Sources of global electricity generation for data centres, Base Case,
           2020-2035, IEA, Paris
+        </a>
+        . Licence:{" "}
+        <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">
+          CC BY 4.0
+        </a>
+        .
+      </p>
+    </figure>
+  );
+}
+
+function IeaEquipmentChart() {
+  return (
+    <figure className="iea-figure">
+      <figcaption>
+        <strong>Global data centre electricity consumption, by equipment, Base Case, 2020-2030</strong>{" "}
+        (TWh)
+      </figcaption>
+      <img
+        src={`${import.meta.env.BASE_URL}images/iea-data-centre-electricity-by-equipment-2020-2030.png`}
+        alt="Stacked area chart of global data center electricity use by equipment, 2020 to 2030, rising from about 270 TWh to about 945 TWh, with accelerated servers growing fastest."
+      />
+      <ul className="iea-legend">
+        <li><span style={{ background: "#77deff" }} />Accelerated servers</li>
+        <li><span style={{ background: "#6e9bde" }} />Conventional servers</li>
+        <li><span style={{ background: "#8ef6af" }} />Other IT equipment</li>
+        <li><span style={{ background: "#40c2b9" }} />Cooling</li>
+        <li><span style={{ background: "#fff783" }} />Other infrastructure</li>
+      </ul>
+      <p className="york-source">
+        Source:{" "}
+        <a href="https://www.iea.org/data-and-statistics/charts/global-data-centre-electricity-consumption-by-equipment-base-case-2020-2030" target="_blank" rel="noreferrer">
+          IEA (2025), Global data centre electricity consumption, by equipment, Base Case,
+          2020-2030, IEA, Paris
         </a>
         . Licence:{" "}
         <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">
