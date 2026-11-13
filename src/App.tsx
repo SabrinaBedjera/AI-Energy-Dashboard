@@ -1840,6 +1840,7 @@ function MapLegend({ fill, layers }: { fill: FillMode; layers: Layers }) {
               </span>
             ))}
           </div>
+          <small>NRCan, compiled 2017, may miss newer stations.</small>
         </div>
       )}
       {layers.water && (
