@@ -393,8 +393,11 @@ function App() {
 
       <section className="map-experience explorer">
         <div className="map-controls explorer-controls">
+          <div className="control-block">
+            <h3>Data centers</h3>
+            <div className="control-row">
           <div className="control-group" aria-label="Status">
-            <span>Show</span>
+            <span>Status</span>
             <div className="chips">
               {(
                 [
@@ -413,24 +416,6 @@ function App() {
                 </button>
               ))}
             </div>
-          </div>
-          <div className="filters">
-            <label>
-              <span>Province</span>
-              <select
-                value={provinceFilter}
-                onChange={(event) => setProvinceFilter(event.target.value)}
-              >
-                <option value="All">All provinces</option>
-                {Object.entries(codeToProvince)
-                  .filter(([code]) => projects.some((project) => project.province === code))
-                  .map(([code, name]) => (
-                    <option key={code} value={code}>
-                      {name}
-                    </option>
-                  ))}
-              </select>
-            </label>
           </div>
           <div className="control-group" aria-label="Size">
             <span>Size</span>
@@ -469,8 +454,32 @@ function App() {
             </div>
             <small className="chip-note">AI includes sites that do AI along with other uses. Not stated means the source doesn&apos;t say.</small>
           </div>
-          <div className="control-group show-on-map" aria-label="Show on map">
-            <span>Show on map</span>
+            </div>
+            <ProjectLegend shown={filteredProjects.length} total={projects.length} />
+          </div>
+          <div className="control-block">
+            <h3>Map</h3>
+            <div className="control-row">
+          <div className="filters">
+            <label>
+              <span>Province</span>
+              <select
+                value={provinceFilter}
+                onChange={(event) => setProvinceFilter(event.target.value)}
+              >
+                <option value="All">All provinces</option>
+                {Object.entries(codeToProvince)
+                  .filter(([code]) => projects.some((project) => project.province === code))
+                  .map(([code, name]) => (
+                    <option key={code} value={code}>
+                      {name}
+                    </option>
+                  ))}
+              </select>
+            </label>
+          </div>
+          <div className="control-group" aria-label="Colour provinces by">
+            <span>Colour the map by</span>
             <div className="chips">
               {(
                 [
@@ -487,6 +496,11 @@ function App() {
                   {label}
                 </button>
               ))}
+            </div>
+          </div>
+          <div className="control-group" aria-label="Add layers">
+            <span>Add to the map</span>
+            <div className="chips">
               {(
                 [
                   ["people", "Where people live"],
@@ -505,6 +519,8 @@ function App() {
                   {label}
                 </button>
               ))}
+            </div>
+          </div>
             </div>
           </div>
         </div>
@@ -535,7 +551,7 @@ function App() {
             {!panelOpen && (
               <p className="map-hint">Click a dot or a province for details.</p>
             )}
-            <MapLegend fill={fill} layers={layers} shown={filteredProjects.length} total={projects.length} />
+            <MapLegend fill={fill} layers={layers} />
           </div>
 
           {panelOpen && (
@@ -607,71 +623,41 @@ function App() {
             power comes from.
           </p>
           <p>
-            A few notes on the data. Sizes (MW) are what each source reports, and they don&apos;t
-            always measure the same thing, so click a project on the map to see what its number
-            means. My list and the York study are separate datasets, so their totals don&apos;t match.
-            All pins are approximate. The energy view shows each province&apos;s 2025 electricity mix,
-            not what a data center actually uses. Power lines are from NRCan CanVec, and being near a
-            line doesn&apos;t mean a data center connects to it. Where people live is from the 2021
-            Census. Power prices are Hydro-Québec&apos;s 2025 estimates for a 50 MW customer, one city
-            per province, before taxes.
+            Sizes come straight from each source, and don&apos;t always measure the same thing. My list
+            and the York study are separate, so their totals differ.
           </p>
         </div>
         <div className="sources">
-          <p>Sources:</p>
-          <a
-            href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6464099"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Carlo &amp; Rolheiser, York University, 2026 ↗
-          </a>
-          <a href="https://majorprojects.alberta.ca/" target="_blank" rel="noreferrer">
-            Government of Alberta Major Projects ↗
-          </a>
-          <a
-            href="https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=2510001501"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Statistics Canada, Table 25-10-0015-01 ↗
-          </a>
-          <a
-            href="https://open.canada.ca/data/en/dataset/92dbea79-f644-4a62-b25e-8eb993ca0264"
-            target="_blank"
-            rel="noreferrer"
-          >
-            NRCan CanVec 1:250K power lines ↗
-          </a>
-          <a
-            href="https://geoappext.nrcan.gc.ca/arcgis/rest/services/Energy/CERP_EN/MapServer"
-            target="_blank"
-            rel="noreferrer"
-          >
-            NRCan Clean Energy Resources and Projects ↗
-          </a>
-          <a
-            href="https://geoappext.nrcan.gc.ca/arcgis/rest/services/NRCAN/AtlasWatershedsEN/MapServer"
-            target="_blank"
-            rel="noreferrer"
-          >
-            NRCan Atlas of Canada, drainage areas ↗
-          </a>
-          <a
-            href="https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=9810000701"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Statistics Canada, Table 98-10-0007-01 (2021 Census) ↗
-          </a>
-          <a
-            href="https://www.hydroquebec.com/data/documents-donnees/pdf/comparaison-prix-2025-en.pdf"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Hydro-Québec, Comparison of Electricity Prices 2025 ↗
-          </a>
-          <span>Individual project sources are linked in the map.</span>
+          <p className="sources-group">Reports and research</p>
+          <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6464099" target="_blank" rel="noreferrer">Carlo &amp; Rolheiser, York University (2026), data centers in Canada</a>
+          <a href="https://www.iea.org/reports/energy-and-ai" target="_blank" rel="noreferrer">IEA, Energy and AI (2025)</a>
+          <a href="https://www.iea.org/data-and-statistics/charts/sources-of-global-electricity-generation-for-data-centres-base-case-2020-2035" target="_blank" rel="noreferrer">IEA, Sources of global electricity generation for data centres (chart, CC BY 4.0)</a>
+          <a href="https://www.iea.org/news/ai-is-set-to-drive-surging-electricity-demand-from-data-centres-while-offering-the-potential-to-transform-how-the-energy-sector-works" target="_blank" rel="noreferrer">IEA news release on Energy and AI (2025)</a>
+          <a href="https://angusreid.org/wp-content/uploads/2026/06/2026.06.01_AI_Policy_data_centres.pdf" target="_blank" rel="noreferrer">Angus Reid Institute, AI policy and data centres (2026)</a>
+          <p className="sources-group">Government strategies and rules</p>
+          <a href="https://ised-isde.canada.ca/site/ised/en/canadian-sovereign-ai-compute-strategy" target="_blank" rel="noreferrer">Government of Canada, Canadian Sovereign AI Compute Strategy</a>
+          <a href="https://ised-isde.canada.ca/site/ised/en/data-centres-powering-canadas-digital-future-responsibly/canadas-responsible-data-centre-development-principles" target="_blank" rel="noreferrer">Government of Canada, Responsible Data Centre Development Principles (signed by 45 companies)</a>
+          <a href="https://www.alberta.ca/artificial-intelligence-data-centres-strategy" target="_blank" rel="noreferrer">Government of Alberta, AI Data Centres Strategy</a>
+          <a href="https://www.alberta.ca/datacentres/grid" target="_blank" rel="noreferrer">Government of Alberta, data centres and the grid</a>
+          <a href="https://majorprojects.alberta.ca/" target="_blank" rel="noreferrer">Government of Alberta, Major Projects</a>
+          <a href="https://news.gov.bc.ca/releases/2026ECS0005-000095" target="_blank" rel="noreferrer">Government of BC, power for AI and data centers</a>
+          <a href="https://www.bnnbloomberg.ca/business/artificial-intelligence/2026/08/27/saskatchewan-says-new-data-centres-must-be-canadian-owned-supply-their-own-power/" target="_blank" rel="noreferrer">Saskatchewan Data Centre Framework (CTV News via BNN Bloomberg)</a>
+          <a href="https://www.blg.com/en/insights/2026/07/data-centre-regulation-in-quebec-from-honeyed-promise-to-iron-control" target="_blank" rel="noreferrer">Quebec, Bill 69 (BLG summary)</a>
+          <a href="https://www.torys.com/en/our-latest-thinking/publications/2025/12/key-takeaways-and-next-steps-on-new-energy-law" target="_blank" rel="noreferrer">Ontario, Bill 40 (Torys summary)</a>
+          <a href="https://web2.gov.mb.ca/bills/43-3/pdf/b039.pdf" target="_blank" rel="noreferrer">Manitoba, Bill 39</a>
+          <p className="sources-group">Utilities and companies</p>
+          <a href="https://www.aeso.ca/grid/connecting-to-the-grid/large-load-projects" target="_blank" rel="noreferrer">AESO, large load projects</a>
+          <a href="https://www.hydroquebec.com/data/documents-donnees/pdf/comparaison-prix-2025-en.pdf" target="_blank" rel="noreferrer">Hydro-Québec, Comparison of Electricity Prices 2025</a>
+          <a href="https://www.telus.com/en/about/news-and-events/media-releases/TELUS-and-Government-of-Canada-advance-work-to-scale-Canadas-sovereign-AI-infrastructure" target="_blank" rel="noreferrer">TELUS, sovereign AI infrastructure</a>
+          <a href="https://cfjctoday.com/2025/05/28/bell-announces-plans-to-open-six-ai-data-centres-in-b-c-as-part-of-bell-ai-fabric/" target="_blank" rel="noreferrer">CFJC Today, Bell AI Fabric in BC</a>
+          <a href="https://www.cp24.com/news/canada/2026/10/16/everwind-says-10b-ai-data-centre-proposal-largest-private-investment-in-ns-history/" target="_blank" rel="noreferrer">CP24, EverWind data center proposal</a>
+          <p className="sources-group">Maps and data</p>
+          <a href="https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=2510001501" target="_blank" rel="noreferrer">Statistics Canada, electricity generation, Table 25-10-0015-01</a>
+          <a href="https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=9810000701" target="_blank" rel="noreferrer">Statistics Canada, 2021 Census population, Table 98-10-0007-01</a>
+          <a href="https://open.canada.ca/data/en/dataset/92dbea79-f644-4a62-b25e-8eb993ca0264" target="_blank" rel="noreferrer">NRCan CanVec, power lines</a>
+          <a href="https://geoappext.nrcan.gc.ca/arcgis/rest/services/Energy/CERP_EN/MapServer" target="_blank" rel="noreferrer">NRCan, Clean Energy Resources and Projects</a>
+          <a href="https://geoappext.nrcan.gc.ca/arcgis/rest/services/NRCAN/AtlasWatershedsEN/MapServer" target="_blank" rel="noreferrer">NRCan Atlas of Canada, drainage areas</a>
+          <span>Each data center&apos;s own source is linked on the map.</span>
         </div>
         <footer>
           <span>Personal project, views my own.</span>
@@ -752,9 +738,7 @@ function Scrolly(props: {
       ),
     },
     {
-      mode: "power",
-      hideProjects: true,
-      fadeAll: true,
+      mode: "projects",
       body: (
         <>
           <p>
@@ -885,7 +869,7 @@ function Scrolly(props: {
       ),
     },
     {
-      mode: "capacity",
+      mode: "projects",
       body: (
         <p>
           Those numbers come from a commercial database I can&apos;t access, so I can&apos;t see
@@ -1194,8 +1178,7 @@ function TodayVsPlanned() {
           Carlo &amp; Rolheiser, York University (2026)
         </a>
         , Tables A1 and A2, Figure 3b, so these are different from my own list. Planned = announced
-        or under construction. Over 100 MW is what the federal government (ISED) and the IEA call
-        large-scale, or hyperscale.
+        or under construction. Over 100 MW is what the IEA calls hyperscale.
       </caption>
     </table>
   );
@@ -1410,6 +1393,12 @@ function SvgMap({
 
   // User zoom (explorer only): buttons, double-click, Ctrl/⌘ + scroll, drag to pan
   const svgRef = useRef<SVGSVGElement | null>(null);
+  const [tip, setTip] = useState<{ text: string; x: number; y: number } | null>(null);
+  const showTip = (event: React.MouseEvent<SVGElement>, text: string) => {
+    const box = (event.currentTarget as SVGElement).ownerSVGElement?.parentElement?.getBoundingClientRect();
+    if (!box) return;
+    setTip({ text, x: event.clientX - box.left + 14, y: event.clientY - box.top + 14 });
+  };
   const [view, setView] = useState({ k: 1, x: 0, y: 0 });
   const drag = useRef<{ x: number; y: number; vx: number; vy: number } | null>(null);
   useEffect(() => setView({ k: 1, x: 0, y: 0 }), [focusProvince]);
@@ -1474,6 +1463,7 @@ function SvgMap({
   };
 
   return (
+    <>
     <svg
       ref={svgRef}
       className={`map-canvas svg-map ${zoomable ? "zoomable" : ""}`}
@@ -1519,13 +1509,16 @@ function SvgMap({
       </g>
       {layers.people && (
         <g className="svg-people">
-          {population?.features?.filter((feature: any) => feature.properties.density_per_km2 >= 10).map((feature: any) => {
+          {population?.features?.map((feature: any) => {
             const p = feature.properties;
+            const tip = `${p.name}: ${p.density_per_km2.toLocaleString("en-CA")} people per km², ${p.population_2021.toLocaleString("en-CA")} people (2021 Census)`;
             return (
               <path
                 key={p.cd_uid}
                 d={pathGenerator(feature) ?? undefined}
                 fill={peopleColor(p.density_per_km2)}
+                onMouseMove={(event) => showTip(event, tip)}
+                onMouseLeave={() => setTip(null)}
               >
                 <title>
                   {`${p.name}: ${p.density_per_km2.toLocaleString("en-CA")} people per km² (${p.population_2021.toLocaleString("en-CA")} people, 2021 Census)`}
@@ -1743,12 +1736,18 @@ function SvgMap({
         </foreignObject>
       )}
     </svg>
+    {tip && (
+      <div className="map-tip" style={{ left: tip.x, top: tip.y }}>
+        {tip.text}
+      </div>
+    )}
+    </>
   );
 }
 
-function MapLegend({ fill, layers, shown, total }: { fill: FillMode; layers: Layers; shown: number; total: number }) {
+function ProjectLegend({ shown, total }: { shown: number; total: number }) {
   return (
-    <div className="map-legend">
+    <div className="project-legend-row">
       <div className="legend-block">
         <p>
           Data center projects: {total} found in public sources
@@ -1771,12 +1770,19 @@ function MapLegend({ fill, layers, shown, total }: { fill: FillMode; layers: Lay
             Outline: lower confidence
           </span>
         </div>
-        <small>Dot size = reported MW. All pins are approximate.</small>
+        <small>A bigger dot means more power (MW). Sites that don&apos;t publish a size get the smallest dot. All pins are approximate.</small>
       </div>
+    </div>
+  );
+}
+
+function MapLegend({ fill, layers }: { fill: FillMode; layers: Layers }) {
+  return (
+    <div className="map-legend">
 
       {fill === "capacity" && (
         <div className="legend-block">
-          <p>Planned MW by province (York University estimate)</p>
+          <p>Planned MW by province (York University estimate, separate from my list of dots)</p>
           <div className="capacity-scale">
             {[
               ["#e8e5df", "Not disclosed"],
@@ -1804,21 +1810,21 @@ function MapLegend({ fill, layers, shown, total }: { fill: FillMode; layers: Lay
               </span>
             ))}
           </div>
-          <small>Teal = cleaner grid, pink = more fossil fuels. Statistics Canada.</small>
+          <small>Teal = cleaner grid, pink = more fossil fuels. This is each province&apos;s 2025 electricity mix (Statistics Canada), not what a data center actually uses.</small>
         </div>
       )}
       {layers.people && (
         <div className="legend-block">
           <p>People per km², 2021 Census</p>
           <div className="capacity-scale">
-            {peopleColors.slice(2).map((color, index) => (
+            {peopleColors.map((color, index) => (
               <span key={color}>
                 <i style={{ background: color }} />
-                {peopleBands[index + 2]}
+                {peopleBands[index]}
               </span>
             ))}
           </div>
-          <small>Statistics Canada, by census division. Areas under 10 people per km² are left clear. Hover an area for its number.</small>
+          <small>All 293 census divisions, Statistics Canada 2021 Census. Hover an area for its number.</small>
         </div>
       )}
       {fill === "price" && (
@@ -1851,7 +1857,7 @@ function MapLegend({ fill, layers, shown, total }: { fill: FillMode; layers: Lay
               Transmission lines (NRCan CanVec)
             </span>
           </div>
-          <small>Being near a line does not mean a project connects to it.</small>
+          <small>NRCan CanVec. Being near a line does not mean a data center connects to it.</small>
         </div>
       )}
       {layers.clean && (

@@ -2180,3 +2180,37 @@ rect.york-planned {
   letter-spacing: normal !important;
   font-size: 15px !important;
 }
+.map-tip {
+  position: absolute; z-index: 5; pointer-events: none; max-width: 280px;
+  background: #fffdf8; border: 1px solid var(--line); padding: 6px 9px;
+  font-family: var(--serif); font-size: 15px; color: var(--ink); line-height: 1.35;
+}
+.svg-people path:not(.people-province-outline):hover { stroke: var(--pink); stroke-width: 1.5; }
+
+/* Explorer controls: two labelled blocks, project legend right under the data center filters */
+.explorer .explorer-controls { display: block; padding: 0; }
+.explorer .control-block { padding: 14px 18px; border-bottom: 1px solid var(--line); }
+.explorer .control-block:last-child { border-bottom: 0; }
+.explorer .control-block h3 { margin: 0 0 8px; font-size: 18px; font-weight: 600; color: var(--ink); }
+.explorer .control-row { display: flex; flex-wrap: wrap; gap: 12px 28px; align-items: flex-start; }
+.explorer .control-row .control-group, .explorer .control-row .filters { padding: 0; border: 0; margin: 0; }
+.explorer .project-legend-row { margin-top: 12px; }
+.explorer .project-legend-row p { margin: 0 0 6px; font-size: 15px; font-weight: 600; }
+.explorer .project-legend-row .project-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+.explorer .project-legend-row span { display: flex; align-items: center; gap: 7px; font-size: 15px; }
+.explorer .project-legend-row i { width: 13px; height: 13px; border-radius: 50%; border: 1px solid rgba(23,45,73,.3); display: inline-block; }
+.explorer .project-legend-row .confidence-key i { background: transparent; border: 1.5px solid var(--ink); }
+.explorer .project-legend-row small { display: block; margin-top: 6px; font-size: 14px; color: var(--muted); }
+.explorer .map-legend:empty { display: none; }
+.about .sources p.sources-group { margin: 16px 0 4px; }
+/* The map keeps its own height now that the controls are taller */
+.map-experience.explorer { height: auto; min-height: 0; }
+.explorer .explorer-stage { flex: none; }
+.explorer .explorer-map { min-height: 0; }
+.explorer .svg-map { flex: none; height: min(78vh, 720px); }
+.explorer .explorer-stage.with-panel .detail-drawer { max-height: calc(min(78vh, 720px) + 140px); overflow-y: auto; }
+.explorer .control-row { gap: 10px 28px; }
+.explorer .project-legend-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 20px; }
+.explorer .project-legend-row .legend-block { display: contents; }
+.explorer .project-legend-row p { margin: 0; }
+.explorer .project-legend-row small { margin: 0; }
