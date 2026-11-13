@@ -432,8 +432,8 @@ function App() {
               ))}
             </div>
           </div>
-          <div className="control-group" aria-label="Use">
-            <span>Use</span>
+          <div className="control-group" aria-label="Data center focus">
+            <span>Data center focus</span>
             <div className="chips">
               {(
                 [
