@@ -793,6 +793,39 @@ function Scrolly(props: {
       ),
     },
     {
+      mode: "sitesPlanned",
+      hideProjects: true,
+      body: (
+        <>
+          <p>
+            The new ones are much bigger too. Canada&apos;s federal government and the IEA treat a
+            data center as large-scale, or hyperscale, when it uses <strong>more than 100 MW</strong>.
+            None of the 194 running in Canada reach that today.{" "}
+            <span className="hl hl-pink">116 of the planned ones do.</span>
+          </p>
+          <p>
+            There&apos;s no official line, though. York uses 50 MW: by that measure{" "}
+            <strong>5</strong> are running and <strong>159</strong> are planned.
+          </p>
+          <p className="york-source">
+            Sources:{" "}
+            <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6464099" target="_blank" rel="noreferrer">
+              York University (2026)
+            </a>
+            , Table A1;{" "}
+            <a href="https://ised-isde.canada.ca/site/ised/en/enabling-large-scale-sovereign-ai-data-centres" target="_blank" rel="noreferrer">
+              ISED
+            </a>
+            ;{" "}
+            <a href="https://www.iea.org/topics/artificial-intelligence" target="_blank" rel="noreferrer">
+              IEA
+            </a>
+            .
+          </p>
+        </>
+      ),
+    },
+    {
       mode: "capacity",
       focus: "Alberta",
       hideProjects: true,
@@ -892,6 +925,40 @@ function Scrolly(props: {
           <span className="hl hl-pink">Wonder Valley</span> are planning their own power plants.
           Its first phase alone is a 1.4 GW gas and geothermal system.
         </p>
+      ),
+    },
+    {
+      mode: "projects",
+      hideProjects: true,
+      fadeAll: true,
+      body: (
+        <>
+          <p>
+            Canadians are wary. In a May 2026 Angus Reid survey,{" "}
+            <span className="hl hl-pink">68% said they would oppose</span> a large AI data center
+            within a few blocks of their home, and <strong>15%</strong> would support one.{" "}
+            <strong>67%</strong> said these sites would be bad for energy and environmental
+            sustainability.
+          </p>
+          <p>
+            Companies are making promises. <strong>45</strong> of them, including Amazon, Google,
+            Microsoft, Meta, OpenAI and Anthropic, have signed Canada&apos;s Responsible Data Centre
+            Development Principles: leave lasting local benefits, don&apos;t shift electricity costs to
+            Canadians, limit and report water use, be open about local impacts, and bring value to
+            Canada. The principles don&apos;t say they are binding.
+          </p>
+          <p className="york-source">
+            Sources:{" "}
+            <a href="https://angusreid.org/wp-content/uploads/2026/06/2026.06.01_AI_Policy_data_centres.pdf" target="_blank" rel="noreferrer">
+              Angus Reid Institute
+            </a>{" "}
+            (online survey, May 7 to 11, 2026, 1,803 adults);{" "}
+            <a href="https://ised-isde.canada.ca/site/ised/en/data-centres-powering-canadas-digital-future-responsibly/canadas-responsible-data-centre-development-principles" target="_blank" rel="noreferrer">
+              ISED
+            </a>
+            .
+          </p>
+        </>
       ),
     },
     {
