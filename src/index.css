@@ -2288,3 +2288,24 @@ rect.york-planned {
 .hero-nav span { color: var(--muted); }
 .hero-nav a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--pink); text-underline-offset: 4px; }
 #story, #explore, #charts, #methods { scroll-margin-top: 16px; }
+/* Legend under the map, not on top of it; province/project panel scrolls on its own (Babs, Nov 13) */
+.explorer.side-layout .map-legend {
+  position: static !important;
+  left: auto !important; bottom: auto !important;
+  max-width: none; max-height: none; overflow: visible;
+  display: flex; flex-wrap: wrap; gap: 14px 36px;
+  border: 0 !important; border-top: 1px solid var(--line) !important;
+  padding: 14px 18px;
+}
+.explorer.side-layout .map-legend .legend-block { min-width: 220px; max-width: 360px; flex: 1 1 260px; }
+.explorer.side-layout .map-legend .legend-block + .legend-block { margin-top: 0; }
+.explorer.side-layout .explorer-stage.with-panel { align-items: stretch; }
+.explorer.side-layout .explorer-stage.with-panel .detail-drawer {
+  contain: size; /* panel takes the map's height and scrolls inside it */
+  overflow-y: auto; overscroll-behavior: contain;
+}
+.explorer.side-layout .map-legend { min-height: 0; }
+.explorer.side-layout .map-legend:not(:has(.legend-block)) { display: none; }
+/* With the panel open, the map fills the space next to it instead of leaving a gap */
+.explorer.side-layout .explorer-stage.with-panel .explorer-map { height: 100%; }
+.explorer.side-layout .explorer-stage.with-panel .svg-map { aspect-ratio: auto; flex: 1 1 0; height: auto; min-height: 420px; }
