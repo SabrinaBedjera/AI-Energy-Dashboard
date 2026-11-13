@@ -876,8 +876,11 @@ function Scrolly(props: {
         <p>
           Those numbers come from a commercial database I can&apos;t access, so I can&apos;t see
           which sites they are. I wanted the projects anyone can check. I looked for every data
-          center project in Canada I could trace to a public source and found{" "}
-          <strong>{props.projects.length}</strong>. The{" "}
+          center in Canada I could trace to a public source and found{" "}
+          <strong>{props.projects.length}</strong>. Of those,{" "}
+          <strong>{props.projects.length - props.plannedCount}</strong> are already running, most of
+          them small buildings in Toronto, Montreal, Vancouver and Calgary listed on the
+          operators&apos; own websites. The{" "}
           <span className="hl hl-pink">pink dots</span> are still plans, the{" "}
           <span className="hl hl-yellow">yellow</span> ones are being built, and the{" "}
           <span className="hl hl-white">white</span> ones are already running.{" "}
