@@ -619,33 +619,41 @@ function App() {
           </p>
         </div>
         <div className="sources">
-          <p className="sources-group">Reports and research</p>
-          <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6464099" target="_blank" rel="noreferrer">Carlo &amp; Rolheiser, York University (2026), data centers in Canada</a>
-          <a href="https://www.iea.org/reports/energy-and-ai" target="_blank" rel="noreferrer">IEA, Energy and AI (2025)</a>
-          <a href="https://www.iea.org/data-and-statistics/charts/sources-of-global-electricity-generation-for-data-centres-base-case-2020-2035" target="_blank" rel="noreferrer">IEA, Sources of global electricity generation for data centres (chart, CC BY 4.0)</a>
-          <a href="https://www.iea.org/data-and-statistics/charts/global-data-centre-electricity-consumption-by-equipment-base-case-2020-2030" target="_blank" rel="noreferrer">IEA, Global data centre electricity consumption, by equipment (chart, CC BY 4.0)</a>
-          <a href="https://www.iea.org/news/ai-is-set-to-drive-surging-electricity-demand-from-data-centres-while-offering-the-potential-to-transform-how-the-energy-sector-works" target="_blank" rel="noreferrer">IEA news release on Energy and AI (2025)</a>
-          <a href="https://angusreid.org/wp-content/uploads/2026/06/2026.06.01_AI_Policy_data_centres.pdf" target="_blank" rel="noreferrer">Angus Reid Institute, AI policy and data centres (2026)</a>
-          <p className="sources-group">Government strategies and rules</p>
-          <a href="https://ised-isde.canada.ca/site/ised/en/data-centres-powering-canadas-digital-future-responsibly/canadas-responsible-data-centre-development-principles" target="_blank" rel="noreferrer">Government of Canada, Responsible Data Centre Development Principles (signed by 45 companies)</a>
-          <a href="https://www.alberta.ca/artificial-intelligence-data-centres-strategy" target="_blank" rel="noreferrer">Government of Alberta, AI Data Centres Strategy</a>
-          <a href="https://majorprojects.alberta.ca/" target="_blank" rel="noreferrer">Government of Alberta, Major Projects</a>
-          <a href="https://news.gov.bc.ca/releases/2026ECS0005-000095" target="_blank" rel="noreferrer">Government of BC, power for AI and data centers</a>
-          <a href="https://www.blg.com/en/insights/2026/07/data-centre-regulation-in-quebec-from-honeyed-promise-to-iron-control" target="_blank" rel="noreferrer">Quebec, Bill 69 (BLG summary)</a>
-          <a href="https://www.torys.com/en/our-latest-thinking/publications/2025/12/key-takeaways-and-next-steps-on-new-energy-law" target="_blank" rel="noreferrer">Ontario, Bill 40 (Torys summary)</a>
-          <a href="https://web2.gov.mb.ca/bills/43-3/pdf/b039.pdf" target="_blank" rel="noreferrer">Manitoba, Bill 39</a>
-          <p className="sources-group">Utilities and companies</p>
-          <a href="https://www.aeso.ca/grid/connecting-to-the-grid/large-load-projects" target="_blank" rel="noreferrer">AESO, large load projects</a>
-          <a href="https://www.hydroquebec.com/data/documents-donnees/pdf/comparaison-prix-2025-en.pdf" target="_blank" rel="noreferrer">Hydro-Québec, Comparison of Electricity Prices 2025</a>
-          <a href="https://www.telus.com/en/about/news-and-events/media-releases/TELUS-and-Government-of-Canada-advance-work-to-scale-Canadas-sovereign-AI-infrastructure" target="_blank" rel="noreferrer">TELUS, sovereign AI infrastructure</a>
-          <a href="https://cfjctoday.com/2025/05/28/bell-announces-plans-to-open-six-ai-data-centres-in-b-c-as-part-of-bell-ai-fabric/" target="_blank" rel="noreferrer">CFJC Today, Bell AI Fabric in BC</a>
-          <a href="https://www.cp24.com/news/canada/2026/10/16/everwind-says-10b-ai-data-centre-proposal-largest-private-investment-in-ns-history/" target="_blank" rel="noreferrer">CP24, EverWind data center proposal</a>
-          <p className="sources-group">Maps and data</p>
-          <a href="https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=2510001501" target="_blank" rel="noreferrer">Statistics Canada, electricity generation, Table 25-10-0015-01</a>
-          <a href="https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=9810000701" target="_blank" rel="noreferrer">Statistics Canada, 2021 Census population, Table 98-10-0007-01</a>
-          <a href="https://open.canada.ca/data/en/dataset/92dbea79-f644-4a62-b25e-8eb993ca0264" target="_blank" rel="noreferrer">NRCan CanVec, power lines</a>
-          <a href="https://geoappext.nrcan.gc.ca/arcgis/rest/services/Energy/CERP_EN/MapServer" target="_blank" rel="noreferrer">NRCan, Clean Energy Resources and Projects</a>
-          <a href="https://geoappext.nrcan.gc.ca/arcgis/rest/services/NRCAN/AtlasWatershedsEN/MapServer" target="_blank" rel="noreferrer">NRCan Atlas of Canada, drainage areas</a>
+          <div className="sources-col">
+            <p className="sources-group">Reports and research</p>
+            <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6464099" target="_blank" rel="noreferrer">Carlo &amp; Rolheiser, York University (2026), data centers in Canada</a>
+            <a href="https://www.iea.org/reports/energy-and-ai" target="_blank" rel="noreferrer">IEA, Energy and AI (2025)</a>
+            <a href="https://www.iea.org/data-and-statistics/charts/sources-of-global-electricity-generation-for-data-centres-base-case-2020-2035" target="_blank" rel="noreferrer">IEA, Sources of global electricity generation for data centres (chart, CC BY 4.0)</a>
+            <a href="https://www.iea.org/data-and-statistics/charts/global-data-centre-electricity-consumption-by-equipment-base-case-2020-2030" target="_blank" rel="noreferrer">IEA, Global data centre electricity consumption, by equipment (chart, CC BY 4.0)</a>
+            <a href="https://www.iea.org/news/ai-is-set-to-drive-surging-electricity-demand-from-data-centres-while-offering-the-potential-to-transform-how-the-energy-sector-works" target="_blank" rel="noreferrer">IEA news release on Energy and AI (2025)</a>
+            <a href="https://angusreid.org/wp-content/uploads/2026/06/2026.06.01_AI_Policy_data_centres.pdf" target="_blank" rel="noreferrer">Angus Reid Institute, AI policy and data centres (2026)</a>
+          </div>
+          <div className="sources-col">
+            <p className="sources-group">Government strategies and rules</p>
+            <a href="https://ised-isde.canada.ca/site/ised/en/data-centres-powering-canadas-digital-future-responsibly/canadas-responsible-data-centre-development-principles" target="_blank" rel="noreferrer">Government of Canada, Responsible Data Centre Development Principles (signed by 45 companies)</a>
+            <a href="https://www.alberta.ca/artificial-intelligence-data-centres-strategy" target="_blank" rel="noreferrer">Government of Alberta, AI Data Centres Strategy</a>
+            <a href="https://majorprojects.alberta.ca/" target="_blank" rel="noreferrer">Government of Alberta, Major Projects</a>
+            <a href="https://news.gov.bc.ca/releases/2026ECS0005-000095" target="_blank" rel="noreferrer">Government of BC, power for AI and data centers</a>
+            <a href="https://www.blg.com/en/insights/2026/07/data-centre-regulation-in-quebec-from-honeyed-promise-to-iron-control" target="_blank" rel="noreferrer">Quebec, Bill 69 (BLG summary)</a>
+            <a href="https://www.torys.com/en/our-latest-thinking/publications/2025/12/key-takeaways-and-next-steps-on-new-energy-law" target="_blank" rel="noreferrer">Ontario, Bill 40 (Torys summary)</a>
+            <a href="https://web2.gov.mb.ca/bills/43-3/pdf/b039.pdf" target="_blank" rel="noreferrer">Manitoba, Bill 39</a>
+          </div>
+          <div className="sources-col">
+            <p className="sources-group">Utilities and companies</p>
+            <a href="https://www.aeso.ca/grid/connecting-to-the-grid/large-load-projects" target="_blank" rel="noreferrer">AESO, large load projects</a>
+            <a href="https://www.hydroquebec.com/data/documents-donnees/pdf/comparaison-prix-2025-en.pdf" target="_blank" rel="noreferrer">Hydro-Québec, Comparison of Electricity Prices 2025</a>
+            <a href="https://www.telus.com/en/about/news-and-events/media-releases/TELUS-and-Government-of-Canada-advance-work-to-scale-Canadas-sovereign-AI-infrastructure" target="_blank" rel="noreferrer">TELUS, sovereign AI infrastructure</a>
+            <a href="https://cfjctoday.com/2025/05/28/bell-announces-plans-to-open-six-ai-data-centres-in-b-c-as-part-of-bell-ai-fabric/" target="_blank" rel="noreferrer">CFJC Today, Bell AI Fabric in BC</a>
+            <a href="https://www.cp24.com/news/canada/2026/10/16/everwind-says-10b-ai-data-centre-proposal-largest-private-investment-in-ns-history/" target="_blank" rel="noreferrer">CP24, EverWind data center proposal</a>
+          </div>
+          <div className="sources-col">
+            <p className="sources-group">Maps and data</p>
+            <a href="https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=2510001501" target="_blank" rel="noreferrer">Statistics Canada, electricity generation, Table 25-10-0015-01</a>
+            <a href="https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=9810000701" target="_blank" rel="noreferrer">Statistics Canada, 2021 Census population, Table 98-10-0007-01</a>
+            <a href="https://open.canada.ca/data/en/dataset/92dbea79-f644-4a62-b25e-8eb993ca0264" target="_blank" rel="noreferrer">NRCan CanVec, power lines</a>
+            <a href="https://geoappext.nrcan.gc.ca/arcgis/rest/services/Energy/CERP_EN/MapServer" target="_blank" rel="noreferrer">NRCan, Clean Energy Resources and Projects</a>
+            <a href="https://geoappext.nrcan.gc.ca/arcgis/rest/services/NRCAN/AtlasWatershedsEN/MapServer" target="_blank" rel="noreferrer">NRCan Atlas of Canada, drainage areas</a>
+          </div>
           <span>Each data center&apos;s own source is linked on the map.</span>
         </div>
         <footer>

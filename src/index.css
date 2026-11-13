@@ -2276,3 +2276,9 @@ rect.york-planned {
 .about .sources a:hover { color: var(--teal); }
 .about footer,
 .about footer span { color: var(--muted); border-color: var(--line); }
+/* Sources in a 2 x 2 grid, smaller text, so the list is shorter (Babs, Nov 13) */
+.about .sources { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 48px; }
+.about .sources .sources-col { min-width: 0; }
+.about .sources .sources-col a { font-size: 15px; line-height: 1.45; padding: 3px 0; }
+.about .sources > span { grid-column: 1 / -1; font-size: 15px; }
+@media (max-width: 700px) { .about .sources { grid-template-columns: 1fr; } }
