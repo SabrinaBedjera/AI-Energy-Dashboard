@@ -31,6 +31,9 @@ type Province = {
   clean_energy_level: string;
   openness: string;
   planned_mw_source: string;
+  power_source_source?: string;
+  grid_rules_sources?: string;
+  levels_source?: string;
 };
 
 type EnergyMix = Record<string, string> & { Province: string };
@@ -321,7 +324,7 @@ function App() {
         (project) =>
           (provinceFilter === "All" || project.province === provinceFilter) &&
           (statusFilter === "All" || project.status === statusFilter) &&
-          (minMw === 0 || Number(project.reported_mw || 0) >= minMw) &&
+          (minMw === 0 || inSizeBand(project.reported_mw, minMw)) &&
           (useFilter === "" ||
             (useFilter === "ai"
               ? project.ai_use === "AI" || project.ai_use === "Mixed"
@@ -420,14 +423,14 @@ function App() {
           <div className="control-group" aria-label="Size">
             <span>Size</span>
             <div className="chips">
-              {[50, 100].map((value) => (
+              {sizeBands.map(([value, label]) => (
                 <button
                   key={value}
                   className={minMw === value ? "active" : ""}
                   aria-pressed={minMw === value}
                   onClick={() => setMinMw(minMw === value ? 0 : value)}
                 >
-                  {value} MW+
+                  {label}
                 </button>
               ))}
             </div>
@@ -567,47 +570,24 @@ function App() {
         </div>
         <div className="about-copy">
           <p>
-            In my analysis, I pull together public data from research papers, news articles,
-            government sources, utility websites, company websites and more! One interesting finding:
-            a lot of data center information sits behind paywalls, either in a private data
-            firm&apos;s database or in a news article. Companies also don&apos;t always publish
-            details about their sites, possibly because the information is proprietary.
+            In my analysis, I pull together publicly accessible data from research papers, news
+            articles, government sources, utility websites, company websites and more! An interesting
+            finding is that a good amount of data center information is behind paywalls, either
+            through a private data firm or a news article. And sometimes industry does not want to
+            publish a lot of information on their data centers, potentially due to proprietary
+            information. Key information gaps were water use and power sources: only 12 of the 125
+            sites I found share anything about cooling or water, and 98 don&apos;t say where their
+            power comes from.
           </p>
-          <p>
-            The biggest gap was water. Only 12 of the 125 sites I found say how they cool their
-            buildings or how much water they use. 98 don&apos;t name a power source beyond the grid,
-            and 40 don&apos;t publish their size in MW.
-          </p>
-          <p>
-            Project capacity appears only when a public source reports it. Different figures can
-            describe IT load, total project capability, grid demand, or on-site generation. Open a
-            project to see exactly what its number measures. The project list and the York
-            paper&apos;s provincial estimates are separate datasets with different coverage, so
-            their totals don&apos;t match. The list includes every kind of data center (cloud,
-            hosting and AI), not only AI ones. All project pins are approximate. Six rows I couldn&apos;t
-            open at the source are marked as lower confidence.
-          </p>
-          <p>
-            The energy view shows each province&apos;s share of 2025 electricity generated from
-            fossil fuels. It does not claim that a data center uses that exact mix, especially when a
-            project reports its own on-site power.
-          </p>
-          <p>
-            Power lines come from NRCan CanVec at 1:250,000 scale, mostly high-voltage transmission
-            lines. A project near a line is not proof that it connects to it.
-          </p>
-          <p>
-            The people view shows population density by census division from the 2021 Census,
-            exactly as Statistics Canada publishes it. Shapes are simplified for the web.
-          </p>
-          <p>
-            Power prices are Hydro-Québec&apos;s estimates from its 2025 comparison of electricity
-            prices in major cities, for a customer using 50,000 kW at 120 kV, on rates in effect April 1, 2025,
-            before taxes. It is one city per province, not a provincial average. Hydro-Québec
-            estimated some bills (Toronto, Charlottetown, Edmonton), and Alberta prices move with its
-            open market. I checked the Montréal and Winnipeg prices against Hydro-Québec&apos;s and
-            Manitoba Hydro&apos;s own published rates, and both matched to the cent.
-          </p>
+          <ul className="method-notes">
+            <li>Sizes (MW) are what each source reports, and they don&apos;t always measure the same thing. Click a project on the map to see what its number means.</li>
+            <li>My list and the York study are separate datasets, so their totals don&apos;t match.</li>
+            <li>All pins are approximate.</li>
+            <li>The energy view shows each province&apos;s 2025 electricity mix, not what a data center actually uses.</li>
+            <li>Power lines are from NRCan CanVec. Being near a line doesn&apos;t mean a data center connects to it.</li>
+            <li>Where people live is from the 2021 Census, by census division.</li>
+            <li>Power prices are Hydro-Québec&apos;s 2025 estimates for a 50 MW customer, one city per province, before taxes.</li>
+          </ul>
         </div>
         <div className="sources">
           <h3>Sources</h3>
@@ -684,6 +664,7 @@ type ScrollStep = {
   hero?: boolean;
   annotations?: Annotation[];
   wide?: boolean;
+  backdrop?: React.ReactNode;
 };
 
 function Scrolly(props: {
@@ -699,11 +680,6 @@ function Scrolly(props: {
   plannedCount: number;
   albertaPlannedCount: number;
 }) {
-  const { pct } = props;
-  const priceText = (city: string) => {
-    const row = props.prices.find((item) => item.city === city);
-    return row ? Number(row.cents_per_kwh_50mw).toFixed(2) : "…";
-  };
   const [active, setActive] = useState(0);
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -719,7 +695,7 @@ function Scrolly(props: {
       body: (
         <>
           <h1>Canada&apos;s AI Boom</h1>
-          <p className="hero-sub">A study of how data centers are growing in Canada, and where they will get their power</p>
+          <p className="hero-sub">An exploration of where Canada&apos;s AI will get its power</p>
           <p className="hero-summary">
             Canada has <strong>194</strong> data centers running. Another <strong>213</strong> are
             planned, and they would draw about <strong>14 times</strong> the power of the ones running now.
@@ -740,10 +716,9 @@ function Scrolly(props: {
       body: (
         <>
           <p>
-            You may have noticed it: AI is everywhere. It&apos;s in almost every news source I read,
-            and people have so many questions. How is AI being used? How do we regulate it? What
-            does AI art do to our creative process? And why are data centers being built everywhere,
-            and where do they get their power?
+            You may have noticed it, AI is everywhere. It&apos;s in almost every news source I read,
+            and people have so many questions. How is AI being used? How do we regulate it? Why are
+            data centers being built everywhere, and where do they get their power?
           </p>
           <p>
             I&apos;m a scientist and engineer who loves data and making complex topics accessible,
@@ -767,34 +742,25 @@ function Scrolly(props: {
       body: (
         <>
           <p>
-            AI is growing fast and showing up in everyday life, from writing emails and searching
-            for jobs to vibe coding a website or doing research. It took off over the last few years
-            thanks to more powerful computer chips and better AI models.
+            AI is rapidly growing and being used in many aspects of everyday life, from writing
+            emails and searching for jobs to vibe coding a website or doing research. AI has
+            experienced a boom over the last few years due to improvements in computing power (e.g.
+            computer chips), and AI models. A data center is a building full of computers and storage
+            that AI companies use to train their models and run their systems.
           </p>
           <p>
-            AI models need data centers to learn and to run. A data center is a building full of
-            computers and storage that run day and night. Think of all the books and research an AI
-            model learns from, and all the questions people ask it every day. A laptop couldn&apos;t
-            hold that, so it lives in data centers.
-          </p>
-          <p>
-            A typical AI-focused data center uses as much electricity as{" "}
-            <strong>100,000 households</strong>. The biggest ones being built today will use{" "}
-            <span className="hl hl-pink">20 times as much</span>. Closer to home, York University
-            researchers estimate that one average announced Canadian data center (
-            <strong>122 MW</strong>) would use as much electricity in a year as 49,000 to 78,000
-            Canadian homes.
-          </p>
-          <p className="york-source">
-            Sources:{" "}
-            <a href={ieaUrl} target="_blank" rel="noreferrer">
-              IEA, Energy and AI (2025)
-            </a>
-            , executive summary;{" "}
+            However, data centers aren&apos;t just used for AI. They&apos;ve been around for years to
+            run websites, email, online banking, streaming and cloud storage. In a York University
+            study (
             <a href={yorkUrl} target="_blank" rel="noreferrer">
-              Carlo &amp; Rolheiser, York University (2026)
+              Carlo &amp; Rolheiser, 2026
             </a>
-            , section 2.2. The homes range assumes the data center runs at 50% to 80% of capacity.
+            ) they flag that out of <strong>194</strong> current data centers{" "}
+            <strong>5 are AI related</strong>, and out of <strong>213</strong> planned data centers{" "}
+            <span className="hl hl-pink">49 are AI related</span>. However, it&apos;s important to
+            flag that the study only counts a site as AI when its plans mention AI, so the real
+            number could be higher. AI is a growing slice, but the boom is about all kinds of
+            computing.
           </p>
         </>
       ),
@@ -803,126 +769,100 @@ function Scrolly(props: {
       mode: "power",
       hideProjects: true,
       fadeAll: true,
+      backdrop: <IeaChart />,
       body: (
         <>
           <p>
-            Data centers need electricity to run, and the more servers they hold, the more they use.
-            The International Energy Agency found that data centers used about{" "}
-            <strong>1.5% of the world&apos;s electricity</strong> in 2024. It expects that to
-            roughly double to about 3% by 2030, slightly more than{" "}
+            Data centers need electricity to run, which increases with the amount of servers that
+            they hold. The International Energy Agency found that data centers used{" "}
+            <strong>1.5% of the world&apos;s electricity</strong> in 2024 (
+            <a href={ieaUrl} target="_blank" rel="noreferrer">
+              IEA, 2025
+            </a>
+            ). It expects that to roughly double to about 3% by 2030, slightly more than{" "}
             <span className="hl hl-pink">all of Japan uses today</span>.
           </p>
           <p>
-            Most data centers running today are well under 100 MW. Canada&apos;s federal government
-            and the IEA call a site large-scale, or hyperscale, once it uses more than{" "}
-            <strong>100 MW</strong>, and many of the new AI builds are aiming for that size.
+            So let&apos;s talk energy use. Most data centers running in Canada are well under 100
+            megawatts (MW). Once a data center uses more than <strong>100 MW</strong> it&apos;s
+            referred to as hyperscale (
+            <a href="https://ised-isde.canada.ca/site/ised/en/enabling-large-scale-sovereign-ai-data-centres" target="_blank" rel="noreferrer">
+              ISED
+            </a>
+            ;{" "}
+            <a href={ieaUrl} target="_blank" rel="noreferrer">
+              IEA
+            </a>
+            ), and takes up a significant amount of land and servers. Many new AI data centers are
+            aiming for this size.
           </p>
           <p>
-            To meet this demand, companies are looking at many energy sources: renewables (wind,
-            solar, hydro), nuclear, natural gas and coal. The IEA expects renewables and natural gas
-            to meet most of the new demand. Companies can plug into the grid if one is close by and
-            has room, sign a deal with a nearby renewable project, or build their own power plant if
-            they&apos;re far from the grid.
+            In order to meet this demand, companies are exploring a range of energy sources such as
+            renewable energy (e.g. wind, solar, hydro), nuclear, natural gas, and coal. The IEA
+            expects renewable energy and natural gas will lead until 2035 due to their availability
+            and lower costs (
+            <a href="https://www.iea.org/news/ai-is-set-to-drive-surging-electricity-demand-from-data-centres-while-offering-the-potential-to-transform-how-the-energy-sector-works" target="_blank" rel="noreferrer">
+              IEA, 2025
+            </a>
+            ).
           </p>
-          <figure className="iea-figure">
-            <figcaption>
-              <strong>Sources of global electricity generation for data centres, Base Case, 2020-2035</strong>{" "}
-              (TWh)
-            </figcaption>
-            <img
-              src={`${import.meta.env.BASE_URL}images/iea-data-centre-electricity-sources-2020-2035.png`}
-              alt="Stacked area chart of electricity generation for data centres worldwide, 2020 to 2035, by source, rising from about 300 TWh to about 1,330 TWh."
-            />
-            <ul className="iea-legend">
-              <li><span style={{ background: "#76ddfe" }} />Coal</li>
-              <li><span style={{ background: "#6b9bdc" }} />Natural gas</li>
-              <li><span style={{ background: "#8ff5a8" }} />Nuclear</li>
-              <li><span style={{ background: "#3fbfb6" }} />Solar PV</li>
-              <li><span style={{ background: "#fff584" }} />Wind</li>
-              <li><span style={{ background: "#ffc773" }} />Other renewables</li>
-              <li><span style={{ background: "#f4733f" }} />Other</li>
-            </ul>
-            <p className="york-source">
-              Source:{" "}
-              <a href="https://www.iea.org/data-and-statistics/charts/sources-of-global-electricity-generation-for-data-centres-base-case-2020-2035" target="_blank" rel="noreferrer">
-                IEA (2025), Sources of global electricity generation for data centres, Base Case,
-                2020-2035, IEA, Paris
-              </a>
-              . Licence:{" "}
-              <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">
-                CC BY 4.0
-              </a>
-              .
-            </p>
-          </figure>
-          <p className="york-source">
-            Source:{" "}
-            <a href={ieaUrl} target="_blank" rel="noreferrer">
-              IEA, Energy and AI (2025)
-            </a>
-            ;{" "}
-            <a href="https://ised-isde.canada.ca/site/ised/en/enabling-large-scale-sovereign-ai-data-centres" target="_blank" rel="noreferrer">
-              ISED, large-scale AI data centres
-            </a>
-            ;{" "}
-            <a href={yorkUrl} target="_blank" rel="noreferrer">
-              York University (2026)
-            </a>
-            , Table A1: none of Canada&apos;s 194 running sites is 100 MW or more.
+          <p>
+            Companies have different approaches to where their data centers get their energy. Some
+            will choose to plug into the electricity grid if it&apos;s nearby and has power
+            available, especially in big cities. Others might build their data centers in more
+            remote locations and will have to build their own power systems, or try to connect to
+            nearby power systems. For example:
           </p>
+          <ul className="step-list">
+            <li>
+              <strong>BC:</strong> TELUS has secured 85 MW of clean, renewable power from BC Hydro (
+              <a href="https://www.telus.com/en/about/news-and-events/media-releases/TELUS-and-Government-of-Canada-advance-work-to-scale-Canadas-sovereign-AI-infrastructure" target="_blank" rel="noreferrer">TELUS</a>
+              ), and Bell describes its BC sites as hydroelectric-powered (
+              <a href="https://cfjctoday.com/2025/05/28/bell-announces-plans-to-open-six-ai-data-centres-in-b-c-as-part-of-bell-ai-fabric/" target="_blank" rel="noreferrer">CFJC</a>
+              ).
+            </li>
+            <li>
+              <strong>Nova Scotia:</strong> EverWind plans to run its data center on wind, with $2
+              billion for new wind projects (
+              <a href="https://www.cp24.com/news/canada/2026/10/16/everwind-says-10b-ai-data-centre-proposal-largest-private-investment-in-ns-history/" target="_blank" rel="noreferrer">CP24</a>
+              ).
+            </li>
+            <li>
+              <strong>Alberta:</strong> most projects that name a fuel plan their own natural gas
+              plants, some with carbon capture (my project list).
+            </li>
+          </ul>
         </>
       ),
     },
     {
-      mode: "grid",
-      hideProjects: true,
+      mode: "capacity",
+      focus: "Alberta",
+      highlight: "Wonder Valley",
       body: (
         <>
-        <p>
-          Where a data center gets its power matters as much as where it&apos;s built. Some plug
-          into the grid. Others sign deals for clean power or build their own. In BC, TELUS has
-          secured <strong>85 MW</strong> of clean, renewable power from BC Hydro, and Bell
-          describes its BC sites as hydroelectric-powered. In Nova Scotia, EverWind plans to run its
-          data center on wind, with <strong>$2 billion</strong> for new wind projects. In Alberta,
-          most projects that name a fuel plan their own natural gas plants, some with carbon
-          capture.
-        </p>
-        <p className="york-source">
-          Sources:{" "}
-          <a href="https://www.telus.com/en/about/news-and-events/media-releases/TELUS-and-Government-of-Canada-advance-work-to-scale-Canadas-sovereign-AI-infrastructure" target="_blank" rel="noreferrer">TELUS</a>
-          ,{" "}
-          <a href="https://cfjctoday.com/2025/05/28/bell-announces-plans-to-open-six-ai-data-centres-in-b-c-as-part-of-bell-ai-fabric/" target="_blank" rel="noreferrer">CFJC (Bell)</a>
-          ,{" "}
-          <a href="https://www.cp24.com/news/canada/2026/10/16/everwind-says-10b-ai-data-centre-proposal-largest-private-investment-in-ns-history/" target="_blank" rel="noreferrer">CP24 (EverWind)</a>
-          , and the power source column in my project list.
-        </p>
+          <p>
+            Overall, data centers are shifting to being built in Alberta. This is due to the
+            different regulations, incentives, and tools that the provinces and territories use.
+            Alberta is aiming to become the North American destination for AI data centers (
+            <a href="https://www.alberta.ca/artificial-intelligence-data-centres-strategy" target="_blank" rel="noreferrer">
+              Government of Alberta, AI Data Centres Strategy, 2024
+            </a>
+            ) by pointing to its power supply and cold climate, low corporate taxes, a data centre
+            concierge program, and regulatory changes to make it easier to build data centers.
+          </p>
+          <p>
+            Alberta&apos;s grid only had room for <strong>1,200 MW</strong> of big new loads, and
+            that&apos;s taken (
+            <a href="https://www.aeso.ca/grid/connecting-to-the-grid/large-load-projects" target="_blank" rel="noreferrer">
+              AESO
+            </a>
+            ), so projects like <span className="hl hl-pink">Wonder Valley</span> plan to build their
+            own power plants. Other provinces are more careful with their power: BC caps how much
+            goes to data centers, and Quebec needs a minister to sign off. The full rules by
+            province are at the bottom of the page.
+          </p>
         </>
-      ),
-    },
-    {
-      mode: "power",
-      hideProjects: true,
-      fadeAll: true,
-      body: (
-        <p>
-          Data centers aren&apos;t new. They&apos;ve run websites, email, online banking,
-          streaming and cloud storage for years, and most still do. York flags only{" "}
-          <strong>5 of the 194</strong> data centers running in Canada as AI-related, and{" "}
-          <strong>49 of the 213</strong> planned ones. York calls these a lower bound, since a site only counts when its
-          plans mention AI. AI is a growing slice, but the boom is about all kinds of computing.
-        </p>
-      ),
-    },
-    {
-      mode: "sitesActive",
-      hideProjects: true,
-      body: (
-        <p>
-          Canada has <strong>194 data centers running</strong> today, using about{" "}
-          <strong>1.6 GW</strong>. Most sit in three provinces: <strong>Ontario</strong> (41%),{" "}
-          <strong>Quebec</strong> (30%) and <strong>BC</strong> (14%), close to big cities. Half of
-          them are within about <strong>4 km of a downtown</strong>.
-        </p>
       ),
     },
     {
@@ -932,74 +872,18 @@ function Scrolly(props: {
       body: (
         <>
           <p>
-            Another <strong>213</strong> are announced or being built, adding up to{" "}
-            <span className="hl hl-pink">22.2 GW</span>, almost <strong>14 times</strong> what runs
-            today. And they point somewhere else:{" "}
-            <span className="hl hl-pink">167 of the 213, or 78%, are in Alberta</span>, and
-            they&apos;re farther out. Half of the announced sites are more than{" "}
-            <strong>48 km from a downtown</strong>.
-          </p>
-          <ProvinceShift />
-        </>
-      ),
-    },
-    {
-      mode: "sitesPlanned",
-      hideProjects: true,
-      body: (
-        <>
-          <p>
-            The new ones are much bigger too. Canada&apos;s federal government and the IEA treat a
-            data center as large-scale, or hyperscale, when it uses <strong>more than 100 MW</strong>.
-            York counts none of the 194 running sites at that size today.{" "}
-            <span className="hl hl-pink">116 of the planned ones do.</span>
-          </p>
-          <p>
-            There&apos;s no official line, though. York uses 50 MW: by that measure{" "}
-            <strong>5</strong> are running and <strong>159</strong> are planned.
-          </p>
-          <p className="york-source">
-            Sources:{" "}
-            <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6464099" target="_blank" rel="noreferrer">
-              York University (2026)
+            These numbers are from the York University study (
+            <a href={yorkUrl} target="_blank" rel="noreferrer">
+              Carlo &amp; Rolheiser, 2026
             </a>
-            , Table A1;{" "}
-            <a href="https://ised-isde.canada.ca/site/ised/en/enabling-large-scale-sovereign-ai-data-centres" target="_blank" rel="noreferrer">
-              ISED
-            </a>
-            ;{" "}
-            <a href="https://www.iea.org/topics/artificial-intelligence" target="_blank" rel="noreferrer">
-              IEA
-            </a>
-            .
+            ), so they&apos;re different from my own list below.
           </p>
-        </>
-      ),
-    },
-    {
-      mode: "capacity",
-      focus: "Alberta",
-      hideProjects: true,
-      body: (
-        <>
+          <TodayVsPlanned />
           <p>
-            By capacity it&apos;s even more lopsided. York puts Alberta at{" "}
-            <span className="hl hl-teal">
-              {props.albertaShare.toFixed(0)}% of all planned data center MW
-            </span>{" "}
-            in Canada.
-          </p>
-          <p>
-            Alberta&apos;s own numbers point the same way. Companies have asked to connect about{" "}
-            <strong>19,565 MW</strong> of new data center load to its grid. That&apos;s more than
-            the most power the whole province has ever used in one hour (about 12,800 MW).
-          </p>
-          <p className="york-source">
-            Sources: York University (2026), Figure 3b;{" "}
-            <a href="https://www.alberta.ca/datacentres/grid" target="_blank" rel="noreferrer">
-              Government of Alberta
-            </a>
-            , citing the AESO connection list of July 30, 2026.
+            Today&apos;s data centers are close to cities, where people live and the grid is
+            strong. The planned ones show a shift: they&apos;re mostly in Alberta, farther from
+            cities where there is likely more room to build, but where getting power can be harder
+            and they might have to build their own. They&apos;re also much bigger.
           </p>
         </>
       ),
@@ -1021,136 +905,6 @@ function Scrolly(props: {
           {props.albertaPlannedCount} of the {props.plannedCount} planned or under construction are
           in Alberta too.
         </p>
-      ),
-    },
-    {
-      mode: "energy",
-      hideProjects: true,
-      body: (
-        <p>
-          That&apos;s surprising, because Alberta&apos;s grid leans hard on fossil fuels. In 2025,{" "}
-          <span className="hl hl-pink">{pct("Alberta", "Fossil fuels %")}%</span> of its
-          electricity came from fossil fuels. In Quebec it was{" "}
-          <span className="hl hl-teal">{pct("Quebec", "Fossil fuels %")}%</span>.
-        </p>
-      ),
-    },
-    {
-      mode: "clean",
-      hideProjects: true,
-      wide: true,
-      body: (
-        <>
-          <p>
-            Provinces set the rules, and the rules differ a lot. The hydro provinces have clean
-            power but ration it. Alberta capped its grid and opened a faster path for projects
-            that bring their own power.
-          </p>
-          <RulesTable />
-        </>
-      ),
-    },
-    {
-      mode: "projects",
-      hideProjects: true,
-      fadeAll: true,
-      wide: true,
-      body: (
-        <>
-        <p>
-          It&apos;s also the cheapest power for big customers. In Hydro-Québec&apos;s 2025 price
-          comparison, a large industrial customer paid{" "}
-          <strong>{priceText("Winnipeg")}¢/kWh in Winnipeg</strong> and{" "}
-          <strong>{priceText("Montréal")}¢ in Montréal</strong>. In Calgary it was{" "}
-          <strong>{priceText("Calgary")}¢</strong>.
-        </p>
-        <PriceChart prices={props.prices} />
-        </>
-      ),
-    },
-    {
-      mode: "capacity",
-      focus: "Alberta",
-      highlight: "Wonder Valley",
-      body: (
-        <p>
-          Alberta took a different route: <strong>bring your own power</strong>. Its grid only had
-          room for 1,200 MW of big new loads, and that&apos;s taken. So projects like{" "}
-          <span className="hl hl-pink">Wonder Valley</span> are planning their own power plants.
-          Its first phase alone is a 1.4 GW gas and geothermal system.
-        </p>
-      ),
-    },
-    {
-      mode: "projects",
-      hideProjects: true,
-      fadeAll: true,
-      body: (
-        <>
-          <p>
-            Canadians are wary. In a May 2026 Angus Reid survey,{" "}
-            <span className="hl hl-pink">68% said they would oppose</span> a large AI data center
-            within a few blocks of their home, and <strong>15%</strong> would support one.{" "}
-            <strong>67%</strong> said these sites would be bad for energy and environmental
-            sustainability.
-          </p>
-          <p>
-            Companies are making promises. <strong>45</strong> of them, including Amazon, Google,
-            Microsoft, Meta, OpenAI and Anthropic, have signed Canada&apos;s Responsible Data Centre
-            Development Principles: leave lasting local benefits, don&apos;t shift electricity costs to
-            Canadians, limit and report water use, be open about local impacts, and bring value to
-            Canada. The principles don&apos;t say they are binding.
-          </p>
-          <p className="york-source">
-            Sources:{" "}
-            <a href="https://angusreid.org/wp-content/uploads/2026/06/2026.06.01_AI_Policy_data_centres.pdf" target="_blank" rel="noreferrer">
-              Angus Reid Institute
-            </a>{" "}
-            (online survey, May 7 to 11, 2026, 1,803 adults);{" "}
-            <a href="https://ised-isde.canada.ca/site/ised/en/data-centres-powering-canadas-digital-future-responsibly/canadas-responsible-data-centre-development-principles" target="_blank" rel="noreferrer">
-              ISED
-            </a>
-            .
-          </p>
-        </>
-      ),
-    },
-    {
-      mode: "power",
-      hideProjects: true,
-      fadeAll: true,
-      wide: true,
-      body: (
-        <>
-          <p>
-            Zoom out, and Canada is still small. York counts <strong>1,989 data centers running
-            in the US</strong> (46.8 GW), against 194 in Canada. But Canada&apos;s planned projects
-            are bigger on average: <span className="hl hl-pink">122 MW vs 95 MW</span>.
-          </p>
-          <YorkComparison />
-        </>
-      ),
-    },
-    {
-      mode: "power",
-      hideProjects: true,
-      fadeAll: true,
-      body: (
-        <>
-          <p>
-            Worldwide, the US used <strong>45%</strong> of all data center electricity in 2024,
-            China <strong>25%</strong> and Europe <strong>15%</strong>. In the US, data centers
-            make up nearly <strong>half of all the growth in electricity demand</strong> expected
-            by 2030. Canada is a small player, but a fast-growing one.
-          </p>
-          <p className="york-source">
-            Source:{" "}
-            <a href={ieaUrl} target="_blank" rel="noreferrer">
-              IEA, Energy and AI (2025)
-            </a>
-            , executive summary.
-          </p>
-        </>
       ),
     },
   ];
@@ -1192,6 +946,7 @@ function Scrolly(props: {
           fadeAll={step.fadeAll}
           annotations={step.annotations}
         />
+        {step.backdrop && <div className="scrolly-backdrop">{step.backdrop}</div>}
       </div>
       <div className="scrolly-steps">
         {steps.map((item, index) => (
@@ -1252,6 +1007,22 @@ function ProvinceBar({ provinces }: { provinces: Province[] }) {
 
 // York University paper (Carlo & Rolheiser 2026, SSRN 6464099), Table 1, data downloaded June 8, 2026.
 // Checked against the paper PDF on Nov 12, 2026. "Planned" = announcement + construction stages.
+const sizeBands: [number, string][] = [
+  [1, "Up to 50 MW"],
+  [2, "50 to 100 MW"],
+  [3, "100 MW+"],
+];
+
+// Size bands don't overlap. Sites with no published MW are left out of every band.
+function inSizeBand(raw: string | undefined, band: number) {
+  if (!raw || !String(raw).trim()) return false;
+  const mw = Number(raw);
+  if (Number.isNaN(mw)) return false;
+  if (band === 1) return mw <= 50;
+  if (band === 2) return mw > 50 && mw < 100;
+  return mw >= 100;
+}
+
 const yorkUrl = "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6464099";
 const ieaUrl = "https://www.iea.org/reports/energy-and-ai";
 const yorkTable1 = {
@@ -1360,6 +1131,79 @@ function PriceChart({ prices }: { prices: PriceRow[] }) {
   );
 }
 
+function IeaChart() {
+  return (
+    <figure className="iea-figure">
+      <figcaption>
+        <strong>Sources of global electricity generation for data centres, Base Case, 2020-2035</strong>{" "}
+        (TWh)
+      </figcaption>
+      <img
+        src={`${import.meta.env.BASE_URL}images/iea-data-centre-electricity-sources-2020-2035.png`}
+        alt="Stacked area chart of electricity generation for data centres worldwide, 2020 to 2035, by source, rising from about 300 TWh to about 1,330 TWh."
+      />
+      <ul className="iea-legend">
+        <li><span style={{ background: "#76ddfe" }} />Coal</li>
+        <li><span style={{ background: "#6b9bdc" }} />Natural gas</li>
+        <li><span style={{ background: "#8ff5a8" }} />Nuclear</li>
+        <li><span style={{ background: "#3fbfb6" }} />Solar PV</li>
+        <li><span style={{ background: "#fff584" }} />Wind</li>
+        <li><span style={{ background: "#ffc773" }} />Other renewables</li>
+        <li><span style={{ background: "#f4733f" }} />Other</li>
+      </ul>
+      <p className="york-source">
+        Source:{" "}
+        <a href="https://www.iea.org/data-and-statistics/charts/sources-of-global-electricity-generation-for-data-centres-base-case-2020-2035" target="_blank" rel="noreferrer">
+          IEA (2025), Sources of global electricity generation for data centres, Base Case,
+          2020-2035, IEA, Paris
+        </a>
+        . Licence:{" "}
+        <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">
+          CC BY 4.0
+        </a>
+        .
+      </p>
+    </figure>
+  );
+}
+
+function TodayVsPlanned() {
+  const rows: [string, string, string][] = [
+    ["Data centers", "194", "213"],
+    ["Power", "1.6 GW", "22.2 GW (almost 14 times more)"],
+    ["Where", "Ontario 41%, Quebec 30%, BC 14%", "Alberta: 78% of sites, 92% of the power"],
+    ["Distance to a downtown (half of sites)", "Within about 4 km", "More than 48 km"],
+    ["Over 100 MW", "None", "116"],
+  ];
+  return (
+    <table className="today-planned">
+      <thead>
+        <tr>
+          <th />
+          <th>Running today</th>
+          <th className="planned">Planned</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map(([label, today, planned]) => (
+          <tr key={label}>
+            <th scope="row">{label}</th>
+            <td>{today}</td>
+            <td className="planned">{planned}</td>
+          </tr>
+        ))}
+      </tbody>
+      <caption>
+        Source:{" "}
+        <a href={yorkUrl} target="_blank" rel="noreferrer">
+          Carlo &amp; Rolheiser, York University (2026)
+        </a>
+        , Tables A1 and A2, Figure 3b. Planned = announced or under construction.
+      </caption>
+    </table>
+  );
+}
+
 function ChartsSection({ prices }: { prices: PriceRow[] }) {
   return (
     <section className="charts-section" id="charts">
@@ -1380,7 +1224,42 @@ function ChartsSection({ prices }: { prices: PriceRow[] }) {
         </div>
         <div className="chart-card">
           <h3>Canada and the US</h3>
+          <p>
+            York counts 1,989 data centers running in the US (46.8 GW), against 194 in Canada. But
+            Canada&apos;s planned projects are bigger on average: 122 MW vs 95 MW.
+          </p>
           <YorkComparison />
+          <p>
+            Worldwide, the US used 45% of all data center electricity in 2024, China 25% and Europe
+            15% (
+            <a href={ieaUrl} target="_blank" rel="noreferrer">
+              IEA, 2025
+            </a>
+            ).
+          </p>
+        </div>
+        <div className="chart-card">
+          <h3>How Canadians feel</h3>
+          <p>
+            In a May 2026 Angus Reid survey, 68% said they would oppose a large AI data center within
+            a few blocks of their home, and 15% would support one. 67% said these sites would be bad
+            for energy and environmental sustainability (
+            <a href="https://angusreid.org/wp-content/uploads/2026/06/2026.06.01_AI_Policy_data_centres.pdf" target="_blank" rel="noreferrer">
+              Angus Reid Institute
+            </a>
+            , online survey, May 7 to 11, 2026, 1,803 adults).
+          </p>
+          <p>
+            45 companies, including Amazon, Google, Microsoft, Meta, OpenAI and Anthropic, have
+            signed Canada&apos;s Responsible Data Centre Development Principles: leave lasting local
+            benefits, don&apos;t shift electricity costs to Canadians, limit and report water use, be
+            open about local impacts, and bring value to Canada. The principles don&apos;t say they are
+            binding (
+            <a href="https://ised-isde.canada.ca/site/ised/en/data-centres-powering-canadas-digital-future-responsibly/canadas-responsible-data-centre-development-principles" target="_blank" rel="noreferrer">
+              ISED
+            </a>
+            ).
+          </p>
         </div>
       </div>
     </section>
@@ -1864,7 +1743,7 @@ function MapLegend({ fill, layers, shown, total }: { fill: FillMode; layers: Lay
     <div className="map-legend">
       <div className="legend-block">
         <p>
-          Data center projects · {total} found in public sources
+          Data center projects: {total} found in public sources
           {shown !== total ? ` (showing ${shown})` : ""}
         </p>
         <div className="project-legend">
@@ -1889,7 +1768,7 @@ function MapLegend({ fill, layers, shown, total }: { fill: FillMode; layers: Lay
 
       {fill === "capacity" && (
         <div className="legend-block">
-          <p>Planned MW by province · York University estimate</p>
+          <p>Planned MW by province (York University estimate)</p>
           <div className="capacity-scale">
             {[
               ["#e8e5df", "Not disclosed"],
@@ -1922,7 +1801,7 @@ function MapLegend({ fill, layers, shown, total }: { fill: FillMode; layers: Lay
       )}
       {layers.people && (
         <div className="legend-block">
-          <p>People per km² · 2021 Census</p>
+          <p>People per km², 2021 Census</p>
           <div className="capacity-scale">
             {peopleColors.slice(2).map((color, index) => (
               <span key={color}>
@@ -1936,7 +1815,7 @@ function MapLegend({ fill, layers, shown, total }: { fill: FillMode; layers: Lay
       )}
       {fill === "price" && (
         <div className="legend-block">
-          <p>Electricity price for a 50 MW customer · ¢/kWh</p>
+          <p>Electricity price for a 50 MW customer (¢/kWh)</p>
           <div className="capacity-scale">
             {priceColors.map((color, index) => (
               <span key={color}>
@@ -1969,7 +1848,7 @@ function MapLegend({ fill, layers, shown, total }: { fill: FillMode; layers: Lay
       )}
       {layers.clean && (
         <div className="legend-block">
-          <p>Clean power stations (NRCan) · size = MW</p>
+          <p>Clean power stations (NRCan), size = MW</p>
           <div className="energy-legend">
             {Object.entries(cleanColors).map(([label, color]) => (
               <span key={label}>
@@ -2105,29 +1984,33 @@ function ProvinceDetail({
   const mixSources = ["Hydro", "Nuclear", "Fossil fuels", "Wind", "Solar", "Biomass"];
   return (
     <>
-      <p className="drawer-kicker">{mode === "capacity" ? "Why here?" : "Electricity profile"}</p>
       <h2>{province.province}</h2>
-      <strong className="capacity-number">{formatMw(province.planned_mw)}</strong>
-      <span className="capacity-label">Provincial planned capacity</span>
-      <dl>
-        <div>
-          <dt>Main power source</dt>
-          <dd>{province.main_power_source}</dd>
-        </div>
-        <div>
-          <dt>Grid rules</dt>
-          <dd>{province.grid_rules}</dd>
-        </div>
-        <div>
-          <dt>Clean energy / openness</dt>
-          <dd>
-            {province.clean_energy_level} / {province.openness}
-          </dd>
-        </div>
-      </dl>
+      <div className="panel-block">
+        <h3>Planned data center power</h3>
+        <p className="capacity-number">{formatMw(province.planned_mw)}</p>
+        <SourceLine raw={province.planned_mw_source} label="York University (2026)" />
+      </div>
+      <div className="panel-block">
+        <h3>Main power source</h3>
+        <p>{province.main_power_source}</p>
+        <SourceLine raw={province.power_source_source} label="York University (2026)" />
+      </div>
+      <div className="panel-block">
+        <h3>Grid rules</h3>
+        <p>{province.grid_rules.replace(/centres/g, "centers").replace(/centre\b/g, "center")}</p>
+        <SourceLine raw={province.grid_rules_sources} />
+      </div>
+      <div className="panel-block">
+        <h3>Clean energy and openness to data centers</h3>
+        <p>
+          Clean energy: {province.clean_energy_level}. Openness: {province.openness}. This is York&apos;s
+          rating, not mine.
+        </p>
+        <SourceLine raw={province.levels_source} label="York University (2026)" />
+      </div>
       {energy && (
-        <div className="mix-chart">
-          <p>2025 electricity mix</p>
+        <div className="panel-block mix-chart">
+          <h3>Where its electricity came from in 2025</h3>
           {mixSources.map((source) => {
             const value = Number(energy[`${source} %`] || 0);
             return (
@@ -2140,31 +2023,61 @@ function ProvinceDetail({
               </div>
             );
           })}
+          <SourceLine raw="https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=2510001501" label="Statistics Canada, Table 25-10-0015-01" />
         </div>
       )}
       {prices.length > 0 && (
-        <div className="price-detail">
-          <p>Large-customer electricity price, April 2025</p>
+        <div className="panel-block price-detail">
+          <h3>What a large customer pays for power, April 2025</h3>
           {prices.map((row) => (
             <div key={row.city}>
               <span>{row.city}</span>
               <strong>{Number(row.cents_per_kwh_50mw).toFixed(2)}¢/kWh</strong>
             </div>
           ))}
-          <a href={prices[0].source} target="_blank" rel="noreferrer">
-            Hydro-Québec 2025 comparison, p.17 ↗
-          </a>
+          <SourceLine raw={prices[0].source} label="Hydro-Québec, Comparison of Electricity Prices 2025, p.17" />
         </div>
       )}
-      <a
-        className="primary-link"
-        href={getUrl(province.planned_mw_source)}
-        target="_blank"
-        rel="noreferrer"
-      >
-        View provincial source ↗
-      </a>
     </>
+  );
+}
+
+const sourceNames: Record<string, string> = {
+  "papers.ssrn.com": "York University (2026)",
+  "aeso.ca": "AESO",
+  "bennettjones.com": "Bennett Jones",
+  "torys.com": "Torys",
+  "mccarthy.ca": "McCarthy Tétrault",
+  "news.gov.bc.ca": "BC government",
+  "blg.com": "BLG",
+  "web2.gov.mb.ca": "Manitoba Bill 39",
+  "alberta.ca": "Government of Alberta",
+};
+
+// Turns a source cell like "https://a.ca (Fig 3b) https://b.ca" into links.
+function SourceLine({ raw, label }: { raw?: string; label?: string }) {
+  if (!raw) return null;
+  const urls = raw.match(/https?:\/\/[^\s,;)]+/g) ?? [];
+  if (!urls.length) return <p className="panel-source">Source: {raw}</p>;
+  const note = raw.match(/\(([^)]+)\)/)?.[1];
+  return (
+    <p className="panel-source">
+      Source{urls.length > 1 ? "s" : ""}:{" "}
+      {urls.map((url, index) => {
+        const domain = url.replace(/^https?:\/\/(www\d*\.)?/, "").split("/")[0];
+        let host = sourceNames[domain] ?? domain;
+        if (label && urls.length === 1) host = label;
+        return (
+          <span key={url}>
+            {index > 0 && ", "}
+            <a href={url} target="_blank" rel="noreferrer">
+              {host}
+            </a>
+          </span>
+        );
+      })}
+      {note ? ` (${note})` : ""}
+    </p>
   );
 }
 

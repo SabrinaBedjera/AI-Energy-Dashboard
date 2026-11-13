@@ -21,7 +21,7 @@
 
   body {
     margin: 0;
-    background: var(--paper);
+    background: #e8ebe7;
     color: var(--ink);
     font-family: var(--serif);
     -webkit-font-smoothing: antialiased;
@@ -662,7 +662,7 @@
   bottom: 38px;
   padding: 11px 14px;
   border: 1px solid var(--ink);
-  background: var(--paper);
+  background: #e8ebe7;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -1827,7 +1827,7 @@ rect.york-planned {
 /* Charts section under the explorer */
 .charts-section {
   padding: 80px max(24px, calc((100vw - 1160px) / 2)) 90px;
-  background: var(--paper);
+  background: #e8ebe7;
   border-top: 1px solid var(--line);
 }
 
@@ -2005,3 +2005,71 @@ rect.york-planned {
 .iea-legend { list-style: none; padding: 0; margin: 0.5rem 0 0; display: flex; flex-wrap: wrap; gap: 0.3rem 0.9rem; font-size: 0.78rem; }
 .iea-legend li { display: flex; align-items: center; gap: 0.35rem; }
 .iea-legend span { width: 0.75rem; height: 0.75rem; border-radius: 2px; display: inline-block; }
+
+.scrolly-graphic svg, .scrolly-graphic svg * { pointer-events: none; cursor: default; }
+.scrolly-backdrop { position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-end; padding: 2rem 4vw; background: #e8ebe7; }
+.scrolly-backdrop .iea-figure { width: min(640px, 55vw); margin: 0; }
+.step-list { margin: 0.25rem 0 0; padding-left: 1.1rem; }
+.step-list li { margin-bottom: 0.4rem; }
+.today-planned { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 1rem; caption-side: bottom; }
+.today-planned th, .today-planned td { text-align: left; padding: 0.45rem 0.5rem; border-bottom: 1px solid rgba(0,0,0,0.1); vertical-align: top; }
+.today-planned thead th { font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; }
+.today-planned th[scope="row"] { font-weight: 400; color: #555; width: 30%; }
+.today-planned td.planned, .today-planned th.planned { color: var(--pink); font-weight: 600; }
+.today-planned caption { text-align: left; font-size: 0.75rem; color: #666; padding-top: 0.4rem; }
+.method-notes { padding-left: 1.1rem; }
+.method-notes li { margin-bottom: 0.35rem; }
+
+/* Interactive map: plain, readable type (Babs, Nov 13). No display font, no all-caps labels, nothing under 14px. */
+.explorer,
+.explorer * {
+  font-family: var(--serif);
+  letter-spacing: normal;
+  font-style: normal;
+}
+.explorer .control-group > span,
+.explorer .map-legend p,
+.explorer .detail-drawer dt,
+.explorer .drawer-kicker {
+  text-transform: none;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.explorer .chips button,
+.explorer select { font-size: 16px; }
+.explorer .map-legend {
+  height: auto;
+  padding: 14px 18px;
+}
+.explorer .map-legend span { font-size: 15px; color: var(--ink); gap: 7px; }
+.explorer .map-legend i { width: 13px; height: 13px; }
+.explorer .map-legend small { font-size: 14px; }
+.explorer .detail-drawer { font-size: 16px; }
+.explorer .detail-drawer h2 { font-size: 28px; font-weight: 600; letter-spacing: normal; }
+.explorer .detail-drawer p,
+.explorer .detail-drawer dd,
+.explorer .detail-drawer span,
+.explorer .detail-drawer strong,
+.explorer .detail-drawer em { font-size: 16px; }
+.explorer .panel-block { padding: 14px 0; border-top: 1px solid var(--line); }
+.explorer .panel-block h3 { font-size: 16px; font-weight: 600; margin: 0 0 6px; color: var(--ink); text-transform: none; }
+.explorer .panel-block > p { margin: 0; line-height: 1.45; }
+.explorer .detail-drawer .capacity-number { font-size: 26px; font-weight: 700; color: var(--pink); line-height: 1.2; }
+.explorer .panel-source { margin-top: 8px !important; font-size: 14px !important; color: var(--muted); }
+.explorer .panel-source a { color: var(--teal); }
+.explorer .mix-chart > div { font-size: 15px; }
+.explorer .svg-map text { font-family: var(--serif); font-size: 13px; }
+.explorer .control-group > span,
+.explorer .map-legend p,
+.explorer .filters label,
+.explorer .filters label > span,
+.explorer .panel-source,
+.explorer .panel-source a {
+  letter-spacing: normal !important;
+  text-transform: none !important;
+}
+.explorer .filters label,
+.explorer .filters label > span { font-size: 15px; font-weight: 600; color: var(--ink); }
+.explorer .panel-source, .explorer .panel-source a { font-weight: 400 !important; }
+.explorer .mix-chart > div { grid-template-columns: 96px 1fr 52px !important; }
