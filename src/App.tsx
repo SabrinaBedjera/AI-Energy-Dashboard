@@ -518,7 +518,7 @@ function App() {
       <section id="methods" className="about">
         <div>
           <p className="eyebrow">Methods</p>
-          <h2>Reported numbers, not estimates.</h2>
+          <h2>Where every number comes from</h2>
         </div>
         <div className="about-copy">
           <p>
