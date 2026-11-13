@@ -627,13 +627,10 @@ function App() {
           <a href="https://www.iea.org/news/ai-is-set-to-drive-surging-electricity-demand-from-data-centres-while-offering-the-potential-to-transform-how-the-energy-sector-works" target="_blank" rel="noreferrer">IEA news release on Energy and AI (2025)</a>
           <a href="https://angusreid.org/wp-content/uploads/2026/06/2026.06.01_AI_Policy_data_centres.pdf" target="_blank" rel="noreferrer">Angus Reid Institute, AI policy and data centres (2026)</a>
           <p className="sources-group">Government strategies and rules</p>
-          <a href="https://ised-isde.canada.ca/site/ised/en/canadian-sovereign-ai-compute-strategy" target="_blank" rel="noreferrer">Government of Canada, Canadian Sovereign AI Compute Strategy</a>
           <a href="https://ised-isde.canada.ca/site/ised/en/data-centres-powering-canadas-digital-future-responsibly/canadas-responsible-data-centre-development-principles" target="_blank" rel="noreferrer">Government of Canada, Responsible Data Centre Development Principles (signed by 45 companies)</a>
           <a href="https://www.alberta.ca/artificial-intelligence-data-centres-strategy" target="_blank" rel="noreferrer">Government of Alberta, AI Data Centres Strategy</a>
-          <a href="https://www.alberta.ca/datacentres/grid" target="_blank" rel="noreferrer">Government of Alberta, data centres and the grid</a>
           <a href="https://majorprojects.alberta.ca/" target="_blank" rel="noreferrer">Government of Alberta, Major Projects</a>
           <a href="https://news.gov.bc.ca/releases/2026ECS0005-000095" target="_blank" rel="noreferrer">Government of BC, power for AI and data centers</a>
-          <a href="https://www.bnnbloomberg.ca/business/artificial-intelligence/2026/08/27/saskatchewan-says-new-data-centres-must-be-canadian-owned-supply-their-own-power/" target="_blank" rel="noreferrer">Saskatchewan Data Centre Framework (CTV News via BNN Bloomberg)</a>
           <a href="https://www.blg.com/en/insights/2026/07/data-centre-regulation-in-quebec-from-honeyed-promise-to-iron-control" target="_blank" rel="noreferrer">Quebec, Bill 69 (BLG summary)</a>
           <a href="https://www.torys.com/en/our-latest-thinking/publications/2025/12/key-takeaways-and-next-steps-on-new-energy-law" target="_blank" rel="noreferrer">Ontario, Bill 40 (Torys summary)</a>
           <a href="https://web2.gov.mb.ca/bills/43-3/pdf/b039.pdf" target="_blank" rel="noreferrer">Manitoba, Bill 39</a>
