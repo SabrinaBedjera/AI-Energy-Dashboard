@@ -255,6 +255,7 @@ function App() {
   const [layers, setLayers] = useState<Layers>(noLayers);
   const [provinceFilter, setProvinceFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [minMw, setMinMw] = useState(0);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedPowerLine, setSelectedPowerLine] = useState<PowerLine | null>(null);
   const [selectedProvince, setSelectedProvince] = useState("Alberta");
@@ -318,9 +319,10 @@ function App() {
       projects.filter(
         (project) =>
           (provinceFilter === "All" || project.province === provinceFilter) &&
-          (statusFilter === "All" || project.status === statusFilter),
+          (statusFilter === "All" || project.status === statusFilter) &&
+          (minMw === 0 || Number(project.reported_mw || 0) >= minMw),
       ),
-    [projects, provinceFilter, statusFilter],
+    [projects, provinceFilter, statusFilter, minMw],
   );
 
   const selectedProvinceData = provinceByName[selectedProvince];
@@ -409,6 +411,21 @@ function App() {
                   ))}
               </select>
             </label>
+          </div>
+          <div className="control-group" aria-label="Size">
+            <span>Size</span>
+            <div className="chips">
+              {[50, 100].map((value) => (
+                <button
+                  key={value}
+                  className={minMw === value ? "active" : ""}
+                  aria-pressed={minMw === value}
+                  onClick={() => setMinMw(minMw === value ? 0 : value)}
+                >
+                  {value} MW+
+                </button>
+              ))}
+            </div>
           </div>
           <div className="control-group" aria-label="Colour provinces by">
             <span>Colour the map by</span>
@@ -800,7 +817,7 @@ function Scrolly(props: {
           <p>
             The new ones are much bigger too. Canada&apos;s federal government and the IEA treat a
             data center as large-scale, or hyperscale, when it uses <strong>more than 100 MW</strong>.
-            None of the 194 running in Canada reach that today.{" "}
+            York counts none of the 194 running sites at that size today.{" "}
             <span className="hl hl-pink">116 of the planned ones do.</span>
           </p>
           <p>
