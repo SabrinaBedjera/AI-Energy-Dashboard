@@ -744,19 +744,6 @@ function Scrolly(props: {
             aren&apos;t just used for AI. They&apos;ve been around for years to run websites, email,
             online banking, streaming and cloud storage.
           </p>
-          <p>
-            In a York University
-            study (
-            <a href={yorkUrl} target="_blank" rel="noreferrer">
-              Carlo &amp; Rolheiser, 2026
-            </a>
-            ) they flag that out of 194 current data centers{" "}
-            5 are AI related, and out of 213 planned data centers{" "}
-            <span className="hl hl-pink">49 are AI related</span>. However, it&apos;s important to
-            flag that the study only counts a site as AI when its plans mention AI, so the real
-            number could be higher. AI is a growing slice, but the boom is about all kinds of
-            computing.
-          </p>
         </>
       ),
     },
