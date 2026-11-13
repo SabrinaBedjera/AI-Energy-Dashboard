@@ -676,6 +676,7 @@ type ScrollStep = {
   annotations?: Annotation[];
   wide?: boolean;
   backdrop?: React.ReactNode;
+  title?: string;
 };
 
 function Scrolly(props: {
@@ -725,17 +726,16 @@ function Scrolly(props: {
             · <a href="#methods">See all my sources</a>
           </p>
           <p className="hero-byline">By Sabrina Bedjera · November 2026</p>
-          <p className="scroll-cue">
-            Scroll ↓ <span>or</span>{" "}
-            <a className="skip-link" href="#explore">
-              skip to the interactive map
-            </a>
-          </p>
+          <nav className="hero-nav" aria-label="Jump to">
+            <span>Jump to:</span> <a href="#story">The story</a> · <a href="#explore">Interactive map</a> ·{" "}
+            <a href="#charts">Charts</a> · <a href="#methods">Methods and sources</a>
+          </nav>
         </>
       ),
     },
     {
       mode: "projects",
+      title: "What is a data center?",
       body: (
         <>
           <p>
@@ -755,6 +755,7 @@ function Scrolly(props: {
     },
     {
       mode: "power",
+      title: "How much power do data centers use?",
       hideProjects: true,
       fadeAll: true,
       backdrop: <IeaChart />,
@@ -785,6 +786,7 @@ function Scrolly(props: {
     },
     {
       mode: "power",
+      title: "What the power is used for",
       hideProjects: true,
       fadeAll: true,
       backdrop: <IeaEquipmentChart />,
@@ -813,6 +815,7 @@ function Scrolly(props: {
     },
     {
       mode: "grid",
+      title: "Where data centers get their power",
       hideProjects: true,
       body: (
         <>
@@ -841,6 +844,7 @@ function Scrolly(props: {
     },
     {
       mode: "capacity",
+      title: "Why Alberta?",
       focus: "Alberta",
       highlight: "Wonder Valley",
       body: (
@@ -871,6 +875,7 @@ function Scrolly(props: {
     },
     {
       mode: "sitesPlanned",
+      title: "Today vs planned",
       hideProjects: true,
       wide: true,
       body: (
@@ -936,7 +941,10 @@ function Scrolly(props: {
             data-step={index}
             className={`scrolly-step ${item.hero ? "hero" : ""} ${item.wide ? "wide" : ""} ${index === active ? "is-active" : ""}`}
           >
-            <div className="step-card">{item.body}</div>
+            <div className="step-card" id={index === 1 ? "story" : undefined}>
+              {item.title && <h2 className="step-title">{item.title}</h2>}
+              {item.body}
+            </div>
           </div>
         ))}
       </div>
