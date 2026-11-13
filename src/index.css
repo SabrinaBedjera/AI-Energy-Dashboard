@@ -2089,3 +2089,33 @@ rect.york-planned {
 .today-planned td.planned { font-weight: 400; }
 .svg-annotations .anno-line { stroke-width: 1.8; }
 .svg-annotations .anno-head-stroke { stroke-width: 2; }
+
+/* Nov 13 round: fun title, two findings, map hint, legend below the map */
+.scrolly-step.hero h1 {
+  font-family: "Archivo Black", var(--serif);
+  font-size: clamp(44px, 4.6vw, 68px);
+  line-height: 1.02;
+  letter-spacing: 0;
+  color: #1f4fa3;
+  -webkit-text-stroke: 2.5px var(--pink);
+  paint-order: stroke fill;
+  text-shadow: 5px 5px 0 #f2b632;
+}
+.hero-findings { list-style: none; padding: 0; margin: 22px 0 6px; }
+.hero-findings li { display: flex; align-items: baseline; gap: 12px; font-size: 18px; line-height: 1.4; margin-bottom: 10px; }
+.finding-num { font-family: "Archivo Black", var(--serif); font-size: 30px; color: var(--pink); min-width: 74px; }
+.hero-source { font-size: 14px; color: var(--muted); }
+.hero-source a { color: var(--teal); }
+.explorer .map-hint {
+  position: absolute; left: 18px; top: 14px; z-index: 2; margin: 0;
+  font-size: 16px; color: var(--ink); background: #f7f4ed; padding: 6px 10px; border: 1px solid var(--line);
+}
+.explorer .map-legend {
+  position: static !important;
+  right: auto !important;
+  height: auto !important;
+  border: 0 !important;
+  border-top: 1px solid var(--line) !important;
+  background: #f7f4ed !important;
+}
+.explorer .show-on-map .chips { flex-wrap: wrap; }

@@ -263,7 +263,7 @@ function App() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedPowerLine, setSelectedPowerLine] = useState<PowerLine | null>(null);
   const [selectedProvince, setSelectedProvince] = useState("Alberta");
-  const [panelOpen, setPanelOpen] = useState(true);
+  const [panelOpen, setPanelOpen] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -323,7 +323,8 @@ function App() {
       projects.filter(
         (project) =>
           (provinceFilter === "All" || project.province === provinceFilter) &&
-          (statusFilter === "All" || project.status === statusFilter) &&
+          (statusFilter === "All" ||
+            (statusFilter === "Planned" ? project.status !== "Operating" : project.status === statusFilter)) &&
           (minMw === 0 || inSizeBand(project.reported_mw, minMw)) &&
           (useFilter === "" ||
             (useFilter === "ai"
@@ -383,26 +384,35 @@ function App() {
       <div className="explore-intro" id="explore">
         <h2>Your turn.</h2>
         <p>
-          Click any dot for its source and what its number actually measures. Colour the map by one
-          measure (click it again to turn it off), then add power lines, clean power stations or watersheds on top.
+          Click any dot for its source and what its number actually measures. Click a province for its
+          rules, energy mix and power prices. Use the buttons to filter the dots or add layers.
         </p>
       </div>
 
       <section className="map-experience explorer">
         <div className="map-controls explorer-controls">
+          <div className="control-group" aria-label="Status">
+            <span>Show</span>
+            <div className="chips">
+              {(
+                [
+                  ["All", "All"],
+                  ["Operating", "Running"],
+                  ["Planned", "Planned"],
+                ] as [string, string][]
+              ).map(([value, label]) => (
+                <button
+                  key={value}
+                  className={statusFilter === value ? "active" : ""}
+                  aria-pressed={statusFilter === value}
+                  onClick={() => setStatusFilter(value)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="filters">
-            <label>
-              <span>Status</span>
-              <select
-                value={statusFilter}
-                onChange={(event) => setStatusFilter(event.target.value)}
-              >
-                <option value="All">All statuses</option>
-                <option>Operating</option>
-                <option>Under construction</option>
-                <option>Proposed</option>
-              </select>
-            </label>
             <label>
               <span>Province</span>
               <select
@@ -455,8 +465,8 @@ function App() {
               ))}
             </div>
           </div>
-          <div className="control-group" aria-label="Colour provinces by">
-            <span>Colour the map by</span>
+          <div className="control-group show-on-map" aria-label="Show on map">
+            <span>Show on map</span>
             <div className="chips">
               {(
                 [
@@ -473,11 +483,6 @@ function App() {
                   {label}
                 </button>
               ))}
-            </div>
-          </div>
-          <div className="control-group" aria-label="Add layers">
-            <span>Add to the map</span>
-            <div className="chips">
               {(
                 [
                   ["people", "Where people live"],
@@ -524,10 +529,7 @@ function App() {
               }}
             />
             {!panelOpen && (
-              <button className="open-panel" onClick={() => setPanelOpen(true)}>
-                View {selectedPowerLine ? "power line" : selectedProject ? "project" : "province"}{" "}
-                details
-              </button>
+              <p className="map-hint">Click a dot or a province for details.</p>
             )}
             <MapLegend fill={fill} layers={layers} shown={filteredProjects.length} total={projects.length} />
           </div>
@@ -565,10 +567,34 @@ function App() {
 
       <section id="methods" className="about">
         <div>
-          <p className="eyebrow">Methods</p>
-          <h2>Where every number comes from</h2>
+          <p className="eyebrow">About me and methods</p>
+          <h2>Why I built this, and where every number comes from</h2>
         </div>
         <div className="about-copy">
+          <p>
+            You may have noticed it, AI is everywhere. It&apos;s in almost every news source I read,
+            and people have so many questions. How is AI being used? How do we regulate it? Why are
+            data centers being built everywhere, and where do they get their power?
+          </p>
+          <p>
+            I&apos;m a scientist and engineer who loves data and making complex topics accessible,
+            and as an energy nerd I had my own questions. What does the data center ecosystem look
+            like in Canada? Where do these data centers get their energy? How do things differ
+            across provinces and territories?
+          </p>
+          <p>
+            I found a lot of resources that looked at these questions, but I couldn&apos;t find an
+            interactive map that pulled it all together, so I decided to build one! I stuck to
+            public information that isn&apos;t behind a paywall, so anyone can explore my data and
+            fact-check my sources.
+          </p>
+          <p>
+            AI is rapidly growing and being used in many aspects of everyday life, from writing
+            emails and searching for jobs to vibe coding a website or doing research. AI has
+            experienced a boom over the last few years due to improvements in computing power (e.g.
+            computer chips), and AI models. A data center is a building full of computers and storage
+            that AI companies use to train their models and run their systems.
+          </p>
           <p>
             In my analysis, I pull together publicly accessible data from research papers, news
             articles, government sources, utility websites, company websites and more! An interesting
@@ -696,9 +722,21 @@ function Scrolly(props: {
         <>
           <h1>Canada&apos;s AI Boom</h1>
           <p className="hero-sub">An exploration of where Canada&apos;s AI will get its power</p>
-          <p className="hero-summary">
-            Canada has 194 data centers running. Another 213 are
-            planned, and they would draw about 14 times the power of the ones running now.
+          <ul className="hero-findings">
+            <li>
+              <span className="finding-num">78%</span> of Canada&apos;s planned data centers are in
+              Alberta.
+            </li>
+            <li>
+              <span className="finding-num">14×</span> the power: what planned sites would draw,
+              compared with the 194 running today.
+            </li>
+          </ul>
+          <p className="hero-source">
+            Source:{" "}
+            <a href={yorkUrl} target="_blank" rel="noreferrer">
+              York University (2026)
+            </a>
           </p>
           <p className="hero-byline">By Sabrina Bedjera · November 2026</p>
           <p className="scroll-cue">
@@ -713,43 +751,11 @@ function Scrolly(props: {
     {
       mode: "power",
       hideProjects: true,
-      body: (
-        <>
-          <p>
-            You may have noticed it, AI is everywhere. It&apos;s in almost every news source I read,
-            and people have so many questions. How is AI being used? How do we regulate it? Why are
-            data centers being built everywhere, and where do they get their power?
-          </p>
-          <p>
-            I&apos;m a scientist and engineer who loves data and making complex topics accessible,
-            and as an energy nerd I had my own questions. What does the data center ecosystem look
-            like in Canada? Where do these data centers get their energy? How do things differ
-            across provinces and territories?
-          </p>
-          <p>
-            I found a lot of resources that looked at these questions, but I couldn&apos;t find an
-            interactive map that pulled it all together, so I decided to build one! I stuck to
-            public information that isn&apos;t behind a paywall, so anyone can explore my data and
-            fact-check my sources.
-          </p>
-        </>
-      ),
-    },
-    {
-      mode: "power",
-      hideProjects: true,
       fadeAll: true,
       body: (
         <>
           <p>
-            AI is rapidly growing and being used in many aspects of everyday life, from writing
-            emails and searching for jobs to vibe coding a website or doing research. AI has
-            experienced a boom over the last few years due to improvements in computing power (e.g.
-            computer chips), and AI models. A data center is a building full of computers and storage
-            that AI companies use to train their models and run their systems.
-          </p>
-          <p>
-            However, data centers aren&apos;t just used for AI. They&apos;ve been around for years to
+            Data centers aren&apos;t just used for AI. They&apos;ve been around for years to
             run websites, email, online banking, streaming and cloud storage. In a York University
             study (
             <a href={yorkUrl} target="_blank" rel="noreferrer">
@@ -781,20 +787,6 @@ function Scrolly(props: {
             </a>
             ). It expects that to roughly double to about 3% by 2030, slightly more than{" "}
             <span className="hl hl-pink">all of Japan uses today</span>.
-          </p>
-          <p>
-            So let&apos;s talk energy use. Most data centers running in Canada are well under 100
-            megawatts (MW). Once a data center uses more than 100 MW it&apos;s
-            referred to as hyperscale (
-            <a href="https://ised-isde.canada.ca/site/ised/en/enabling-large-scale-sovereign-ai-data-centres" target="_blank" rel="noreferrer">
-              ISED
-            </a>
-            ;{" "}
-            <a href={ieaUrl} target="_blank" rel="noreferrer">
-              IEA
-            </a>
-            ), and takes up a significant amount of land and servers. Many new AI data centers are
-            aiming for this size.
           </p>
           <p>
             In order to meet this demand, companies are exploring a range of energy sources such as
@@ -879,13 +871,6 @@ function Scrolly(props: {
       wide: true,
       body: (
         <>
-          <p>
-            These numbers are from the York University study (
-            <a href={yorkUrl} target="_blank" rel="noreferrer">
-              Carlo &amp; Rolheiser, 2026
-            </a>
-            ), so they&apos;re different from my own list below.
-          </p>
           <TodayVsPlanned />
           <p>
             Today&apos;s data centers are close to cities, where people live and the grid is
@@ -1205,7 +1190,9 @@ function TodayVsPlanned() {
         <a href={yorkUrl} target="_blank" rel="noreferrer">
           Carlo &amp; Rolheiser, York University (2026)
         </a>
-        , Tables A1 and A2, Figure 3b. Planned = announced or under construction.
+        , Tables A1 and A2, Figure 3b, so these are different from my own list. Planned = announced
+        or under construction. Over 100 MW is what the federal government (ISED) and the IEA call
+        large-scale, or hyperscale.
       </caption>
     </table>
   );
