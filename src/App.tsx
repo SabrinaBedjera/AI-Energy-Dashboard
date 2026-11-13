@@ -476,8 +476,8 @@ function App() {
             {(
               [
                 ["lines", "Power lines"],
-                ["clean", "Clean power stations"],
-                ["people", "Where people live"],
+                ["clean", "Clean energy projects"],
+                ["people", "Population spread"],
                 ["water", "Watersheds"],
               ] as [keyof Layers, string][]
             ).map(([key, label]) => (
@@ -1784,7 +1784,7 @@ function MapLegend({ fill, layers }: { fill: FillMode; layers: Layers }) {
       )}
       {layers.people && (
         <div className="legend-block">
-          <p>People per km², 2021 Census</p>
+          <p>Population spread: people per km², 2021 Census</p>
           <div className="capacity-scale">
             {peopleColors.map((color, index) => (
               <span key={color}>
@@ -1831,7 +1831,7 @@ function MapLegend({ fill, layers }: { fill: FillMode; layers: Layers }) {
       )}
       {layers.clean && (
         <div className="legend-block">
-          <p>Clean power stations (NRCan), size = MW</p>
+          <p>Clean energy projects (NRCan): operating hydro, wind, solar, nuclear, biomass and tidal stations. Size = MW</p>
           <div className="energy-legend">
             {Object.entries(cleanColors).map(([label, color]) => (
               <span key={label}>
