@@ -385,7 +385,7 @@ function App() {
       <div className="explore-intro" id="explore">
         <h2>Your turn.</h2>
         <p>
-          Click any dot for its source and what its number actually measures. Click a province for its
+          Try out the map, explore data center projects and clean power. Click a province for its
           rules, energy mix and power prices. Use the buttons to filter the dots or add layers.
         </p>
       </div>
@@ -763,7 +763,7 @@ function Scrolly(props: {
               IEA, 2025
             </a>
             ). It expects that to roughly double to about 3% by 2030, slightly more than{" "}
-            <span className="hl hl-pink">all of Japan uses today</span>.
+            all of Japan uses today.
           </p>
           <p>
             In order to meet this demand, companies are exploring a range of energy sources such as
@@ -856,7 +856,7 @@ function Scrolly(props: {
             <a href="https://www.aeso.ca/grid/connecting-to-the-grid/large-load-projects" target="_blank" rel="noreferrer">
               AESO
             </a>
-            ), so projects like <span className="hl hl-pink">Wonder Valley</span> plan to build their
+            ), so projects like Wonder Valley plan to build their
             own power plants. Other provinces are more careful with their power: BC caps how much
             goes to data centers, and Quebec needs a minister to sign off. The full rules by
             province are at the bottom of the page.
