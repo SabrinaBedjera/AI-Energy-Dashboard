@@ -806,6 +806,14 @@ function Scrolly(props: {
             </a>
             ).
           </p>
+        </>
+      ),
+    },
+    {
+      mode: "grid",
+      hideProjects: true,
+      body: (
+        <>
           <p>
             Companies have different approaches to where their data centers get their energy. Some
             will choose to plug into the electricity grid if it&apos;s nearby and has power
