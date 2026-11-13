@@ -769,7 +769,7 @@ function Scrolly(props: {
               IEA, 2025
             </a>
             ). It expects that to roughly double to about 3% by 2030, slightly more than{" "}
-            all of Japan uses today.
+            the whole country of Japan uses today.
           </p>
           <p>
             In order to meet this demand, companies are exploring a range of energy sources such as
