@@ -1189,7 +1189,7 @@ function IeaEquipmentChart() {
 function TodayVsPlanned() {
   const rows: [string, string, string][] = [
     ["Data centers", "194", "213"],
-    ["Power", "1.6 GW", "22.2 GW (almost 14 times more)"],
+    ["Power", "1.6 GW", "22.2 GW (14×)"],
     ["Where", "Ontario 41%, Quebec 30%, BC 14%", "Alberta: 78% of sites, 92% of the power"],
     ["Distance to a downtown (half of sites)", "Within about 4 km", "More than 48 km"],
     ["Over 100 MW", "None", "116"],
