@@ -259,7 +259,7 @@ function App() {
   const [provinceFilter, setProvinceFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
   const [minMw, setMinMw] = useState(0);
-  const [useFilter, setUseFilter] = useState<"" | "ai" | "other">("");
+  const [useFilter, setUseFilter] = useState<"" | "ai" | "other" | "unknown">("");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedPowerLine, setSelectedPowerLine] = useState<PowerLine | null>(null);
   const [selectedProvince, setSelectedProvince] = useState("Alberta");
@@ -329,7 +329,9 @@ function App() {
           (useFilter === "" ||
             (useFilter === "ai"
               ? project.ai_use === "AI" || project.ai_use === "Mixed"
-              : project.ai_use === "General cloud" || project.ai_use === "Not AI")),
+              : useFilter === "other"
+                ? project.ai_use === "General cloud" || project.ai_use === "Not AI"
+                : !project.ai_use || project.ai_use === "Not stated")),
       ),
     [projects, provinceFilter, statusFilter, minMw, useFilter],
   );
@@ -452,7 +454,8 @@ function App() {
                 [
                   ["ai", "AI"],
                   ["other", "Other uses"],
-                ] as ["ai" | "other", string][]
+                  ["unknown", "Not stated"],
+                ] as ["ai" | "other" | "unknown", string][]
               ).map(([value, label]) => (
                 <button
                   key={value}
@@ -464,6 +467,7 @@ function App() {
                 </button>
               ))}
             </div>
+            <small className="chip-note">AI includes sites that do AI along with other uses. Not stated means the source doesn&apos;t say.</small>
           </div>
           <div className="control-group show-on-map" aria-label="Show on map">
             <span>Show on map</span>
@@ -566,10 +570,7 @@ function App() {
       <ChartsSection prices={prices ?? []} />
 
       <section id="methods" className="about">
-        <div>
-          <p className="eyebrow">About me and methods</p>
-          <h2>Why I built this, and where every number comes from</h2>
-        </div>
+        <h2>About me and methods</h2>
         <div className="about-copy">
           <p>
             You may have noticed it, AI is everywhere. It&apos;s in almost every news source I read,
@@ -605,18 +606,19 @@ function App() {
             sites I found share anything about cooling or water, and 98 don&apos;t say where their
             power comes from.
           </p>
-          <ul className="method-notes">
-            <li>Sizes (MW) are what each source reports, and they don&apos;t always measure the same thing. Click a project on the map to see what its number means.</li>
-            <li>My list and the York study are separate datasets, so their totals don&apos;t match.</li>
-            <li>All pins are approximate.</li>
-            <li>The energy view shows each province&apos;s 2025 electricity mix, not what a data center actually uses.</li>
-            <li>Power lines are from NRCan CanVec. Being near a line doesn&apos;t mean a data center connects to it.</li>
-            <li>Where people live is from the 2021 Census, by census division.</li>
-            <li>Power prices are Hydro-Québec&apos;s 2025 estimates for a 50 MW customer, one city per province, before taxes.</li>
-          </ul>
+          <p>
+            A few notes on the data. Sizes (MW) are what each source reports, and they don&apos;t
+            always measure the same thing, so click a project on the map to see what its number
+            means. My list and the York study are separate datasets, so their totals don&apos;t match.
+            All pins are approximate. The energy view shows each province&apos;s 2025 electricity mix,
+            not what a data center actually uses. Power lines are from NRCan CanVec, and being near a
+            line doesn&apos;t mean a data center connects to it. Where people live is from the 2021
+            Census. Power prices are Hydro-Québec&apos;s 2025 estimates for a 50 MW customer, one city
+            per province, before taxes.
+          </p>
         </div>
         <div className="sources">
-          <h3>Sources</h3>
+          <p>Sources:</p>
           <a
             href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6464099"
             target="_blank"

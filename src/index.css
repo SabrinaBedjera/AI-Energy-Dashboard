@@ -2133,3 +2133,42 @@ rect.york-planned {
   -webkit-text-stroke: 2.5px var(--pink);
   paint-order: stroke fill;
 }
+
+/* About me and methods: one wide column of plain paragraphs, all the same size, nothing bold */
+.about {
+  display: block;
+  padding: 80px 24px 28px;
+}
+.about > * { max-width: 920px; margin-left: auto; margin-right: auto; }
+.about h2,
+.about-copy p,
+.about .sources,
+.about .sources p,
+.about .sources a,
+.about .sources span,
+.about footer,
+.about footer span {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: normal;
+  text-transform: none;
+  color: #e3e8ec;
+}
+.about h2 { margin: 0 auto 20px; max-width: 920px; }
+.about-copy p + p { margin-top: 18px; }
+.about .sources { display: block; margin-top: 18px; }
+.about .sources p { margin: 0 0 6px; }
+.about .sources a,
+.about .sources span {
+  display: block;
+  padding: 2px 0;
+  border: 0;
+  text-decoration: underline;
+  text-decoration-color: #5d7189;
+  text-underline-offset: 3px;
+}
+.about .sources span { text-decoration: none; }
+.about footer { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 32px; }
+.explorer .chip-note { display: block; margin-top: 6px; font-size: 14px; color: var(--muted); max-width: 300px; line-height: 1.35; }
