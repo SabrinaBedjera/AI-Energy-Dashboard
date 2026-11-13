@@ -1017,7 +1017,6 @@ function ProvinceBar({ provinces }: { provinces: Province[] }) {
 // Checked against the paper PDF on Nov 12, 2026. "Planned" = announcement + construction stages.
 const sizeBands: [number, string][] = [
   [1, "Up to 50 MW"],
-  [2, "50 to 100 MW"],
   [3, "100 MW+"],
 ];
 
