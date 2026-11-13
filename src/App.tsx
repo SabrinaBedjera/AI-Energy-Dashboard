@@ -720,7 +720,7 @@ function Scrolly(props: {
       ],
       body: (
         <>
-          <h1>Canada&apos;s AI Boom</h1>
+          <h1 className="fun-title" data-text="Canada's AI Boom">Canada&apos;s AI Boom</h1>
           <p className="hero-sub">An exploration of where Canada&apos;s AI will get its power</p>
           <ul className="hero-findings">
             <li>
@@ -736,7 +736,8 @@ function Scrolly(props: {
             Source:{" "}
             <a href={yorkUrl} target="_blank" rel="noreferrer">
               York University (2026)
-            </a>
+            </a>{" "}
+            · <a href="#methods">See all my sources</a>
           </p>
           <p className="hero-byline">By Sabrina Bedjera · November 2026</p>
           <p className="scroll-cue">

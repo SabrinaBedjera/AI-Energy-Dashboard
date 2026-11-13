@@ -2119,3 +2119,17 @@ rect.york-planned {
   background: #f7f4ed !important;
 }
 .explorer .show-on-map .chips { flex-wrap: wrap; }
+
+/* Title: blue with pink outline; the yellow shadow is a copy with its own pink outline */
+.scrolly-step.hero h1.fun-title { position: relative; z-index: 0; text-shadow: none; }
+.scrolly-step.hero h1.fun-title::before {
+  content: attr(data-text);
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  right: -5px;
+  z-index: -1;
+  color: #f2b632;
+  -webkit-text-stroke: 2.5px var(--pink);
+  paint-order: stroke fill;
+}
