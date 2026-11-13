@@ -323,8 +323,7 @@ function App() {
       projects.filter(
         (project) =>
           (provinceFilter === "All" || project.province === provinceFilter) &&
-          (statusFilter === "All" ||
-            (statusFilter === "Planned" ? project.status !== "Operating" : project.status === statusFilter)) &&
+          (statusFilter === "All" || project.status === statusFilter) &&
           (minMw === 0 || inSizeBand(project.reported_mw, minMw)) &&
           (useFilter === "" ||
             (useFilter === "ai"
@@ -391,31 +390,32 @@ function App() {
         </p>
       </div>
 
-      <section className="map-experience explorer">
+      <section className="map-experience explorer side-layout">
         <div className="map-controls explorer-controls">
-          <div className="control-block">
-            <h3>Data centers</h3>
-            <div className="control-row">
+          <h3>Data centers</h3>
           <div className="control-group" aria-label="Status">
             <span>Status</span>
             <div className="chips">
               {(
                 [
-                  ["All", "All"],
-                  ["Operating", "Running"],
-                  ["Planned", "Planned"],
-                ] as [string, string][]
-              ).map(([value, label]) => (
+                  ["All", "All", ""],
+                  ["Operating", "Operational", statusColors.Operating],
+                  ["Under construction", "Under construction", statusColors["Under construction"]],
+                  ["Proposed", "Planned projects", statusColors.Proposed],
+                ] as [string, string, string][]
+              ).map(([value, label, color]) => (
                 <button
                   key={value}
                   className={statusFilter === value ? "active" : ""}
                   aria-pressed={statusFilter === value}
                   onClick={() => setStatusFilter(value)}
                 >
+                  {color && <i className="status-dot" style={{ background: color }} aria-hidden="true" />}
                   {label}
                 </button>
               ))}
             </div>
+            <small className="chip-note">Size of dot increases with MW.</small>
           </div>
           <div className="control-group" aria-label="Size">
             <span>Size</span>
@@ -452,15 +452,8 @@ function App() {
                 </button>
               ))}
             </div>
-            <small className="chip-note">AI includes sites that do AI along with other uses. Not stated means the source doesn&apos;t say.</small>
           </div>
-            </div>
-            <ProjectLegend shown={filteredProjects.length} total={projects.length} />
-          </div>
-          <div className="control-block">
-            <h3>Map</h3>
-            <div className="control-row">
-          <div className="filters">
+          <div className="control-group" aria-label="Province">
             <label>
               <span>Province</span>
               <select
@@ -478,8 +471,37 @@ function App() {
               </select>
             </label>
           </div>
+          <div className="control-group layer-list" aria-label="Map layers">
+            <span>Map layers</span>
+            {(
+              [
+                ["lines", "Power lines"],
+                ["clean", "Clean power stations"],
+                ["people", "Where people live"],
+                ["water", "Watersheds"],
+              ] as [keyof Layers, string][]
+            ).map(([key, label]) => (
+              <label key={key} className="check">
+                <input
+                  type="checkbox"
+                  checked={layers[key]}
+                  onChange={() => setLayers((current) => ({ ...current, [key]: !current[key] }))}
+                />
+                {label}
+              </label>
+            ))}
+            <button
+              className="link-button"
+              onClick={() => {
+                const allOn = layers.lines && layers.clean && layers.people && layers.water;
+                setLayers((current) => ({ ...current, lines: !allOn, clean: !allOn, people: !allOn, water: !allOn }));
+              }}
+            >
+              {layers.lines && layers.clean && layers.people && layers.water ? "Hide all layers" : "Show all layers"}
+            </button>
+          </div>
           <div className="control-group" aria-label="Colour provinces by">
-            <span>Colour the map by</span>
+            <span>Colour provinces by</span>
             <div className="chips">
               {(
                 [
@@ -498,31 +520,9 @@ function App() {
               ))}
             </div>
           </div>
-          <div className="control-group" aria-label="Add layers">
-            <span>Add to the map</span>
-            <div className="chips">
-              {(
-                [
-                  ["people", "Where people live"],
-                  ["lines", "Power lines"],
-                  ["clean", "Clean power stations"],
-                  ["water", "Watersheds"],
-                ] as [keyof Layers, string][]
-              ).map(([key, label]) => (
-                <button
-                  key={key}
-                  className={`toggle ${layers[key] ? "active" : ""}`}
-                  aria-pressed={layers[key]}
-                  onClick={() => setLayers((current) => ({ ...current, [key]: !current[key] }))}
-                >
-                  <i aria-hidden="true">{layers[key] ? "✓" : "+"}</i>
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-            </div>
-          </div>
+          <p className="shown-count">
+            Showing {filteredProjects.length} of {projects.length} data centers
+          </p>
         </div>
 
         <div className={`explorer-stage ${panelOpen ? "with-panel" : ""}`}>
@@ -1742,37 +1742,6 @@ function SvgMap({
       </div>
     )}
     </>
-  );
-}
-
-function ProjectLegend({ shown, total }: { shown: number; total: number }) {
-  return (
-    <div className="project-legend-row">
-      <div className="legend-block">
-        <p>
-          Data center projects: {total} found in public sources
-          {shown !== total ? ` (showing ${shown})` : ""}
-        </p>
-        <div className="project-legend">
-          {Object.entries(statusColors).map(([label, color]) => (
-            <span key={label}>
-              <i
-                style={{
-                  background: color,
-                  borderColor: statusStroke[label as keyof typeof statusStroke],
-                }}
-              />
-              {label}
-            </span>
-          ))}
-          <span className="confidence-key">
-            <i />
-            Outline: lower confidence
-          </span>
-        </div>
-        <small>A bigger dot means more power (MW). Sites that don&apos;t publish a size get the smallest dot. All pins are approximate.</small>
-      </div>
-    </div>
   );
 }
 

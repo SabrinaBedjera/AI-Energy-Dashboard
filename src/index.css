@@ -2214,3 +2214,45 @@ rect.york-planned {
 .explorer .project-legend-row .legend-block { display: contents; }
 .explorer .project-legend-row p { margin: 0; }
 .explorer .project-legend-row small { margin: 0; }
+
+/* Explorer: controls in a left column, map full height, layer notes in a corner box (Babs, Nov 13) */
+.map-experience.explorer.side-layout {
+  display: grid;
+  grid-template-columns: 290px minmax(0, 1fr);
+  align-items: stretch;
+}
+.explorer.side-layout .explorer-controls {
+  display: block;
+  padding: 20px 18px;
+  border: 0;
+  border-right: 1px solid var(--line);
+  background: #f7f4ed;
+}
+.explorer.side-layout .explorer-controls h3 { margin: 0 0 12px; font-size: 19px; font-weight: 600; }
+.explorer.side-layout .control-group { padding: 0; border: 0; margin: 0 0 16px; display: block; }
+.explorer.side-layout .control-group > span,
+.explorer.side-layout .control-group label > span { display: block; margin-bottom: 6px; font-size: 15px; font-weight: 600; }
+.explorer.side-layout .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.explorer.side-layout .chips button { font-size: 15px; padding: 6px 10px; display: inline-flex; align-items: center; gap: 7px; }
+.explorer.side-layout .status-dot { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--ink); display: inline-block; flex: none; }
+.explorer.side-layout select { width: 100%; }
+.explorer.side-layout .chip-note { margin-top: 6px; max-width: none; }
+.explorer.side-layout .check { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 400; padding: 3px 0; cursor: pointer; }
+.explorer.side-layout .check input { width: 16px; height: 16px; accent-color: var(--ink); }
+.explorer.side-layout .link-button { margin-top: 6px; padding: 0; border: 0; background: none; font-size: 15px; color: var(--teal); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.explorer.side-layout .shown-count { margin: 4px 0 0; font-size: 14px; color: var(--muted); }
+.explorer.side-layout .svg-map { height: min(88vh, 820px); }
+.explorer.side-layout .map-legend {
+  position: absolute !important;
+  left: 18px !important; bottom: 18px; right: auto !important;
+  max-width: 320px; max-height: 60%; overflow-y: auto;
+  border: 1px solid var(--line) !important;
+  padding: 10px 12px;
+}
+.explorer.side-layout .map-legend .legend-block + .legend-block { margin-top: 10px; }
+.explorer.side-layout .map-legend p { font-size: 15px; margin-bottom: 5px; }
+.explorer.side-layout .map-legend span, .explorer.side-layout .map-legend small { font-size: 14px; }
+@media (max-width: 900px) {
+  .map-experience.explorer.side-layout { grid-template-columns: 1fr; }
+  .explorer.side-layout .explorer-controls { border-right: 0; border-bottom: 1px solid var(--line); }
+}
