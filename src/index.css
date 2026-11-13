@@ -2070,3 +2070,22 @@ rect.york-planned {
 .explorer .filters label > span { font-size: 15px; font-weight: 600; color: var(--ink); }
 .explorer .panel-source, .explorer .panel-source a { font-weight: 400 !important; }
 .explorer .mix-chart > div { grid-template-columns: 96px 1fr 52px !important; }
+
+/* Babs Nov 13: title straight on the page, no card; no monospace in the hero; numbers not bold */
+.scrolly-step.hero .step-card {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding-left: 0;
+}
+.hero-byline,
+.scroll-cue {
+  font-family: var(--serif);
+  font-size: 15px;
+  font-variant: small-caps;
+  letter-spacing: 0.02em;
+}
+.hero-summary strong { font-weight: 400; }
+.today-planned td.planned { font-weight: 400; }
+.svg-annotations .anno-line { stroke-width: 1.8; }
+.svg-annotations .anno-head-stroke { stroke-width: 2; }

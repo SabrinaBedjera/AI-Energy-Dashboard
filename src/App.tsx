@@ -697,8 +697,8 @@ function Scrolly(props: {
           <h1>Canada&apos;s AI Boom</h1>
           <p className="hero-sub">An exploration of where Canada&apos;s AI will get its power</p>
           <p className="hero-summary">
-            Canada has <strong>194</strong> data centers running. Another <strong>213</strong> are
-            planned, and they would draw about <strong>14 times</strong> the power of the ones running now.
+            Canada has 194 data centers running. Another 213 are
+            planned, and they would draw about 14 times the power of the ones running now.
           </p>
           <p className="hero-byline">By Sabrina Bedjera · November 2026</p>
           <p className="scroll-cue">
@@ -755,8 +755,8 @@ function Scrolly(props: {
             <a href={yorkUrl} target="_blank" rel="noreferrer">
               Carlo &amp; Rolheiser, 2026
             </a>
-            ) they flag that out of <strong>194</strong> current data centers{" "}
-            <strong>5 are AI related</strong>, and out of <strong>213</strong> planned data centers{" "}
+            ) they flag that out of 194 current data centers{" "}
+            5 are AI related, and out of 213 planned data centers{" "}
             <span className="hl hl-pink">49 are AI related</span>. However, it&apos;s important to
             flag that the study only counts a site as AI when its plans mention AI, so the real
             number could be higher. AI is a growing slice, but the boom is about all kinds of
@@ -775,7 +775,7 @@ function Scrolly(props: {
           <p>
             Data centers need electricity to run, which increases with the amount of servers that
             they hold. The International Energy Agency found that data centers used{" "}
-            <strong>1.5% of the world&apos;s electricity</strong> in 2024 (
+            1.5% of the world&apos;s electricity in 2024 (
             <a href={ieaUrl} target="_blank" rel="noreferrer">
               IEA, 2025
             </a>
@@ -784,7 +784,7 @@ function Scrolly(props: {
           </p>
           <p>
             So let&apos;s talk energy use. Most data centers running in Canada are well under 100
-            megawatts (MW). Once a data center uses more than <strong>100 MW</strong> it&apos;s
+            megawatts (MW). Once a data center uses more than 100 MW it&apos;s
             referred to as hyperscale (
             <a href="https://ised-isde.canada.ca/site/ised/en/enabling-large-scale-sovereign-ai-data-centres" target="_blank" rel="noreferrer">
               ISED
@@ -860,7 +860,7 @@ function Scrolly(props: {
             concierge program, and regulatory changes to make it easier to build data centers.
           </p>
           <p>
-            Alberta&apos;s grid only had room for <strong>1,200 MW</strong> of big new loads, and
+            Alberta&apos;s grid only had room for 1,200 MW of big new loads, and
             that&apos;s taken (
             <a href="https://www.aeso.ca/grid/connecting-to-the-grid/large-load-projects" target="_blank" rel="noreferrer">
               AESO
@@ -903,8 +903,8 @@ function Scrolly(props: {
           Those numbers come from a commercial database I can&apos;t access, so I can&apos;t see
           which sites they are. I wanted the projects anyone can check. I looked for every data
           center in Canada I could trace to a public source and found{" "}
-          <strong>{props.projects.length}</strong>. Of those,{" "}
-          <strong>{props.projects.length - props.plannedCount}</strong> are already running, most of
+          {props.projects.length}. Of those,{" "}
+          {props.projects.length - props.plannedCount} are already running, most of
           them small buildings in Toronto, Montreal, Vancouver and Calgary listed on the
           operators&apos; own websites. The{" "}
           <span className="hl hl-pink">pink dots</span> are still plans, the{" "}
@@ -1670,11 +1670,6 @@ function SvgMap({
       </g>
       {annotations && annotations.length > 0 && (
         <g className="svg-annotations" aria-hidden="true">
-          <defs>
-            <marker id="anno-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-              <path d="M1 1 L9 5 L1 9" fill="none" stroke="#172d49" strokeWidth="1.6" strokeLinecap="round" />
-            </marker>
-          </defs>
           {annotations.map((note) => {
             const point = projection([note.lon, note.lat]);
             if (!point) return null;
@@ -1682,18 +1677,34 @@ function SvgMap({
             const lx = px + note.dx;
             const ly = py + note.dy;
             const anchor = note.anchor ?? (note.dx < 0 ? "end" : "start");
-            // hand-drawn feel: an S-curve from the label to just short of the point
-            const sx = lx + (anchor === "end" ? 6 : -6);
-            const sy = ly + (note.dy < 0 ? 30 : -26);
-            const ex = px - Math.sign(note.dx) * 10;
-            const ey = py - Math.sign(note.dy) * 10;
-            const mx = (sx + ex) / 2;
-            const my = (sy + ey) / 2;
-            const bend = 26;
-            const d = `M${sx} ${sy} C ${sx + (note.dx < 0 ? bend : -bend)} ${my - bend}, ${mx - bend} ${my + bend}, ${mx} ${my} S ${ex + (note.dx < 0 ? -bend : bend) / 2} ${ey - (note.dy < 0 ? bend : -bend) / 2}, ${ex} ${ey}`;
+            // hand-drawn feel: one loose arc that swings out to the side, with a quick pen-stroke head
+            const sx = lx + (anchor === "end" ? -4 : 4);
+            const sy = ly + (note.dy < 0 ? 32 : -24);
+            const ex = px - Math.sign(note.dx) * 9;
+            const ey = py - Math.sign(note.dy) * 9;
+            const vx = ex - sx;
+            const vy = ey - sy;
+            const len = Math.hypot(vx, vy) || 1;
+            const swing = Math.min(70, len * 0.35) * (note.dx < 0 ? -1 : 1);
+            const cx = sx + vx * 0.5 - (vy / len) * swing;
+            const cy = sy + vy * 0.5 + (vx / len) * swing;
+            const d = `M${sx} ${sy} Q ${cx} ${cy} ${ex} ${ey}`;
+            // arrowhead follows the curve's last direction, two strokes of different length
+            const tx = ex - cx;
+            const ty = ey - cy;
+            const tl = Math.hypot(tx, ty) || 1;
+            const ux = tx / tl;
+            const uy = ty / tl;
+            const head = (size: number, turn: number) => {
+              const c = Math.cos(turn);
+              const sn = Math.sin(turn);
+              return `${ex - size * (ux * c - uy * sn)} ${ey - size * (uy * c + ux * sn)}`;
+            };
+            const h = `M${head(11, 0.5)} L${ex} ${ey} L${head(8, -0.6)}`;
             return (
               <g key={note.lines[0]}>
-                <path d={d} className="anno-line" markerEnd="url(#anno-arrow)" />
+                <path d={d} className="anno-line" />
+                <path d={h} className="anno-line anno-head-stroke" />
                 <text x={lx} y={ly} textAnchor={anchor} className="anno-head">{note.lines[0]}</text>
                 <text x={lx} y={ly + 20} textAnchor={anchor} className="anno-sub">{note.lines[1]}</text>
               </g>
