@@ -17,6 +17,9 @@ type Project = {
   source: string;
   source_2: string;
   check_status: string;
+  ai_use?: string;
+  ai_use_quote?: string;
+  ai_use_link?: string;
 };
 
 type Province = {
@@ -1839,6 +1842,22 @@ function ProjectDetail({ project, onProvince }: { project: Project; onProvince: 
           <dt>Location precision</dt>
           <dd>{project.location_precision}</dd>
         </div>
+        {project.ai_use && (
+          <div>
+            <dt>What it is for</dt>
+            <dd>
+              {project.ai_use === "Not stated" ? "Not stated publicly" : project.ai_use}
+              {project.ai_use_link && (
+                <>
+                  {" "}
+                  <a href={project.ai_use_link} target="_blank" rel="noreferrer">
+                    source ↗
+                  </a>
+                </>
+              )}
+            </dd>
+          </div>
+        )}
       </dl>
       {project.notes && <p className="detail-note">{project.notes}</p>}
       <a className="primary-link" href={project.source} target="_blank" rel="noreferrer">
