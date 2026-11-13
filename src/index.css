@@ -2256,3 +2256,11 @@ rect.york-planned {
   .map-experience.explorer.side-layout { grid-template-columns: 1fr; }
   .explorer.side-layout .explorer-controls { border-right: 0; border-bottom: 1px solid var(--line); }
 }
+
+/* Bigger map: it fills the full width of its column and its height follows, so no empty bands */
+.map-experience.explorer.side-layout { grid-template-columns: 250px minmax(0, 1fr); }
+.explorer.side-layout .explorer-controls { padding: 18px 14px; }
+.explorer.side-layout .svg-map { height: auto; aspect-ratio: 1000 / 600; width: 100%; display: block; }
+.explorer.side-layout .explorer-stage.with-panel { grid-template-columns: minmax(0, 1fr) 300px; }
+.explorer.side-layout .explorer-stage.with-panel .detail-drawer { max-height: none; position: relative; }
+.explorer.side-layout .explorer-map { background: #e8ebe7; }

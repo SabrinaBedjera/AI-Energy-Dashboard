@@ -476,7 +476,7 @@ function App() {
             {(
               [
                 ["lines", "Power lines"],
-                ["clean", "Clean energy projects"],
+                ["clean", "Clean power generation"],
                 ["people", "Population spread"],
                 ["water", "Watersheds"],
               ] as [keyof Layers, string][]
@@ -1372,8 +1372,8 @@ function SvgMap({
     if (boundaries)
       nextProjection.fitExtent(
         [
-          [12, 12],
-          [988, 588],
+          [4, 4],
+          [996, 596],
         ],
         boundaries,
       );
@@ -1831,7 +1831,7 @@ function MapLegend({ fill, layers }: { fill: FillMode; layers: Layers }) {
       )}
       {layers.clean && (
         <div className="legend-block">
-          <p>Clean energy projects (NRCan): operating hydro, wind, solar, nuclear, biomass and tidal stations. Size = MW</p>
+          <p>Clean power generation (NRCan): hydro, wind, solar, nuclear, biomass and tidal generating stations. Size = MW</p>
           <div className="energy-legend">
             {Object.entries(cleanColors).map(([label, color]) => (
               <span key={label}>
