@@ -606,7 +606,8 @@ function App() {
             In my analysis, I pull together publicly accessible data from research papers, news
             articles, government sources, utility websites, company websites and more! An interesting
             finding is that a decent amount of data center information is behind paywalls, either
-            through a private data firm or a news article. Key information gaps were water use and
+            through a private data firm or a news article. Of the 125 sites I found, 84 are already
+            running, mostly small buildings listed on the operators&apos; own websites. Key information gaps were water use and
             power sources. For example, only 12 of the 125 sites I found share anything about cooling
             or water, and 98 don&apos;t say where their power comes from.
           </p>
@@ -877,25 +878,6 @@ function Scrolly(props: {
             and they might have to build their own. They&apos;re also much bigger.
           </p>
         </>
-      ),
-    },
-    {
-      mode: "projects",
-      body: (
-        <p>
-          Those numbers come from a commercial database I can&apos;t access, so I can&apos;t see
-          which sites they are. I wanted the projects anyone can check. I looked for every data
-          center in Canada I could trace to a public source and found{" "}
-          {props.projects.length}. Of those,{" "}
-          {props.projects.length - props.plannedCount} are already running, most of
-          them small buildings in Toronto, Montreal, Vancouver and Calgary listed on the
-          operators&apos; own websites. The{" "}
-          <span className="hl hl-pink">pink dots</span> are still plans, the{" "}
-          <span className="hl hl-yellow">yellow</span> ones are being built, and the{" "}
-          <span className="hl hl-white">white</span> ones are already running.{" "}
-          {props.albertaPlannedCount} of the {props.plannedCount} planned or under construction are
-          in Alberta too.
-        </p>
       ),
     },
   ];
