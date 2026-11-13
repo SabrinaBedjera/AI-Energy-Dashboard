@@ -1970,3 +1970,31 @@ rect.york-planned {
     width: calc(100% - 38vw - 24px);
   }
 }
+
+/* Province rules table */
+.rules-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.rules-table th,
+.rules-table td {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.rules-table th {
+  width: 32%;
+  padding-right: 12px;
+  font-weight: 700;
+}
+
+.rules-table td a {
+  color: var(--pink);
+  text-decoration: none;
+  font-weight: 700;
+}

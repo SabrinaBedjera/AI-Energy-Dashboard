@@ -848,12 +848,16 @@ function Scrolly(props: {
     {
       mode: "clean",
       hideProjects: true,
+      wide: true,
       body: (
-        <p>
-          The hydro provinces have the clean power. They&apos;re just not handing it out. BC caps
-          new data centres at <strong>400 MW</strong> over two years. Quebec needs a minister to
-          sign off. Manitoba has proposed a special rate for them.
-        </p>
+        <>
+          <p>
+            Provinces set the rules, and the rules differ a lot. The hydro provinces have clean
+            power but ration it. Alberta capped its grid and opened a faster path for projects
+            that bring their own power.
+          </p>
+          <RulesTable />
+        </>
       ),
     },
     {
@@ -1147,11 +1151,51 @@ function ChartsSection({ prices }: { prices: PriceRow[] }) {
           <PriceChart prices={prices} />
         </div>
         <div className="chart-card">
+          <h3>The rules by province</h3>
+          <RulesTable />
+        </div>
+        <div className="chart-card">
           <h3>Canada and the US</h3>
           <YorkComparison />
         </div>
       </div>
     </section>
+  );
+}
+
+const rulesRows: [string, string, string][] = [
+  ["Alberta", "Grid capped at 1,200 MW for big new loads (all allocated). Bill 8 fast-tracks data centres that bring their own power.", "https://www.aeso.ca/grid/connecting-to-the-grid/large-load-projects"],
+  ["British Columbia", "Competitive process: up to 300 MW for AI and 100 MW for other data centres over two years, 145 MW max per project.", "https://news.gov.bc.ca/releases/2026ECS0005-000095"],
+  ["Quebec", "A minister must authorize power for any data centre of 5 MW or more (Bill 69).", "https://www.blg.com/en/insights/2026/07/data-centre-regulation-in-quebec-from-honeyed-promise-to-iron-control"],
+  ["Ontario", "The government decides which large loads can connect, and weighs economic benefit (Bill 40).", "https://www.torys.com/en/our-latest-thinking/publications/2025/12/key-takeaways-and-next-steps-on-new-energy-law"],
+  ["Manitoba", "Proposed a separate rate class for data centres (Bill 39). Not yet clear if it's in force.", "https://web2.gov.mb.ca/bills/43-3/pdf/b039.pdf"],
+  ["Saskatchewan", "No data centre cap. Big projects can bring their own power.", "https://www.cp24.com/news/canada/2026/09/15/bell-ai-data-centre-project-near-regina-to-quadruple-in-size/"],
+  ["Nova Scotia, New Brunswick", "Standard grid connection, no data centre rules yet.", "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6464099"],
+];
+
+function RulesTable() {
+  return (
+    <div className="york-charts">
+      <table className="rules-table">
+        <tbody>
+          {rulesRows.map(([province, rule, url]) => (
+            <tr key={province}>
+              <th scope="row">{province}</th>
+              <td>
+                {rule}{" "}
+                <a href={url} target="_blank" rel="noreferrer" aria-label={`Source for ${province}`}>
+                  ↗
+                </a>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="york-source">
+        Rules as of November 2026. Summary based on York University (2026), Table 2, and each
+        province&apos;s own sources (↗).
+      </p>
+    </div>
   );
 }
 
