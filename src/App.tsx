@@ -824,29 +824,23 @@ function Scrolly(props: {
       body: (
         <>
           <p>
-            Companies have different approaches to where their data centers get their energy. Some
-            will choose to plug into the electricity grid if it&apos;s nearby and has power
-            available, especially in big cities. Others might build their data centers in more
-            remote locations and will have to build their own power systems, or try to connect to
-            nearby power systems. For example:
+            Companies have different approaches for sourcing their data center energy. Some will
+            choose to plug into the electricity grid if it&apos;s nearby and has power available.
+            Others might build their data centers in more remote locations and may have to build
+            their own power systems. For example:
           </p>
           <ul className="step-list">
             <li>
-              <strong>BC:</strong> TELUS has secured 85 MW of clean, renewable power from BC Hydro (
+              <strong>BC:</strong> TELUS&apos; data centers have secured 85 MW of renewable power from
+              BC Hydro (
               <a href="https://www.telus.com/en/about/news-and-events/media-releases/TELUS-and-Government-of-Canada-advance-work-to-scale-Canadas-sovereign-AI-infrastructure" target="_blank" rel="noreferrer">TELUS</a>
-              ), and Bell describes its BC sites as hydroelectric-powered (
-              <a href="https://cfjctoday.com/2025/05/28/bell-announces-plans-to-open-six-ai-data-centres-in-b-c-as-part-of-bell-ai-fabric/" target="_blank" rel="noreferrer">CFJC</a>
               ).
             </li>
             <li>
-              <strong>Nova Scotia:</strong> EverWind plans to run its data center on wind, with $2
-              billion for new wind projects (
+              <strong>Nova Scotia:</strong> EverWind is investing $2B in new wind projects to supply
+              energy to their data centers (
               <a href="https://www.cp24.com/news/canada/2026/10/16/everwind-says-10b-ai-data-centre-proposal-largest-private-investment-in-ns-history/" target="_blank" rel="noreferrer">CP24</a>
               ).
-            </li>
-            <li>
-              <strong>Alberta:</strong> most projects that name a fuel plan their own natural gas
-              plants, some with carbon capture (my project list).
             </li>
           </ul>
         </>
