@@ -827,7 +827,7 @@ function Scrolly(props: {
           </p>
           <ul className="step-list">
             <li>
-              <strong>BC:</strong> TELUS&apos; data centers have secured 85 MW of renewable power from
+              <strong>British Columbia:</strong> TELUS&apos; data centers have secured 85 MW of renewable power from
               BC Hydro (
               <a href="https://www.telus.com/en/about/news-and-events/media-releases/TELUS-and-Government-of-Canada-advance-work-to-scale-Canadas-sovereign-AI-infrastructure" target="_blank" rel="noreferrer">TELUS</a>
               ).
