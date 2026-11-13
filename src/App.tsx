@@ -723,13 +723,26 @@ function Scrolly(props: {
       mode: "grid",
       hideProjects: true,
       body: (
+        <>
         <p>
-          Where does that power come from? A data centre can plug into the{" "}
-          <strong>grid</strong> like any other big customer. It can also get its power more
-          directly from <span className="hl hl-teal">clean energy projects</span>, by signing a
-          long-term deal with a wind, solar or hydro project or by building its own. That&apos;s
-          why this map shows power lines and clean power stations alongside the data centres.
+          Where a data centre gets its power matters as much as where it&apos;s built. Some plug
+          into the grid. Others sign deals for clean power or build their own. In BC, TELUS has
+          secured <strong>85 MW</strong> of clean, renewable power from BC Hydro, and Bell
+          describes its BC sites as hydroelectric-powered. In Nova Scotia, EverWind plans to run its
+          data centre on wind, with <strong>$2 billion</strong> for new wind projects. In Alberta,
+          most projects that name a fuel plan their own natural gas plants, some with carbon
+          capture.
         </p>
+        <p className="york-source">
+          Sources:{" "}
+          <a href="https://www.telus.com/en/about/news-and-events/media-releases/TELUS-and-Government-of-Canada-advance-work-to-scale-Canadas-sovereign-AI-infrastructure" target="_blank" rel="noreferrer">TELUS</a>
+          ,{" "}
+          <a href="https://cfjctoday.com/2025/05/28/bell-announces-plans-to-open-six-ai-data-centres-in-b-c-as-part-of-bell-ai-fabric/" target="_blank" rel="noreferrer">CFJC (Bell)</a>
+          ,{" "}
+          <a href="https://www.cp24.com/news/canada/2026/10/16/everwind-says-10b-ai-data-centre-proposal-largest-private-investment-in-ns-history/" target="_blank" rel="noreferrer">CP24 (EverWind)</a>
+          , and the power source column in my project list.
+        </p>
+        </>
       ),
     },
     {
