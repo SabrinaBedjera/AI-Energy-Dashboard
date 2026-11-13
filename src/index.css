@@ -2172,3 +2172,11 @@ rect.york-planned {
 .about .sources span { text-decoration: none; }
 .about footer { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 32px; }
 .explorer .chip-note { display: block; margin-top: 6px; font-size: 14px; color: var(--muted); max-width: 300px; line-height: 1.35; }
+/* Byline, scroll cue and source: same serif as the text above, just smaller (Babs) */
+.hero-byline, .scroll-cue, .scroll-cue span, .skip-link, .hero-source {
+  font-family: var(--serif) !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  font-size: 15px !important;
+}
