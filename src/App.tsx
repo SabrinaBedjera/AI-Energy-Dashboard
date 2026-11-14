@@ -43,6 +43,8 @@ type MapMode =
   | "energy"
   | "clean"
   | "water"
+  | "stress"
+  | "fibre"
   | "people"
   | "grid"
   | "projects"
@@ -53,8 +55,8 @@ type MapMode =
 type Annotation = { lon: number; lat: number; dx: number; dy: number; lines: [string, string]; anchor?: "start" | "end" };
 
 type FillMode = "none" | "capacity" | "energy" | "people" | "price" | "sitesActive" | "sitesPlanned";
-type Layers = { people: boolean; lines: boolean; clean: boolean; water: boolean };
-const noLayers: Layers = { people: false, lines: false, clean: false, water: false };
+type Layers = { people: boolean; lines: boolean; clean: boolean; water: boolean; stress: boolean; fibre: boolean };
+const noLayers: Layers = { people: false, lines: false, clean: false, water: false, stress: false, fibre: false };
 
 // Scrolly steps still describe one "mode"; turn it into a fill + overlays
 function viewFor(mode: MapMode): { fill: FillMode; layers: Layers } {
@@ -64,6 +66,8 @@ function viewFor(mode: MapMode): { fill: FillMode; layers: Layers } {
   if (mode === "grid") return { fill: "none", layers: { ...noLayers, lines: true, clean: true } };
   if (mode === "people") return { fill: "none", layers: { ...noLayers, people: true } };
   if (mode === "water") return { fill: "none", layers: { ...noLayers, water: true } };
+  if (mode === "stress") return { fill: "none", layers: { ...noLayers, stress: true } };
+  if (mode === "fibre") return { fill: "none", layers: { ...noLayers, fibre: true } };
   return { fill: mode as FillMode, layers: noLayers };
 }
 
@@ -232,6 +236,30 @@ const formatMw = (value: string | number) =>
   value === "" || value === null ? "Not disclosed" : `${Number(value).toLocaleString("en-CA")} MW`;
 
 const dataUrl = (file: string) => `${import.meta.env.BASE_URL}data/${file}`;
+
+// Extra map layers load once, the first time a map needs them.
+const geoCache: Record<string, Promise<any>> = {};
+function useGeo(file: string, enabled: boolean) {
+  const [data, setData] = useState<any>(null);
+  useEffect(() => {
+    if (!enabled) return;
+    let alive = true;
+    (geoCache[file] ??= fetch(dataUrl(file)).then((response) => response.json())).then((d) => {
+      if (alive) setData(d);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [file, enabled]);
+  return data;
+}
+const stressColors: Record<number, string> = { 1: "#cfe5e1", 2: "#8fc4bb", 3: "#3f8f84", 4: "#0b5f57" };
+const stressLabels: [number, string][] = [
+  [1, "Low to medium"],
+  [2, "Medium to high"],
+  [3, "High"],
+  [4, "Extremely high"],
+];
 const mapSources = {
   generation: "https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=2510001501",
   population: "https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=9810000701",
@@ -239,7 +267,10 @@ const mapSources = {
   clean: "https://geoappext.nrcan.gc.ca/arcgis/rest/services/Energy/CERP_EN/MapServer",
   water: "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NRCAN/AtlasWatershedsEN/MapServer",
   prices: "https://www.hydroquebec.com/data/documents-donnees/pdf/comparaison-prix-2025-en.pdf",
+  stress: "https://www.wri.org/data/aqueduct-global-maps-40-data",
+  fibre: "https://open.canada.ca/data/en/dataset/00a331db-121b-445d-b119-35dbbe3eedd9",
 };
+const randUrl = "https://www.rand.org/pubs/tools/TLA4617-1.html";
 function Citation({ href, children }: { href: string; children: React.ReactNode }) {
   return <a href={href} target="_blank" rel="noreferrer">{children}</a>;
 }
@@ -517,6 +548,8 @@ function App() {
                 ["clean", "Clean power generation"],
                 ["people", "Population spread"],
                 ["water", "Watersheds"],
+                ["stress", "Water stress"],
+                ["fibre", "No fibre backbone nearby"],
               ] as [keyof Layers, string][]
             ).map(([key, label]) => (
               <label key={key} className="check">
@@ -531,11 +564,11 @@ function App() {
             <button
               className="link-button"
               onClick={() => {
-                const allOn = layers.lines && layers.clean && layers.people && layers.water;
-                setLayers((current) => ({ ...current, lines: !allOn, clean: !allOn, people: !allOn, water: !allOn }));
+                const allOn = Object.values(layers).every(Boolean);
+                setLayers({ lines: !allOn, clean: !allOn, people: !allOn, water: !allOn, stress: !allOn, fibre: !allOn });
               }}
             >
-              {layers.lines && layers.clean && layers.people && layers.water ? "Hide all layers" : "Show all layers"}
+              {Object.values(layers).every(Boolean) ? "Hide all layers" : "Show all layers"}
             </button>
           </div>
           <div className="control-group" aria-label="Colour provinces by">
@@ -818,16 +851,14 @@ function Scrolly(props: {
       body: (
         <>
           <p>
-            AI is rapidly growing and being used in many aspects of everyday life, from writing
-            emails and searching for jobs to vibe coding websites or doing research. AI has
-            experienced a boom over the last few years due to improvements in computing power (e.g.
-            computer chips), and AI models.
+            AI is being used in many parts of everyday life, from writing emails and searching for jobs to
+            vibe coding websites. It has boomed over the last few years thanks to better computer chips and AI
+            models.
           </p>
           <p>
-            A data center is a building full of computer servers that companies use to run their
-            systems. For instance, if you&apos;ve ever done a Google search, your computer would have
-            connected to a server in a data center. Companies use AI data centers to train and run
-            their AI models.
+            A data center is a building full of computer servers, plus the power, cooling and network equipment
+            that keeps them running (IEA, 2025). If you&apos;ve ever done a Google search, your computer connected
+            to a server in a data center. AI data centers train and run AI models.
           </p>
         </>
       ),
@@ -838,10 +869,9 @@ function Scrolly(props: {
       body: (
         <>
           <p>
-            Where a data center gets built depends on many things, like access to energy, land and
-            water. Data centers also need to move a lot of data quickly, so being close to the
-            internet backbone (high-capacity fibre lines) matters too. I couldn&apos;t find a public
-            dataset of Canada&apos;s fibre lines to add to my map, but you can explore them on the{" "}
+            Where a data center gets built depends on multiple factors such as land, energy, water and fast
+            internet (<Citation href={randUrl}>RAND, 2026</Citation>). I couldn&apos;t find a public map of
+            Canada&apos;s fibre lines, but you can explore them on the{" "}
             <a href="https://bbmaps.itu.int/bbmaps/" target="_blank" rel="noreferrer">
               ITU Broadband Map
             </a>
@@ -849,6 +879,39 @@ function Scrolly(props: {
           </p>
         </>
       ),
+    },
+    {
+      mode: "people",
+      hideProjects: true,
+      title: "Land",
+      body: (
+        <p>
+          Data centers need space. Darker areas have more people per km² (Statistics Canada, 2021 Census).
+        </p>
+      ),
+    },
+    {
+      mode: "grid",
+      hideProjects: true,
+      title: "Energy",
+      body: <p>They need a lot of power. These are Canada&apos;s power lines and clean power stations (NRCan).</p>,
+    },
+    {
+      mode: "stress",
+      hideProjects: true,
+      title: "Water",
+      body: (
+        <p>
+          Many data centers use water for cooling. Darker areas already use more of their available water (WRI
+          Aqueduct). Much of southern Alberta has high or extremely high water stress.
+        </p>
+      ),
+    },
+    {
+      mode: "fibre",
+      hideProjects: true,
+      title: "Fast internet",
+      body: <p>They need fast fibre connections. Each dot is a community with no fibre backbone nearby (ISED).</p>,
     },
     {
       mode: "power",
@@ -1005,6 +1068,7 @@ function Scrolly(props: {
   const phone = usePhoneLayout();
   const renderStoryMap = (item: ScrollStep) => (
         <SvgMap
+          key={`${item.mode}-${item.title ?? ""}`}
           boundaries={props.boundaries}
           powerLines={props.powerLines}
           cleanStations={props.cleanStations}
@@ -1024,7 +1088,7 @@ function Scrolly(props: {
           fadeAll={item.fadeAll}
           annotations={phone ? undefined : item.annotations}
           fitStoryMap={!item.focus && (phone || !item.hero)}
-          alignBottom={item.mode === "grid" || item.mode === "sitesPlanned" || item.mode === "sitesActive"}
+          alignBottom={["grid", "sitesPlanned", "sitesActive", "people", "stress", "fibre"].includes(item.mode)}
         />
   );
   const renderStoryLegend = (item: ScrollStep) => (
@@ -1060,6 +1124,11 @@ function Scrolly(props: {
                   <small>Larger dots indicate higher generating capacity (MW). Stations: <Citation href={mapSources.clean}>NRCan</Citation>, a list compiled in 2017. Some stations have since closed and newer ones may be missing. Lines: <Citation href={mapSources.lines}>NRCan CanVec</Citation>. Proximity does not establish a data center’s power supply.</small>
                 </div>
               )}
+        {(item.mode === "people" || item.mode === "stress" || item.mode === "fibre") && (
+          <div className="cover-legend story-under-map-key story-layer-key" role="group" aria-label="Map legend">
+            <MapLegend fill="none" layers={viewFor(item.mode).layers} />
+          </div>
+        )}
         {(item.mode === "sitesPlanned" || item.mode === "sitesActive") && (
           <div className="cover-legend story-under-map-key" role="group" aria-label="Provincial site share map legend">
             <p>Share of Canada&apos;s {item.mode === "sitesPlanned" ? "planned" : "operating"} data center sites</p>
@@ -1077,7 +1146,7 @@ function Scrolly(props: {
   const step = steps[active];
   return (
     <section className="scrolly">
-      {!phone && <div className={`scrolly-graphic ${step.wide ? "shift" : ""} ${step.backdrop ? "has-backdrop" : ""} ${step.hero ? "is-cover" : ""} ${step.mode === "grid" || step.mode === "sitesPlanned" || step.mode === "sitesActive" ? "has-map-key" : ""}`}>
+      {!phone && <div className={`scrolly-graphic ${step.wide ? "shift" : ""} ${step.backdrop ? "has-backdrop" : ""} ${step.hero ? "is-cover" : ""} ${["grid", "sitesPlanned", "sitesActive", "people", "stress", "fibre"].includes(step.mode) ? "has-map-key" : ""}`}>
         {renderStoryMap(step)}
         {renderStoryLegend(step)}
         {step.backdrop && <div className="scrolly-backdrop">{step.backdrop}</div>}
@@ -1568,6 +1637,8 @@ function SvgMap({
   onSelectProvince: (name: string) => void;
   onSelectPowerLine: (line: PowerLine) => void;
 }) {
+  const waterStress = useGeo("water-stress.geojson", layers.stress);
+  const noFibre = useGeo("no-fibre-backbone.geojson", layers.fibre);
   const phone = usePhoneLayout();
   const projection = useMemo(() => {
     const nextProjection = geoConicEqualArea().parallels([50, 70]).rotate([96, 0]).center([0, 62]);
@@ -1769,6 +1840,15 @@ function SvgMap({
             })}
         </g>
       )}
+      {layers.stress && (
+        <g className="svg-stress">
+          {waterStress?.features?.map((feature: any) => (
+            <path key={feature.properties.bws_cat} d={pathGenerator(feature) ?? undefined} fill={stressColors[feature.properties.bws_cat]}>
+              <title>{`Water stress: ${feature.properties.bws_label}`}</title>
+            </path>
+          ))}
+        </g>
+      )}
       {layers.water && (
         <g className="svg-drainage">
           {drainage?.features?.map((feature: any) => (
@@ -1824,8 +1904,21 @@ function SvgMap({
             })}
         </g>
       )}
+      {layers.fibre && (
+        <g className="svg-fibre">
+          {(noFibre?.features ?? []).map((feature: any, index: number) => {
+            const point = projection(feature.geometry.coordinates);
+            if (!point) return null;
+            return (
+              <circle key={index} cx={point[0]} cy={point[1]} r={r(2.2)}>
+                <title>{`${feature.properties.name}: no fibre backbone nearby`}</title>
+              </circle>
+            );
+          })}
+        </g>
+      )}
       <g className={`svg-projects ${hideProjects ? "hidden" : ""}`}>
-        {projects.map((project) => {
+        {projects.map((project, dotIndex) => {
           const point = projection([Number(project.lon), Number(project.lat)]) ?? [0, 0];
           const radius = r(
             project.reported_mw ? 3.2 + Math.min(Number(project.reported_mw) / 230, 5.8) : 3.2,
@@ -1834,6 +1927,7 @@ function SvgMap({
           return (
             <g
               key={project.id}
+              style={{ "--i": dotIndex } as React.CSSProperties}
               onClick={(event) => {
                 event.stopPropagation();
                 onSelectProject(project);
@@ -2064,6 +2158,8 @@ function MapLegend({ fill, layers }: { fill: FillMode; layers: Layers }) {
           <small><Citation href={mapSources.clean}>NRCan</Citation>, a list compiled in 2017. Some stations have since closed and newer ones may be missing.</small>
         </div>
       )}
+      {layers.stress && <StressLegend />}
+      {layers.fibre && <FibreLegend />}
       {layers.water && (
         <div className="legend-block">
           <p>Watersheds</p>
@@ -2073,6 +2169,41 @@ function MapLegend({ fill, layers }: { fill: FillMode; layers: Layers }) {
           </small>
         </div>
       )}
+    </div>
+  );
+}
+
+function StressLegend() {
+  return (
+    <div className="legend-block">
+      <p>Water stress</p>
+      <div className="capacity-scale">
+        {stressLabels.map(([cat, label]) => (
+          <span key={cat}>
+            <i style={{ background: stressColors[cat] }} />
+            {label}
+          </span>
+        ))}
+      </div>
+      <small>
+        How much of the available water is already being used. Unshaded areas are low or have no data. Source:{" "}
+        <Citation href={mapSources.stress}>WRI Aqueduct 4.0</Citation>, baseline water stress, CC BY 4.0.
+      </small>
+    </div>
+  );
+}
+
+function FibreLegend() {
+  return (
+    <div className="legend-block">
+      <p>
+        <span className="fibre-swatch" aria-hidden="true" />
+        Communities with no fibre backbone nearby
+      </p>
+      <small>
+        661 of about 13,000 communities. Source: <Citation href={mapSources.fibre}>ISED, National Broadband Data</Citation>, Open
+        Government Licence – Canada.
+      </small>
     </div>
   );
 }
