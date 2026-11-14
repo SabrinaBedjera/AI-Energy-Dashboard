@@ -2483,3 +2483,24 @@ rect.york-planned {
     margin: -8px -12px 4px 8px; background: var(--paper); z-index: 1;
   }
 }
+/* IEA charts: bigger title, legend and source (Babs, Nov 13) */
+.iea-figure figcaption { font-size: 20px; line-height: 1.35; margin-bottom: 10px; color: var(--ink); }
+.iea-figure figcaption strong { font-weight: 600; }
+.iea-legend { font-size: 16px; gap: 6px 18px; margin-top: 10px; color: var(--ink); }
+.iea-legend span { width: 14px; height: 14px; }
+.iea-figure .york-source { font-size: 15px; line-height: 1.45; margin-top: 8px; }
+@media (max-width: 800px) {
+  .step-card .iea-figure figcaption { font-size: 17px; }
+  .step-card .iea-legend { font-size: 15px; }
+  .step-card .iea-figure .york-source { font-size: 14px; }
+}
+/* Visual break between the story and the interactive map */
+.section-break {
+  border: 0; border-top: 2px dashed var(--navy, #1f2a44); opacity: 0.45;
+  width: min(1100px, calc(100% - 32px)); margin: 72px auto 8px;
+}
+@media (min-width: 801px) and (max-width: 1280px) {
+  .scrolly-graphic.has-map-key .svg-map { height: calc(100% - 175px); bottom: 175px; }
+}
+.explore-intro h2 { font-size: 84px; font-weight: 700; letter-spacing: -0.01em; }
+@media (max-width: 800px) { .explore-intro h2 { font-size: 46px; } }

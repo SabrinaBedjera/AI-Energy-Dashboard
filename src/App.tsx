@@ -415,6 +415,7 @@ function App() {
         albertaPlannedCount={albertaPlannedCount}
       />
 
+      <hr className="section-break" aria-hidden="true" />
       <div className="explore-intro" id="explore">
         <h2>Try out the map</h2>
         <p>
@@ -1028,6 +1029,7 @@ function Scrolly(props: {
           fadeAll={item.fadeAll}
           annotations={phone ? undefined : item.annotations}
           fitStoryMap={!item.focus && (phone || !item.hero)}
+          alignBottom={item.mode === "grid" || item.mode === "sitesPlanned" || item.mode === "sitesActive"}
         />
   );
   const renderStoryLegend = (item: ScrollStep) => (
@@ -1068,7 +1070,7 @@ function Scrolly(props: {
             <p>Share of Canada&apos;s {item.mode === "sitesPlanned" ? "planned" : "operating"} data center sites</p>
             <div className="project-legend share-scale">
               {siteShareColors.map((color, index) => (
-                <span key={color}><i style={{ background: color, borderColor: color }} aria-hidden="true" />{["0%", ">0–<5%", "5–<15%", "15–<35%", "35–100%"][index]}</span>
+                <span key={color}><i style={{ background: color, borderColor: color }} aria-hidden="true" />{["None", "Under 5%", "5 to 15%", "15 to 35%", "Over 35%"][index]}</span>
               ))}
             </div>
             <small>Darker pink = a larger share of sites, not MW. Source: <Citation href={yorkUrl}>York University (2026), Appendix Table A2</Citation>.</small>
@@ -1280,7 +1282,7 @@ function IeaChart() {
   return (
     <figure className="iea-figure">
       <figcaption>
-        <strong>Sources of global electricity generation for data centres, Base Case, 2020-2035</strong>{" "}
+        <strong>IEA figure: Sources of global electricity generation for data centres, Base Case, 2020-2035</strong>{" "}
         (TWh)
       </figcaption>
       <img
@@ -1316,7 +1318,7 @@ function IeaEquipmentChart() {
   return (
     <figure className="iea-figure">
       <figcaption>
-        <strong>Global data centre electricity consumption, by equipment, Base Case, 2020-2030</strong>{" "}
+        <strong>IEA figure: Global data centre electricity consumption, by equipment, Base Case, 2020-2030</strong>{" "}
         (TWh)
       </figcaption>
       <img
@@ -1547,9 +1549,11 @@ function SvgMap({
   zoomable,
   annotations,
   fitStoryMap = false,
+  alignBottom = false,
 }: {
   annotations?: Annotation[];
   fitStoryMap?: boolean;
+  alignBottom?: boolean;
   focusProvince?: string;
   hideProjects?: boolean;
   highlightProject?: string;
@@ -1671,7 +1675,7 @@ function SvgMap({
       ref={svgRef}
       className={`map-canvas svg-map ${zoomable ? "zoomable" : ""}`}
       viewBox={fitStoryMap ? "120 0 760 600" : "0 0 1000 600"}
-      preserveAspectRatio="xMidYMid meet"
+      preserveAspectRatio={alignBottom ? "xMidYMax meet" : "xMidYMid meet"}
       style={phone && zoomable ? { touchAction: view.k > 1 ? "none" : "pan-y" } : undefined}
       role="img"
       aria-label="Interactive map of Canadian data center projects"
