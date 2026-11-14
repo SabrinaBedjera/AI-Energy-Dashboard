@@ -2523,3 +2523,19 @@ rect.york-planned {
 @media (min-width: 801px) and (max-width: 1280px) {
   .scrolly-graphic.is-cover .svg-map { top: auto; height: min(calc(100% - 135px), 48vw); bottom: 135px; overflow: visible; }
 }
+/* Half-screen (801-1280px): keep map + legend together, centred vertically */
+@media (min-width: 801px) and (max-width: 1280px) {
+  .scrolly-graphic { --mapH: min(calc(100% - 260px), 46vw); --keyH: 120px; }
+  .scrolly-graphic.has-map-key:has(.story-map-key) { --keyH: 175px; }
+  .scrolly-graphic.is-cover .svg-map,
+  .scrolly-graphic.has-map-key .svg-map {
+    top: auto; height: var(--mapH);
+    bottom: calc((100% - var(--mapH) - var(--keyH)) / 2 + var(--keyH));
+    overflow: visible;
+  }
+  .scrolly-graphic .cover-map-key,
+  .scrolly-graphic .story-under-map-key {
+    bottom: calc((100% - var(--mapH) - var(--keyH)) / 2);
+    max-height: var(--keyH);
+  }
+}
