@@ -256,7 +256,21 @@ function dominantEnergy(mix?: EnergyMix) {
   );
 }
 
+// Keep phone layouts in normal document flow; desktop retains the sticky story.
+function usePhoneLayout() {
+  const [phone, setPhone] = useState(() => window.matchMedia("(max-width: 800px)").matches);
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 800px)");
+    const update = () => setPhone(query.matches);
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+  return phone;
+}
+
 function App() {
+  const phone = usePhoneLayout();
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [energy, setEnergy] = useState<EnergyMix[]>([]);
@@ -403,7 +417,11 @@ function App() {
       </div>
 
       <section className="map-experience explorer side-layout">
-        <div className="map-controls explorer-controls">
+        <button className="mobile-filter-toggle" aria-expanded={mobileFiltersOpen} aria-controls="map-filters" onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}>
+          <span>{mobileFiltersOpen ? "Hide filters and layers" : "Filters and layers"}</span>
+          <span>{filteredProjects.length} shown {mobileFiltersOpen ? "−" : "+"}</span>
+        </button>
+        <div id="map-filters" className={`map-controls explorer-controls ${mobileFiltersOpen ? "is-open" : ""}`}>
           <h3>Data centers</h3>
           <div className="control-group" aria-label="Status">
             <span>Status</span>
@@ -533,6 +551,7 @@ function App() {
           <p className="shown-count">
             Showing {filteredProjects.length} of {projects.length} data centers
           </p>
+          <button className="mobile-apply-filters" onClick={() => setMobileFiltersOpen(false)}>Show map</button>
         </div>
 
         <div className={`explorer-stage ${panelOpen ? "with-panel" : ""}`}>
@@ -549,6 +568,7 @@ function App() {
               fill={fill}
               layers={layers}
               zoomable
+              fitStoryMap={phone && provinceFilter === "All"}
               selectedProject={selectedProject}
               onSelectProject={selectProject}
               onSelectProvince={selectProvince}
@@ -559,7 +579,7 @@ function App() {
               }}
             />
             {!panelOpen && (
-              <p className="map-hint">Click a dot or a province for details.</p>
+              <p className="map-hint">{phone ? "Tap a dot or province for details." : "Click a dot or a province for details."}</p>
             )}
             <MapLegend fill={fill} layers={layers} />
           </div>
@@ -961,10 +981,8 @@ function Scrolly(props: {
     return () => observer.disconnect();
   }, []);
 
-  const step = steps[active];
-  return (
-    <section className="scrolly">
-      <div className={`scrolly-graphic ${step.wide ? "shift" : ""} ${step.backdrop ? "has-backdrop" : ""} ${step.hero ? "is-cover" : ""} ${step.mode === "grid" || step.mode === "sitesPlanned" || step.mode === "sitesActive" ? "has-map-key" : ""}`}>
+  const phone = usePhoneLayout();
+  const renderStoryMap = (item: ScrollStep) => (
         <SvgMap
           boundaries={props.boundaries}
           powerLines={props.powerLines}
@@ -973,20 +991,24 @@ function Scrolly(props: {
           population={props.population}
           prices={props.prices}
           projects={props.projects}
-          fill={viewFor(step.mode).fill}
-          layers={viewFor(step.mode).layers}
+          fill={viewFor(item.mode).fill}
+          layers={viewFor(item.mode).layers}
           selectedProject={null}
           onSelectProject={() => {}}
           onSelectProvince={() => {}}
           onSelectPowerLine={() => {}}
-          focusProvince={step.focus}
-          hideProjects={step.hideProjects}
-          highlightProject={step.highlight}
-          fadeAll={step.fadeAll}
-          annotations={step.annotations}
-          fitStoryMap={!step.hero && !step.focus}
+          focusProvince={item.focus}
+          hideProjects={item.hideProjects}
+          highlightProject={item.highlight}
+          fadeAll={item.fadeAll}
+          annotations={phone ? undefined : item.annotations}
+          fitStoryMap={!item.focus && (phone || !item.hero)}
         />
-        {step.hero && (
+  );
+  const renderStoryLegend = (item: ScrollStep) => (
+    <>
+
+        {item.hero && (
           <div className="cover-legend cover-map-key" role="group" aria-label="Cover map legend">
             <div className="project-legend">
               {([
@@ -1004,7 +1026,7 @@ function Scrolly(props: {
             <small>Dot size = reported MW · Smallest dots include unknown capacity</small>
           </div>
         )}
-              {step.mode === "grid" && (
+              {item.mode === "grid" && (
                 <div className="story-map-key cover-legend story-under-map-key" role="group" aria-label="Power infrastructure map legend">
                   <p><span className="transmission-swatch" aria-hidden="true" />Power transmission lines</p>
                   <p>Clean power generation</p>
@@ -1016,9 +1038,9 @@ function Scrolly(props: {
                   <small>Larger dots indicate higher generating capacity (MW). Stations: <Citation href={mapSources.clean}>NRCan</Citation>, compiled 2017; newer stations may be missing. Lines: <Citation href={mapSources.lines}>NRCan CanVec</Citation>. Proximity does not establish a data center’s power supply.</small>
                 </div>
               )}
-        {(step.mode === "sitesPlanned" || step.mode === "sitesActive") && (
+        {(item.mode === "sitesPlanned" || item.mode === "sitesActive") && (
           <div className="cover-legend story-under-map-key" role="group" aria-label="Provincial site share map legend">
-            <p>Share of Canada&apos;s {step.mode === "sitesPlanned" ? "planned" : "operating"} data center sites</p>
+            <p>Share of Canada&apos;s {item.mode === "sitesPlanned" ? "planned" : "operating"} data center sites</p>
             <div className="project-legend share-scale">
               {siteShareColors.map((color, index) => (
                 <span key={color}><i style={{ background: color, borderColor: color }} aria-hidden="true" />{["0%", ">0–<5%", "5–<15%", "15–<35%", "35–100%"][index]}</span>
@@ -1027,8 +1049,17 @@ function Scrolly(props: {
             <small>Darker pink = a larger share of sites, not MW. Source: <Citation href={yorkUrl}>York University (2026), Appendix Table A2</Citation>.</small>
           </div>
         )}
+
+    </>
+  );
+  const step = steps[active];
+  return (
+    <section className="scrolly">
+      {!phone && <div className={`scrolly-graphic ${step.wide ? "shift" : ""} ${step.backdrop ? "has-backdrop" : ""} ${step.hero ? "is-cover" : ""} ${step.mode === "grid" || step.mode === "sitesPlanned" || step.mode === "sitesActive" ? "has-map-key" : ""}`}>
+        {renderStoryMap(step)}
+        {renderStoryLegend(step)}
         {step.backdrop && <div className="scrolly-backdrop">{step.backdrop}</div>}
-      </div>
+      </div>}
       <div className="scrolly-steps">
         {steps.map((item, index) => (
           <div
@@ -1042,8 +1073,14 @@ function Scrolly(props: {
             <div className="step-card" id={index === 1 ? "story" : undefined}>
               {item.title && <h2 className="step-title">{item.title}</h2>}
               {item.body}
-              {item.backdrop && <div className="inline-story-chart">{item.backdrop}</div>}
+              {phone && item.backdrop && <div className="inline-story-chart">{item.backdrop}</div>}
             </div>
+            {phone && !item.backdrop && (
+              <div className="mobile-story-figure">
+                {renderStoryMap(item)}
+                {renderStoryLegend(item)}
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -1508,6 +1545,7 @@ function SvgMap({
   onSelectProvince: (name: string) => void;
   onSelectPowerLine: (line: PowerLine) => void;
 }) {
+  const phone = usePhoneLayout();
   const projection = useMemo(() => {
     const nextProjection = geoConicEqualArea().parallels([50, 70]).rotate([96, 0]).center([0, 62]);
     if (boundaries)
@@ -1610,6 +1648,7 @@ function SvgMap({
       className={`map-canvas svg-map ${zoomable ? "zoomable" : ""}`}
       viewBox={fitStoryMap ? "120 0 760 600" : "0 0 1000 600"}
       preserveAspectRatio="xMidYMid meet"
+      style={phone && zoomable ? { touchAction: view.k > 1 ? "none" : "pan-y" } : undefined}
       role="img"
       aria-label="Interactive map of Canadian data center projects"
       onDoubleClick={(event) => {
@@ -1618,7 +1657,7 @@ function SvgMap({
         zoomAt(1.6, x, y);
       }}
       onPointerDown={(event) => {
-        if (!zoomable) return;
+        if (!zoomable || (phone && event.pointerType === "touch" && view.k === 1)) return;
         drag.current = { x: event.clientX, y: event.clientY, vx: view.x, vy: view.y };
       }}
       onPointerMove={(event) => {
@@ -1630,6 +1669,7 @@ function SvgMap({
       }}
       onPointerUp={() => (drag.current = null)}
       onPointerLeave={() => (drag.current = null)}
+      onPointerCancel={() => (drag.current = null)}
     >
       <rect width="1000" height="600" fill="#e8ebe7" />
       <g transform={`translate(${view.x} ${view.y}) scale(${view.k})`}>
@@ -1873,7 +1913,7 @@ function SvgMap({
       )}
       </g>
       </g>
-      {zoomable && (
+      {zoomable && !phone && (
         <foreignObject x="934" y="12" width="54" height="120">
           <div
             className="zoom-buttons"
@@ -1887,6 +1927,13 @@ function SvgMap({
         </foreignObject>
       )}
     </svg>
+    {zoomable && phone && (
+      <div className="mobile-map-zoom zoom-buttons" onPointerDown={(event) => event.stopPropagation()}>
+        <button aria-label="Zoom in" onClick={() => zoomAt(1.5)}>+</button>
+        <button aria-label="Zoom out" onClick={() => zoomAt(1 / 1.5)}>−</button>
+        <button aria-label="Reset zoom" onClick={() => setView({ k: 1, x: 0, y: 0 })}>⟲</button>
+      </div>
+    )}
     {tip && (
       <div className="map-tip" style={{ left: tip.x, top: tip.y }}>
         {tip.text}
