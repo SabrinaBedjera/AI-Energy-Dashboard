@@ -896,7 +896,7 @@ function Scrolly(props: {
     {
       mode: "power",
       hideProjects: true,
-      title: "Energy",
+      title: "Power lines",
       body: (
         <p>
           Data centers need power to run their servers, cool their systems, etc. These are Canada&apos;s power
