@@ -2504,3 +2504,19 @@ rect.york-planned {
 }
 .explore-intro h2 { font-size: 84px; font-weight: 700; letter-spacing: -0.01em; }
 @media (max-width: 800px) { .explore-intro h2 { font-size: 46px; } }
+/* Methods section: bigger text (Babs, Nov 13) */
+#methods.about h2 { font-family: var(--display); font-size: 52px; font-weight: 700; line-height: 1.05; margin-bottom: 24px; color: var(--ink); }
+#methods .about-copy { max-width: 1000px; }
+#methods .about-copy p { font-size: 22px; line-height: 1.6; color: var(--ink); }
+#methods .about-copy a { font-size: inherit; }
+#methods .sources { max-width: 1100px; }
+#methods .sources-group { font-size: 22px; font-weight: 600; color: var(--ink); }
+#methods .sources a { font-size: 18px; line-height: 1.5; }
+@media (max-width: 800px) {
+  #methods.about h2 { font-size: 36px; }
+  #methods .about-copy p { font-size: 18px; }
+  #methods .sources-group { font-size: 19px; }
+  #methods .sources a { font-size: 16px; }
+}
+#methods > h2, #methods .about-copy, #methods .sources { width: 100%; max-width: 1100px; margin-left: auto; margin-right: auto; padding-left: 0; padding-right: 0; }
+#methods .about-copy a[href*="github"] { text-decoration: underline; text-underline-offset: 4px; font-weight: 600; }
