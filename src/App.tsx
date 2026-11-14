@@ -833,6 +833,14 @@ function Scrolly(props: {
             connected to a server in a data center. Companies use AI data centers to train and run
             their AI models.
           </p>
+        </>
+      ),
+    },
+    {
+      mode: "projects",
+      title: "Where data centers get built",
+      body: (
+        <>
           <p>
             Where a data center gets built depends on many things, like access to energy, land and
             water. Data centers also need to move a lot of data quickly, so being close to the
