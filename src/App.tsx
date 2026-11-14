@@ -291,6 +291,13 @@ function App() {
   const [selectedProvince, setSelectedProvince] = useState("Alberta");
   const [panelOpen, setPanelOpen] = useState(false);
 
+  // A link like #methods should open at that section once the page has its data.
+  useEffect(() => {
+    if (!projects.length || !window.location.hash) return;
+    const target = document.getElementById(window.location.hash.slice(1));
+    if (target) setTimeout(() => target.scrollIntoView(), 300);
+  }, [projects.length]);
+
   useEffect(() => {
     Promise.all([
       fetch(dataUrl("projects.csv")).then((response) => response.text()),
@@ -1035,7 +1042,7 @@ function Scrolly(props: {
                       <span key={label}><i style={{ background: color, borderColor: color }} aria-hidden="true" />{label}</span>
                     ))}
                   </div>
-                  <small>Larger dots indicate higher generating capacity (MW). Stations: <Citation href={mapSources.clean}>NRCan</Citation>, compiled 2017; newer stations may be missing. Lines: <Citation href={mapSources.lines}>NRCan CanVec</Citation>. Proximity does not establish a data center’s power supply.</small>
+                  <small>Larger dots indicate higher generating capacity (MW). Stations: <Citation href={mapSources.clean}>NRCan</Citation>, a list compiled in 2017. Some stations have since closed and newer ones may be missing. Lines: <Citation href={mapSources.lines}>NRCan CanVec</Citation>. Proximity does not establish a data center’s power supply.</small>
                 </div>
               )}
         {(item.mode === "sitesPlanned" || item.mode === "sitesActive") && (
@@ -1131,6 +1138,7 @@ function ProvinceBar({ provinces }: { provinces: Province[] }) {
 // Checked against the paper PDF on Nov 12, 2026. "Planned" = announcement + construction stages.
 const sizeBands: [number, string][] = [
   [1, "Up to 50 MW"],
+  [2, "50 to 100 MW"],
   [3, "100 MW+"],
 ];
 
@@ -2038,7 +2046,7 @@ function MapLegend({ fill, layers }: { fill: FillMode; layers: Layers }) {
               </span>
             ))}
           </div>
-          <small><Citation href={mapSources.clean}>NRCan</Citation>, compiled 2017, may miss newer stations.</small>
+          <small><Citation href={mapSources.clean}>NRCan</Citation>, a list compiled in 2017. Some stations have since closed and newer ones may be missing.</small>
         </div>
       )}
       {layers.water && (
@@ -2163,7 +2171,8 @@ function ProvinceDetail({
   mode: MapMode;
   prices: PriceRow[];
 }) {
-  const mixSources = ["Hydro", "Nuclear", "Fossil fuels", "Wind", "Solar", "Biomass"];
+  // Statistics Canada 25-10-0015-01 reports fossil fuels and biomass together as combustible fuels.
+  const mixSources = ["Hydro", "Nuclear", "Combustible fuels", "Wind", "Solar"];
   return (
     <>
       <h2>{province.province}</h2>
@@ -2181,12 +2190,15 @@ function ProvinceDetail({
         <div className="panel-block mix-chart">
           <h3>Power Generation Sources</h3>
           {mixSources.map((source) => {
-            const value = Number(energy[`${source} %`] || 0);
+            const value =
+              source === "Combustible fuels"
+                ? Number(energy["Fossil fuels %"] || 0) + Number(energy["Biomass %"] || 0)
+                : Number(energy[`${source} %`] || 0);
             return (
               <div key={source}>
-                <span>{source}</span>
+                <span>{source === "Combustible fuels" ? "Fossil fuels and biomass" : source}</span>
                 <i>
-                  <b style={{ width: `${value}%`, background: energyColors[source] }} />
+                  <b style={{ width: `${value}%`, background: energyColors[source] ?? energyColors["Fossil fuels"] }} />
                 </i>
                 <em>{value.toFixed(1)}%</em>
               </div>
