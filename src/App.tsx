@@ -383,9 +383,9 @@ function App() {
       />
 
       <div className="explore-intro" id="explore">
-        <h2>Your turn.</h2>
+        <h2>Try out the map</h2>
         <p>
-          Try out the map, explore data center projects and clean power. Click a province for its
+          Explore the data center projects and clean power. Click a province for its
           rules, energy mix and power prices. Use the buttons to filter the dots or add layers.
         </p>
       </div>
