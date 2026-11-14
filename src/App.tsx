@@ -593,7 +593,9 @@ function App() {
         </div>
       </section>
 
-      <ChartsSection prices={prices ?? []} />
+      {/* Claude / future maintainers: the bottom Charts section is intentionally hidden.
+          Full version preserved on archive/charts-before-removal (commit 2c09cb3).
+          Restore ChartsSection and its jump link only if requested. */}
 
       <section id="methods" className="about">
         <h2>About my methods</h2>
@@ -636,8 +638,9 @@ function App() {
             use <Citation href={yorkUrl}>York University&apos;s separate dataset</Citation> of 194 operating and 213 planned sites.
           </p>
           <p>
-            <a href="https://github.com/SabrinaBedjera/AI-Energy-Dashboard" target="_blank" rel="noreferrer">Explore the code</a>{" · "}
-            <a href={dataUrl("projects.csv")} download>Download the project data (CSV)</a>
+            <a href="https://github.com/SabrinaBedjera/AI-Energy-Dashboard" target="_blank" rel="noreferrer">Explore the code</a>
+            {/* Project CSV download link intentionally hidden for now.
+                Previous link is preserved on archive/charts-before-removal. */}
           </p>
         </div>
         <div className="sources">
@@ -751,7 +754,7 @@ function Scrolly(props: {
           <p className="hero-byline">By Sabrina Bedjera · November 2026</p>
           <nav className="hero-nav" aria-label="Jump to">
             <span>Jump to:</span> <a href="#story">The story</a> · <a href="#explore">Interactive map</a> ·{" "}
-            <a href="#charts">Charts</a> · <a href="#methods">Data and methods</a>
+            <a href="#methods">Data and methods</a>
           </nav>
 
         </>
