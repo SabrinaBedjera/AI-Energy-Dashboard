@@ -894,13 +894,21 @@ function Scrolly(props: {
       ),
     },
     {
-      mode: "grid",
+      mode: "power",
       hideProjects: true,
       title: "Energy",
-      body: <p>
-          Data centers need power to run their servers, cool their systems, etc. These are Canada&apos;s power lines
-          and clean power generation stations, e.g. hydro and wind (NRCan).
-        </p>,
+      body: (
+        <p>
+          Data centers need power to run their servers, cool their systems, etc. These are Canada&apos;s power
+          lines (NRCan).
+        </p>
+      ),
+    },
+    {
+      mode: "clean",
+      hideProjects: true,
+      title: "Clean power",
+      body: <p>These are Canada&apos;s clean power generation stations, e.g. hydro and wind (NRCan).</p>,
     },
     {
       mode: "stress",
@@ -913,12 +921,6 @@ function Scrolly(props: {
           of their available water (WRI Aqueduct). A large portion of southern Alberta has high water stress.
         </p>
       ),
-    },
-    {
-      mode: "fibre",
-      hideProjects: true,
-      title: "Fast internet",
-      body: <p>They need fast fibre connections. Each dot is a community with no fibre backbone nearby (ISED).</p>,
     },
     {
       mode: "power",
@@ -1095,7 +1097,7 @@ function Scrolly(props: {
           fadeAll={item.fadeAll}
           annotations={phone ? undefined : item.annotations}
           fitStoryMap={!item.focus && (phone || !item.hero)}
-          alignBottom={["grid", "sitesPlanned", "sitesActive", "people", "stress", "fibre"].includes(item.mode)}
+          alignBottom={["grid", "sitesPlanned", "sitesActive", "people", "stress", "fibre", "power", "clean"].includes(item.mode)}
         />
   );
   const renderStoryLegend = (item: ScrollStep) => (
@@ -1131,7 +1133,7 @@ function Scrolly(props: {
                   <small>Larger dots indicate higher generating capacity (MW). Stations: <Citation href={mapSources.clean}>NRCan</Citation>, a list compiled in 2017. Some stations have since closed and newer ones may be missing. Lines: <Citation href={mapSources.lines}>NRCan CanVec</Citation>. Proximity does not establish a data center’s power supply.</small>
                 </div>
               )}
-        {(item.mode === "people" || item.mode === "stress" || item.mode === "fibre") && (
+        {["people", "stress", "fibre", "power", "clean"].includes(item.mode) && (
           <div className="cover-legend story-under-map-key story-layer-key" role="group" aria-label="Map legend">
             <MapLegend fill="none" layers={viewFor(item.mode).layers} />
           </div>
@@ -1153,7 +1155,7 @@ function Scrolly(props: {
   const step = steps[active];
   return (
     <section className="scrolly">
-      {!phone && <div className={`scrolly-graphic ${step.wide ? "shift" : ""} ${step.backdrop ? "has-backdrop" : ""} ${step.hero ? "is-cover" : ""} ${["grid", "sitesPlanned", "sitesActive", "people", "stress", "fibre"].includes(step.mode) ? "has-map-key" : ""}`}>
+      {!phone && <div className={`scrolly-graphic ${step.wide ? "shift" : ""} ${step.backdrop ? "has-backdrop" : ""} ${step.hero ? "is-cover" : ""} ${["grid", "sitesPlanned", "sitesActive", "people", "stress", "fibre", "power", "clean"].includes(step.mode) ? "has-map-key" : ""}`}>
         {renderStoryMap(step)}
         {renderStoryLegend(step)}
         {step.backdrop && <div className="scrolly-backdrop">{step.backdrop}</div>}
