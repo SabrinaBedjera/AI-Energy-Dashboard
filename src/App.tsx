@@ -122,9 +122,9 @@ const statusStroke = {
   Proposed: "#ffffff",
 };
 
-// Teal = clean grid, pink = fossil grid (share of 2025 generation from fossil fuels)
-const fossilScale = ["#0b5f57", "#3f9e8f", "#a9d6cd", "#f1efea", "#f4b6c8", "#e57aa0", "#c2185b"];
-const fossilBands = ["0–14%", "", "", "43–57%", "", "", "86–100%"];
+// Sequential blue: share of provincial electricity generated from fossil fuels in 2025.
+const fossilScale = ["#eff3ff", "#bdd7e7", "#6baed6", "#3182bd", "#08519c"];
+const fossilBands = ["0–<20%", "20–<40%", "40–<60%", "60–<80%", "80–100%"];
 const cleanColors: Record<string, string> = {
   Hydro: "#0b5f57",
   Wind: "#5fb3a6",
@@ -170,12 +170,12 @@ const priceLabel: Record<string, [number, number, "start" | "end" | "middle"]> =
   "St. John's": [0, 22, "middle"],
 };
 
-const fossilColor = (share: number) => fossilScale[Math.min(6, Math.floor((share / 100) * 7))];
+const fossilColor = (share: number) => fossilScale[Math.min(4, Math.max(0, Math.floor(share / 20)))];
 
 const energyColors: Record<string, string> = {
   Hydro: "#0b5f57",
   Nuclear: "#6c5b8f",
-  "Fossil fuels": "#c2185b",
+  "Fossil fuels": "#08519c",
   Wind: "#5fb3a6",
   Solar: "#d9a62e",
   Biomass: "#9a8f7a",
@@ -232,6 +232,18 @@ const formatMw = (value: string | number) =>
   value === "" || value === null ? "Not disclosed" : `${Number(value).toLocaleString("en-CA")} MW`;
 
 const dataUrl = (file: string) => `${import.meta.env.BASE_URL}data/${file}`;
+const mapSources = {
+  generation: "https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=2510001501",
+  population: "https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=9810000701",
+  lines: "https://open.canada.ca/data/en/dataset/92dbea79-f644-4a62-b25e-8eb993ca0264",
+  clean: "https://geoappext.nrcan.gc.ca/arcgis/rest/services/Energy/CERP_EN/MapServer",
+  water: "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NRCAN/AtlasWatershedsEN/MapServer",
+  prices: "https://www.hydroquebec.com/data/documents-donnees/pdf/comparaison-prix-2025-en.pdf",
+};
+function Citation({ href, children }: { href: string; children: React.ReactNode }) {
+  return <a href={href} target="_blank" rel="noreferrer">{children}</a>;
+}
+
 
 const getUrl = (source: string) => source.match(/https?:\/\/[^\s]+/)?.[0] ?? "#";
 
@@ -623,7 +635,7 @@ function App() {
           <p>
             Each project includes links to its sources. This dataset may not capture every data center
             in Canada. The map uses my 125-site project list; the headline statistics and selected charts
-            use York University&apos;s separate dataset of 194 operating and 213 planned sites.
+            use <Citation href={yorkUrl}>York University&apos;s separate dataset</Citation> of 194 operating and 213 planned sites.
           </p>
           <p>
             <a href="https://github.com/SabrinaBedjera/AI-Energy-Dashboard" target="_blank" rel="noreferrer">Explore the code</a>{" · "}
@@ -1014,7 +1026,7 @@ function Scrolly(props: {
                       <span key={label}><i style={{ background: color, borderColor: color }} aria-hidden="true" />{label}</span>
                     ))}
                   </div>
-                  <small>Larger dots indicate higher generating capacity (MW). Stations: NRCan, compiled 2017; newer stations may be missing. Lines: NRCan CanVec. Proximity does not establish a data center’s power supply.</small>
+                  <small>Larger dots indicate higher generating capacity (MW). Stations: <Citation href={mapSources.clean}>NRCan</Citation>, compiled 2017; newer stations may be missing. Lines: <Citation href={mapSources.lines}>NRCan CanVec</Citation>. Proximity does not establish a data center’s power supply.</small>
                 </div>
               )}
               {item.backdrop && <div className="inline-story-chart">{item.backdrop}</div>}
@@ -1389,7 +1401,7 @@ function RulesTable() {
         </tbody>
       </table>
       <p className="york-source">
-        Rules as of November 2026. Summary based on York University (2026), Table 2, and each
+        Rules as of November 2026. Summary based on <Citation href={yorkUrl}>York University (2026), Table 2</Citation>, and each
         province&apos;s own sources (↗).
       </p>
     </div>
@@ -1669,7 +1681,10 @@ function SvgMap({
                   x={x}
                   y={y}
                   className={share !== null ? "share-label" : ""}
-                  style={{ fontSize: (share !== null ? 15 : 9) / Math.sqrt(scale) }}
+                  style={{
+                    fontSize: (share !== null ? 15 : 9) / Math.sqrt(scale),
+                    fill: fill === "energy" && feature.properties.fossil_share >= 60 ? "#ffffff" : undefined,
+                  }}
                 >
                   {provinceCodes[feature.properties.name]}
                   {share !== null ? ` ${Math.round(share)}%` : ""}
@@ -1874,7 +1889,7 @@ function MapLegend({ fill, layers }: { fill: FillMode; layers: Layers }) {
 
       {fill === "capacity" && (
         <div className="legend-block">
-          <p>Planned MW by province (York University estimate, separate from my list of dots)</p>
+          <p>Planned MW by province (<Citation href={yorkUrl}>York University</Citation> estimate, separate from my list of dots)</p>
           <div className="capacity-scale">
             {[
               ["#e8e5df", "Not disclosed"],
@@ -1902,7 +1917,7 @@ function MapLegend({ fill, layers }: { fill: FillMode; layers: Layers }) {
               </span>
             ))}
           </div>
-          <small>Teal = cleaner grid, pink = more fossil fuels. This is each province&apos;s 2025 electricity mix (Statistics Canada), not what a data center actually uses.</small>
+          <small>Darker blue = a higher fossil-fuel share of electricity generated in 2025. Bands are display choices, not source categories. Source: <Citation href={mapSources.generation}>Statistics Canada, Table 25-10-0015-01</Citation>. Provincial generation does not establish a data center&apos;s electricity supply.</small>
         </div>
       )}
       {layers.people && (
@@ -1916,7 +1931,7 @@ function MapLegend({ fill, layers }: { fill: FillMode; layers: Layers }) {
               </span>
             ))}
           </div>
-          <small>All 293 census divisions, Statistics Canada 2021 Census. Hover an area for its number.</small>
+          <small>All 293 census divisions, <Citation href={mapSources.population}>Statistics Canada 2021 Census</Citation>. Hover an area for its number.</small>
         </div>
       )}
       {fill === "price" && (
@@ -1935,7 +1950,7 @@ function MapLegend({ fill, layers }: { fill: FillMode; layers: Layers }) {
             </span>
           </div>
           <small>
-            Hydro-Québec 2025 estimate (rates on April 1, 2025, before taxes), one city per
+            <Citation href={mapSources.prices}>Hydro-Québec 2025 estimate</Citation> (rates on April 1, 2025, before taxes), one city per
             province. Montréal and Winnipeg checked against the utilities&apos; own rates.
           </small>
         </div>
@@ -1946,15 +1961,15 @@ function MapLegend({ fill, layers }: { fill: FillMode; layers: Layers }) {
           <div className="power-legend">
             <span>
               <i />
-              Transmission lines (NRCan CanVec)
+              Transmission lines (<Citation href={mapSources.lines}>NRCan CanVec</Citation>)
             </span>
           </div>
-          <small>NRCan CanVec. Being near a line does not mean a data center connects to it.</small>
+          <small><Citation href={mapSources.lines}>NRCan CanVec</Citation>. Being near a line does not mean a data center connects to it.</small>
         </div>
       )}
       {layers.clean && (
         <div className="legend-block">
-          <p>Clean power generation (NRCan): hydro, wind, solar, nuclear, biomass and tidal generating stations. Size = MW</p>
+          <p>Clean power generation (<Citation href={mapSources.clean}>NRCan</Citation>): hydro, wind, solar, nuclear, biomass and tidal generating stations. Size = MW</p>
           <div className="energy-legend">
             {Object.entries(cleanColors).map(([label, color]) => (
               <span key={label}>
@@ -1963,14 +1978,14 @@ function MapLegend({ fill, layers }: { fill: FillMode; layers: Layers }) {
               </span>
             ))}
           </div>
-          <small>NRCan, compiled 2017, may miss newer stations.</small>
+          <small><Citation href={mapSources.clean}>NRCan</Citation>, compiled 2017, may miss newer stations.</small>
         </div>
       )}
       {layers.water && (
         <div className="legend-block">
           <p>Watersheds</p>
           <small>
-            Major drainage areas, NRCan Atlas of Canada. Shows which river system an area drains
+            Major drainage areas, <Citation href={mapSources.water}>NRCan Atlas of Canada</Citation>. Shows which river system an area drains
             into, not water use or stress.
           </small>
         </div>
@@ -1992,7 +2007,7 @@ function PowerLineDetail({ line }: { line: PowerLine }) {
         </div>
         <div>
           <dt>Source</dt>
-          <dd>Natural Resources Canada, CanVec 1:250K</dd>
+          <dd><Citation href={mapSources.lines}>Natural Resources Canada, CanVec 1:250K</Citation></dd>
         </div>
       </dl>
       <p className="detail-note">
