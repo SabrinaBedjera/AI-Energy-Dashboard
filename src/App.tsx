@@ -899,8 +899,8 @@ function Scrolly(props: {
       title: "Power lines",
       body: (
         <p>
-          Data centers need power to run their servers, cool their systems, etc. These are Canada&apos;s power
-          lines (NRCan).
+          Data centers need power to run their servers, cool their systems, etc. Many plug into the grid through
+          power lines like these (NRCan).
         </p>
       ),
     },
@@ -908,7 +908,10 @@ function Scrolly(props: {
       mode: "clean",
       hideProjects: true,
       title: "Clean power",
-      body: <p>These are Canada&apos;s clean power generation stations, e.g. hydro and wind (NRCan).</p>,
+      body: <p>
+          Some build their own power or partner with power plants, like Canada&apos;s clean power generation
+          stations, e.g. hydro and wind (NRCan).
+        </p>,
     },
     {
       mode: "stress",
