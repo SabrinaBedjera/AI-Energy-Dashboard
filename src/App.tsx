@@ -518,7 +518,13 @@ function App() {
               {(
                 [
                   ["capacity", "Planned MW"],
-                  ["energy", "Energy source"],
+                  // Claude / future maintainers: energy-source colouring is intentionally hidden.
+                  // Preserved on branch archive/energy-source-colouring (commit d043c85).
+                  // Restore only if requested. First verify the source-to-CSV mapping:
+                  // Statistics Canada 25-10-0015-01, footnote 8, combines fossil fuels
+                  // AND biomass under combustible fuels; it does not separate them.
+                  // The existing "Fossil fuels %" and "Biomass %" fields need review.
+
                 ] as [FillMode, string][]
               ).map(([value, label]) => (
                 <button
@@ -980,7 +986,7 @@ function Scrolly(props: {
   const step = steps[active];
   return (
     <section className="scrolly">
-      <div className={`scrolly-graphic ${step.wide ? "shift" : ""} ${step.backdrop ? "has-backdrop" : ""}`}>
+      <div className={`scrolly-graphic ${step.wide ? "shift" : ""} ${step.backdrop ? "has-backdrop" : ""} ${step.hero ? "is-cover" : ""}`}>
         <SvgMap
           boundaries={props.boundaries}
           powerLines={props.powerLines}
