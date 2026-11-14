@@ -2400,3 +2400,86 @@ rect.york-planned {
   .story-under-map-key small { font-size: 11px; }
   .scrolly-step:not(.hero):not(.has-backdrop) { padding-bottom: 190px; }
 }
+
+/* Phone-first reading and map controls; desktop story layout is unchanged. */
+.mobile-filter-toggle, .mobile-apply-filters { display: none; }
+@media (max-width: 800px) {
+  .scrolly-steps { margin-top: 0; }
+  .scrolly-step,
+  .scrolly-step.hero,
+  .scrolly-step:not(.hero):not(.has-backdrop) {
+    min-height: 0; display: block; padding: 24px 16px;
+  }
+  .scrolly-step.hero { padding-top: 32px; }
+  .scrolly-step .step-card,
+  .scrolly-step.wide .step-card,
+  .scrolly-step.hero .step-card {
+    width: 100%; max-width: none; opacity: 1; padding: 20px;
+    font-size: 17px; line-height: 1.55;
+  }
+  .scrolly-step.hero .step-card { padding: 0; }
+  .scrolly-step.hero h1.fun-title { font-size: clamp(38px, 10vw, 60px); line-height: 1.05; }
+  .hero-findings li { font-size: 17px; }
+  .finding-num { font-size: 28px; min-width: 66px; }
+  .mobile-story-figure { position: relative; width: 100%; margin-top: 20px; pointer-events: auto; }
+  .mobile-story-figure .svg-map { position: static; width: 100%; height: auto; aspect-ratio: 760 / 600; display: block; }
+  .mobile-story-figure .cover-map-key,
+  .mobile-story-figure .story-under-map-key {
+    position: static; width: 100%; margin-top: 12px; padding: 0;
+  }
+  .mobile-story-figure .project-legend { gap: 8px 12px; }
+  .mobile-story-figure .cover-legend { font-size: 13px; }
+  .mobile-story-figure .cover-legend small { font-size: 12px; }
+  .step-card .inline-story-chart { margin: 24px -8px 0; }
+  .step-card .iea-figure figcaption { font-size: 14px; }
+  .step-card .iea-legend { gap: 8px 12px; }
+  .today-planned { font-size: 13px; overflow-wrap: anywhere; }
+  .today-planned th, .today-planned td { padding: 8px 5px; }
+  .today-planned caption { font-size: 12px; }
+  .explore-intro { padding: 32px 20px 24px; }
+  .explore-intro h2 { font-size: 38px; }
+  .map-experience.explorer.side-layout { display: flex; flex-direction: column; height: auto; min-height: 0; }
+  .mobile-filter-toggle {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    width: 100%; min-height: 52px; padding: 12px 16px;
+    background: var(--paper); color: var(--ink); border: 0; border-bottom: 1px solid var(--line);
+    font: inherit; font-size: 15px; text-align: left; cursor: pointer;
+  }
+  .explorer.side-layout .explorer-controls { display: none; width: 100%; padding: 20px; }
+  .explorer.side-layout .explorer-controls.is-open { display: block; }
+  .mobile-apply-filters { display: block; width: 100%; min-height: 44px; margin-top: 16px; background: var(--ink); color: white; border: 0; font: inherit; }
+  .explorer.side-layout .chips button { min-height: 44px; }
+  .explorer.side-layout .check { min-height: 44px; }
+  .explorer.side-layout select { min-height: 44px; font-size: 16px; }
+  .explorer.side-layout .explorer-stage,
+  .explorer.side-layout .explorer-stage.with-panel { display: block; width: 100%; }
+  .explorer.side-layout .explorer-map { width: 100%; min-width: 0; }
+  .explorer.side-layout .svg-map,
+  .explorer.side-layout .explorer-stage.with-panel .svg-map {
+    position: static; width: 100%; height: auto; min-height: 320px; aspect-ratio: 1000 / 800;
+  }
+  .explorer .map-hint { top: 12px; left: 12px; max-width: calc(100% - 80px); padding: 6px 8px; font-size: 13px; }
+  .mobile-map-zoom { position: absolute; top: 12px; right: 12px; }
+  .mobile-map-zoom button { width: 44px; height: 44px; font-size: 22px; }
+  .explorer.side-layout .map-legend { width: 100%; padding: 16px; gap: 16px; }
+  .explorer.side-layout .map-legend .legend-block { min-width: 0; max-width: 100%; flex-basis: 100%; }
+  .explorer.side-layout .explorer-stage.with-panel .detail-drawer {
+    position: fixed; inset: auto 0 0; z-index: 50;
+    width: 100%; max-width: 100%; max-height: 85svh; height: auto;
+    padding: 20px 24px calc(24px + env(safe-area-inset-bottom));
+    contain: none; overflow-y: auto; overscroll-behavior: contain;
+    border: 1px solid var(--line); border-radius: 16px 16px 0 0;
+    box-shadow: 0 -8px 32px rgba(23,45,73,.2); background: var(--paper);
+    overflow-wrap: anywhere;
+  }
+  .explorer .detail-drawer h2 { padding-right: 36px; font-size: 28px; }
+  .explorer .detail-drawer .drawer-close { width: 44px; height: 44px; right: 12px; top: 12px; font-size: 30px; }
+  .about { padding: 40px 20px 24px; }
+}
+
+@media (max-width: 800px) {
+  .explorer .detail-drawer .drawer-close {
+    position: sticky; float: right; top: 0; right: auto;
+    margin: -8px -12px 4px 8px; background: var(--paper); z-index: 1;
+  }
+}
