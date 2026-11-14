@@ -515,27 +515,19 @@ function App() {
           <div className="control-group" aria-label="Colour provinces by">
             <span>Colour provinces by</span>
             <div className="chips">
-              {(
-                [
-                  ["capacity", "Planned MW"],
-                  // Claude / future maintainers: energy-source colouring is intentionally hidden.
-                  // Preserved on branch archive/energy-source-colouring (commit d043c85).
-                  // Restore only if requested. First verify the source-to-CSV mapping:
-                  // Statistics Canada 25-10-0015-01, footnote 8, combines fossil fuels
-                  // AND biomass under combustible fuels; it does not separate them.
-                  // The existing "Fossil fuels %" and "Biomass %" fields need review.
-
-                ] as [FillMode, string][]
-              ).map(([value, label]) => (
-                <button
-                  key={value}
-                  className={fill === value ? "active" : ""}
-                  aria-pressed={fill === value}
-                  onClick={() => setFill(fill === value ? "none" : value)}
-                >
-                  {label}
-                </button>
-              ))}
+              {/* Claude / future maintainers: energy-source colouring is intentionally hidden.
+                  Preserved on branch archive/energy-source-colouring (commit d043c85).
+                  Restore only if requested. First verify the source-to-CSV mapping:
+                  Statistics Canada 25-10-0015-01, footnote 8, combines fossil fuels
+                  AND biomass under combustible fuels; it does not separate them.
+                  The existing "Fossil fuels %" and "Biomass %" fields need review. */}
+              <button
+                className={fill === "capacity" ? "active" : ""}
+                aria-pressed={fill === "capacity"}
+                onClick={() => setFill(fill === "capacity" ? "none" : "capacity")}
+              >
+                Planned MW
+              </button>
             </div>
           </div>
           <p className="shown-count">
