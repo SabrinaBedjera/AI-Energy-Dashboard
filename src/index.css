@@ -2588,7 +2588,6 @@ rect.york-planned {
 .scrolly-graphic .svg-provinces path { transition: fill 0.8s ease, opacity 0.6s ease; }
 .scrolly-graphic .svg-map { transition: left 0.4s ease, width 0.4s ease, height 0.4s ease, bottom 0.4s ease, top 0.4s ease; }
 @media (min-width: 1281px) {
-  .scrolly-graphic.is-cover .svg-map,
   .scrolly-graphic.has-map-key .svg-map {
     top: 24px; height: auto; bottom: calc(var(--keyH, 120px) + 32px);
   }

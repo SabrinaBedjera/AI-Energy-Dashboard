@@ -1083,12 +1083,33 @@ function Scrolly(props: {
     const graphic = graphicRef.current;
     if (!graphic) return;
     const key = graphic.querySelector<HTMLElement>(".cover-map-key, .story-under-map-key");
-    const update = () => graphic.style.setProperty("--keyH", `${key ? Math.ceil(key.getBoundingClientRect().height) : 0}px`);
+    const map = graphic.querySelector<SVGSVGElement>("svg.svg-map");
+    const update = () => {
+      graphic.style.setProperty("--keyH", `${key ? Math.ceil(key.getBoundingClientRect().height) : 0}px`);
+      if (!key || !map) return;
+      // Tuck the legend just under the drawn map when there is room (Babs, Nov 14)
+      key.style.top = "";
+      key.style.bottom = "";
+      const box = graphic.getBoundingClientRect();
+      const mapBottom = map.getBoundingClientRect().bottom - box.top;
+      const keyHeight = key.getBoundingClientRect().height;
+      // The cover keeps its own spot so the curvy arrow labels stay clear
+      if (key.classList.contains("story-under-map-key") && mapBottom + 12 + keyHeight <= box.height - 8) {
+        key.style.top = `${Math.round(mapBottom + 12)}px`;
+        key.style.bottom = "auto";
+      }
+    };
     update();
     if (!key) return;
     const observer = new ResizeObserver(update);
     observer.observe(key);
-    return () => observer.disconnect();
+    observer.observe(graphic);
+    if (map) observer.observe(map);
+    const settle = window.setTimeout(update, 500);
+    return () => {
+      observer.disconnect();
+      window.clearTimeout(settle);
+    };
   }, [active, phone]);
   // Desktop keeps ONE story map on screen and swaps its data as cards change (Babs, Nov 14).
   const renderStoryMap = (item: ScrollStep, key = "story-map") => (
@@ -1113,7 +1134,7 @@ function Scrolly(props: {
           fadeAll={item.fadeAll}
           annotations={phone ? undefined : item.annotations}
           fitStoryMap={!item.focus && (phone || !item.hero)}
-          alignBottom={["grid", "sitesPlanned", "sitesActive", "people", "stress", "fibre", "power", "clean"].includes(item.mode)}
+          alignBottom={["grid", "sitesPlanned", "sitesActive", "people", "stress", "fibre", "power", "clean"].includes(item.mode) || (item.mode === "projects" && !item.hero)}
         />
   );
   const renderStoryLegend = (item: ScrollStep) => (
