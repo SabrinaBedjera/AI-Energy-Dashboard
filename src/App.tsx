@@ -886,7 +886,10 @@ function Scrolly(props: {
       title: "Land",
       body: (
         <p>
-          Data centers need space. Darker areas have more people per km² (Statistics Canada, 2021 Census).
+          Data centers need available area to build. In Canada, operating data centers have been built close to
+          cities, which could have advantages like being closer to power resources, while planned centers are being
+          built in more remote locations (York University, 2026). Darker areas have more people per km² (Statistics
+          Canada, 2021 Census).
         </p>
       ),
     },
@@ -894,7 +897,10 @@ function Scrolly(props: {
       mode: "grid",
       hideProjects: true,
       title: "Energy",
-      body: <p>They need a lot of power. These are Canada&apos;s power lines and clean power stations (NRCan).</p>,
+      body: <p>
+          Data centers need power to run their servers, cool their systems, etc. These are Canada&apos;s power lines
+          and clean power generation stations, e.g. hydro and wind (NRCan).
+        </p>,
     },
     {
       mode: "stress",
@@ -902,8 +908,9 @@ function Scrolly(props: {
       title: "Water",
       body: (
         <p>
-          Many data centers use water for cooling. Darker areas already use more of their available water (WRI
-          Aqueduct). Much of southern Alberta has high or extremely high water stress.
+          Many data centers use water for cooling, however some data centers don&apos;t need to use water at all
+          (e.g. closed loop systems). Darker areas on the map have higher water stress and are using a high portion
+          of their available water (WRI Aqueduct). A large portion of southern Alberta has high water stress.
         </p>
       ),
     },
