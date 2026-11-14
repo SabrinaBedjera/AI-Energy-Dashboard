@@ -833,6 +833,16 @@ function Scrolly(props: {
             connected to a server in a data center. Companies use AI data centers to train and run
             their AI models.
           </p>
+          <p>
+            Where a data center gets built depends on many factors, such as energy, land, water,
+            and access to the internet backbone (high-capacity fibre lines), as they need fast data
+            transfer. I couldn&apos;t include fibre lines on my map because I couldn&apos;t find a
+            publicly accessible database, but you can explore fibre networks on the{" "}
+            <a href="https://bbmaps.itu.int/bbmaps/" target="_blank" rel="noreferrer">
+              ITU Broadband Map
+            </a>
+            .
+          </p>
         </>
       ),
     },
