@@ -1137,8 +1137,7 @@ function ProvinceBar({ provinces }: { provinces: Province[] }) {
 // York University paper (Carlo & Rolheiser 2026, SSRN 6464099), Table 1, data downloaded June 8, 2026.
 // Checked against the paper PDF on Nov 12, 2026. "Planned" = announcement + construction stages.
 const sizeBands: [number, string][] = [
-  [1, "Up to 50 MW"],
-  [2, "50 to 100 MW"],
+  [1, "Under 100 MW"],
   [3, "100 MW+"],
 ];
 
@@ -1147,8 +1146,7 @@ function inSizeBand(raw: string | undefined, band: number) {
   if (!raw || !String(raw).trim()) return false;
   const mw = Number(raw);
   if (Number.isNaN(mw)) return false;
-  if (band === 1) return mw <= 50;
-  if (band === 2) return mw > 50 && mw < 100;
+  if (band === 1) return mw < 100;
   return mw >= 100;
 }
 
