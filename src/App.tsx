@@ -665,11 +665,6 @@ function App() {
             in Canada. The map uses my 125-site project list; the headline statistics and selected charts
             use <Citation href={yorkUrl}>York University&apos;s separate dataset</Citation> of 194 operating and 213 planned sites.
           </p>
-          <p>
-            <a href="https://github.com/SabrinaBedjera/AI-Energy-Dashboard" target="_blank" rel="noreferrer">Explore the code</a>
-            {/* Project CSV download link intentionally hidden for now.
-                Previous link is preserved on archive/charts-before-removal. */}
-          </p>
         </div>
         <div className="sources">
           <div className="sources-col">
