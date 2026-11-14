@@ -737,40 +737,23 @@ function Scrolly(props: {
             </li>
             <li>
               <span className="finding-num">14×</span>
-              <span>The reported power capacity of planned data centers is about 14 times that of
-              operating sites: 22.2 GW versus 1.6 GW.</span>
+              <span>the reported power capacity in planned projects versus operating sites
+              (22.2 GW vs 1.6 GW).</span>
             </li>
           </ul>
           <p className="hero-source">
-            Reported capacity, not actual electricity use. Planned projects may change or never be built.
-            Both headline statistics: {" "}
+            Source: {" "}
             <a href={yorkUrl} target="_blank" rel="noreferrer">
               York University (2026)
             </a>{" "}
-            · <a href="#methods">See all my sources</a>
+            · <a href="#methods">Methods</a>
           </p>
           <p className="hero-byline">By Sabrina Bedjera · November 2026</p>
           <nav className="hero-nav" aria-label="Jump to">
             <span>Jump to:</span> <a href="#story">The story</a> · <a href="#explore">Interactive map</a> ·{" "}
             <a href="#charts">Charts</a> · <a href="#methods">Data and methods</a>
           </nav>
-          <div className="cover-legend" role="group" aria-label="Cover map legend">
-            <p>Data center projects</p>
-            <div className="project-legend">
-              {([
-                ["Operating", "Operational"],
-                ["Under construction", "Under construction"],
-                ["Proposed", "Planned projects"],
-              ] as const).map(([status, label]) => (
-                <span key={status}>
-                  <i style={{ background: statusColors[status], borderColor: statusStroke[status] }} aria-hidden="true" />
-                  {label}
-                </span>
-              ))}
-              <span className="confidence-key"><i aria-hidden="true" />Outer ring: lower confidence</span>
-            </div>
-            <small>Larger dots indicate higher reported MW. Smallest dots also include sites with no reported capacity. Locations are approximate.</small>
-          </div>
+
         </>
       ),
     },
@@ -978,7 +961,7 @@ function Scrolly(props: {
   const step = steps[active];
   return (
     <section className="scrolly">
-      <div className={`scrolly-graphic ${step.wide ? "shift" : ""} ${step.backdrop ? "has-backdrop" : ""} ${step.hero ? "is-cover" : ""}`}>
+      <div className={`scrolly-graphic ${step.wide ? "shift" : ""} ${step.backdrop ? "has-backdrop" : ""} ${step.hero ? "is-cover" : ""} ${step.mode === "grid" || step.mode === "sitesPlanned" || step.mode === "sitesActive" ? "has-map-key" : ""}`}>
         <SvgMap
           boundaries={props.boundaries}
           powerLines={props.powerLines}
@@ -1000,6 +983,47 @@ function Scrolly(props: {
           annotations={step.annotations}
           fitStoryMap={!step.hero && !step.focus}
         />
+        {step.hero && (
+          <div className="cover-legend cover-map-key" role="group" aria-label="Cover map legend">
+            <div className="project-legend">
+              {([
+                ["Operating", "Operational"],
+                ["Under construction", "Under construction"],
+                ["Proposed", "Planned projects"],
+              ] as const).map(([status, label]) => (
+                <span key={status}>
+                  <i style={{ background: statusColors[status], borderColor: statusStroke[status] }} aria-hidden="true" />
+                  {label}
+                </span>
+              ))}
+              <span className="confidence-key"><i aria-hidden="true" />Outer ring: lower confidence</span>
+            </div>
+            <small>Dot size = reported MW · Smallest dots include unknown capacity</small>
+          </div>
+        )}
+              {step.mode === "grid" && (
+                <div className="story-map-key cover-legend story-under-map-key" role="group" aria-label="Power infrastructure map legend">
+                  <p><span className="transmission-swatch" aria-hidden="true" />Power transmission lines</p>
+                  <p>Clean power generation</p>
+                  <div className="project-legend">
+                    {Object.entries(cleanColors).map(([label, color]) => (
+                      <span key={label}><i style={{ background: color, borderColor: color }} aria-hidden="true" />{label}</span>
+                    ))}
+                  </div>
+                  <small>Larger dots indicate higher generating capacity (MW). Stations: <Citation href={mapSources.clean}>NRCan</Citation>, compiled 2017; newer stations may be missing. Lines: <Citation href={mapSources.lines}>NRCan CanVec</Citation>. Proximity does not establish a data center’s power supply.</small>
+                </div>
+              )}
+        {(step.mode === "sitesPlanned" || step.mode === "sitesActive") && (
+          <div className="cover-legend story-under-map-key" role="group" aria-label="Provincial site share map legend">
+            <p>Share of Canada&apos;s {step.mode === "sitesPlanned" ? "planned" : "operating"} data center sites</p>
+            <div className="project-legend share-scale">
+              {siteShareColors.map((color, index) => (
+                <span key={color}><i style={{ background: color, borderColor: color }} aria-hidden="true" />{["0%", ">0–<5%", "5–<15%", "15–<35%", "35–100%"][index]}</span>
+              ))}
+            </div>
+            <small>Darker pink = a larger share of sites, not MW. Source: <Citation href={yorkUrl}>York University (2026), Appendix Table A2</Citation>.</small>
+          </div>
+        )}
         {step.backdrop && <div className="scrolly-backdrop">{step.backdrop}</div>}
       </div>
       <div className="scrolly-steps">
@@ -1015,18 +1039,6 @@ function Scrolly(props: {
             <div className="step-card" id={index === 1 ? "story" : undefined}>
               {item.title && <h2 className="step-title">{item.title}</h2>}
               {item.body}
-              {item.mode === "grid" && (
-                <div className="story-map-key cover-legend" role="group" aria-label="Power infrastructure map legend">
-                  <p><span className="transmission-swatch" aria-hidden="true" />Power transmission lines</p>
-                  <p>Clean power generation</p>
-                  <div className="project-legend">
-                    {Object.entries(cleanColors).map(([label, color]) => (
-                      <span key={label}><i style={{ background: color, borderColor: color }} aria-hidden="true" />{label}</span>
-                    ))}
-                  </div>
-                  <small>Larger dots indicate higher generating capacity (MW). Stations: <Citation href={mapSources.clean}>NRCan</Citation>, compiled 2017; newer stations may be missing. Lines: <Citation href={mapSources.lines}>NRCan CanVec</Citation>. Proximity does not establish a data center’s power supply.</small>
-                </div>
-              )}
               {item.backdrop && <div className="inline-story-chart">{item.backdrop}</div>}
             </div>
           </div>
@@ -1302,7 +1314,7 @@ function TodayVsPlanned() {
           Carlo &amp; Rolheiser, York University (2026)
         </a>
         , Tables A1 and A2, Figure 3b, so these are different from my own list. Planned = announced
-        or under construction. Over 100 MW is what the IEA calls hyperscale.
+        or under construction. Over 100 MW is what the <Citation href={ieaUrl}>IEA</Citation> calls hyperscale.
       </caption>
     </table>
   );
