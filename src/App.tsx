@@ -645,7 +645,7 @@ function App() {
             In my analysis, I pull together publicly accessible data from research papers, news
             articles, government sources, utility websites, company websites and more! An interesting
             finding is that a decent amount of data center information is behind paywalls, either
-            through a private data firm or a news article. Of the 125 sites I found, 84 are already
+            through a private data firm or a news article. Of the 125 sites I found (includes distinct sites and grouped projects), 84 are already
             running, mostly small buildings listed on the operators&apos; own websites. Key information gaps were water use and
             power sources. For example, only 12 of the 125 sites I found share anything about cooling
             or water. For 98 of the 125 mapped sites, a power source was not identified in the public
