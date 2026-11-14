@@ -2309,3 +2309,38 @@ rect.york-planned {
 /* With the panel open, the map fills the space next to it instead of leaving a gap */
 .explorer.side-layout .explorer-stage.with-panel .explorer-map { height: 100%; }
 .explorer.side-layout .explorer-stage.with-panel .svg-map { aspect-ratio: auto; flex: 1 1 0; height: auto; min-height: 420px; }
+
+/* Cover key uses the same status palette as the explorer. */
+.cover-legend { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 14px; line-height: 1.4; }
+.cover-legend > p { margin: 0 0 8px; font-weight: 600; }
+.cover-legend .project-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.cover-legend .project-legend i { display: inline-block; width: 11px; height: 11px; border: 1.5px solid; flex: none; }
+.cover-legend small { display: block; margin-top: 8px; font-size: 13px; color: var(--muted); }
+
+/* Keep each story chart next to its text on wide monitors. */
+@media (min-width: 1281px) {
+  .scrolly { --chart-gutter: max(6vw, calc((100vw - 1500px) / 2)); }
+  .scrolly-step.has-backdrop { padding-left: var(--chart-gutter); }
+  .scrolly-graphic.has-backdrop .scrolly-backdrop { padding: 0; justify-content: flex-start; }
+  .scrolly-graphic.has-backdrop .iea-figure {
+    position: relative;
+    left: calc(var(--chart-gutter) + 448px);
+    width: min(900px, 88vh, calc(100vw - var(--chart-gutter) - var(--chart-gutter) - 448px));
+  }
+}
+
+.inline-story-chart { display: none; }
+@media (min-width: 801px) and (max-width: 1280px) {
+  .scrolly-graphic.has-backdrop .scrolly-backdrop { padding: 0; justify-content: flex-start; }
+  .scrolly-graphic.has-backdrop .iea-figure {
+    position: relative;
+    left: calc(34vw + 48px);
+    width: min(640px, 88vh, calc(63vw - 48px));
+  }
+}
+@media (max-width: 800px) {
+  .scrolly-graphic.has-backdrop .scrolly-backdrop { display: none; }
+  .inline-story-chart { display: block; margin-top: 24px; }
+}
+
+.story-map-key .transmission-swatch { display: inline-block; width: 26px; height: 2px; background: #5b6e8c; margin-right: 8px; vertical-align: middle; }

@@ -609,13 +609,25 @@ function App() {
             through a private data firm or a news article. Of the 125 sites I found, 84 are already
             running, mostly small buildings listed on the operators&apos; own websites. Key information gaps were water use and
             power sources. For example, only 12 of the 125 sites I found share anything about cooling
-            or water, and 98 don&apos;t say where their power comes from.
+            or water. For 98 of the 125 mapped sites, a power source was not identified in the public
+            sources reviewed.
           </p>
           <p>
             A few notes on the data. Each map layer has its own notes and sources under its legend.
             Sizes (MW) are what each source reports, and they don&apos;t always measure the same thing.
             Some count only the computers, some the whole site, some the power plant next door, and
-            some only the first phase. All pins are approximate.
+            some only the first phase. These reported capacities are not measurements of actual
+            electricity use. Provincial generation mixes do not establish the power supply of an
+            individual facility. Planned projects may change or never be built. All pins are approximate.
+          </p>
+          <p>
+            Each project includes links to its sources. This dataset may not capture every data center
+            in Canada. The map uses my 125-site project list; the headline statistics and selected charts
+            use York University&apos;s separate dataset of 194 operating and 213 planned sites.
+          </p>
+          <p>
+            <a href="https://github.com/SabrinaBedjera/AI-Energy-Dashboard" target="_blank" rel="noreferrer">Explore the code</a>{" · "}
+            <a href={dataUrl("projects.csv")} download>Download the project data (CSV)</a>
           </p>
         </div>
         <div className="sources">
@@ -714,12 +726,14 @@ function Scrolly(props: {
               Alberta.
             </li>
             <li>
-              <span className="finding-num">14×</span> the power: what planned sites would draw,
-              compared with the 194 running today.
+              <span className="finding-num">14×</span>
+              <span>The reported power capacity of planned data centers is about 14 times that of
+              operating sites: 22.2 GW versus 1.6 GW.</span>
             </li>
           </ul>
           <p className="hero-source">
-            Source:{" "}
+            Reported capacity, not actual electricity use. Planned projects may change or never be built.
+            Both headline statistics: {" "}
             <a href={yorkUrl} target="_blank" rel="noreferrer">
               York University (2026)
             </a>{" "}
@@ -728,8 +742,54 @@ function Scrolly(props: {
           <p className="hero-byline">By Sabrina Bedjera · November 2026</p>
           <nav className="hero-nav" aria-label="Jump to">
             <span>Jump to:</span> <a href="#story">The story</a> · <a href="#explore">Interactive map</a> ·{" "}
-            <a href="#charts">Charts</a> · <a href="#methods">Methods and sources</a>
+            <a href="#charts">Charts</a> · <a href="#methods">Data and methods</a>
           </nav>
+          <div className="cover-legend" role="group" aria-label="Cover map legend">
+            <p>Data center projects</p>
+            <div className="project-legend">
+              {([
+                ["Operating", "Operational"],
+                ["Under construction", "Under construction"],
+                ["Proposed", "Planned projects"],
+              ] as const).map(([status, label]) => (
+                <span key={status}>
+                  <i style={{ background: statusColors[status], borderColor: statusStroke[status] }} aria-hidden="true" />
+                  {label}
+                </span>
+              ))}
+              <span className="confidence-key"><i aria-hidden="true" />Outer ring: lower confidence</span>
+            </div>
+            <small>Larger dots indicate higher reported MW. Smallest dots also include sites with no reported capacity. Locations are approximate.</small>
+          </div>
+        </>
+      ),
+    },
+    {
+      mode: "projects",
+      title: "Canada’s data center shift",
+      body: (
+        <>
+          <p>
+            Canada is experiencing a data center shift. Operating data centers are concentrated in
+            Ontario and Quebec, are located close to cities, and have smaller reported power
+            capacities. Planned data center projects have larger reported power capacities and are
+            more concentrated in Alberta.
+          </p>
+          <p>
+            However, planned projects are not built projects. Whether they proceed depends on access
+            to power, land, funding, water, regulatory approvals, and other factors. In areas with
+            limited grid connection capacity, some developers are looking to build their own power
+            generation. For example, Wonder Valley proposes on-site natural gas and geothermal power.
+          </p>
+          <p>
+            My analysis brings together project announcements, provincial electricity generation,
+            infrastructure, and policy to explore that shift.
+          </p>
+          <p className="hero-source">
+            Sources: <a href={yorkUrl} target="_blank" rel="noreferrer">York University (2026)</a>,{" "}
+            <a href="https://www.aeso.ca/grid/connecting-to-the-grid/large-load-projects" target="_blank" rel="noreferrer">AESO</a>,{" "}
+            <a href="https://majorprojects.alberta.ca/details/Wonder-Valley-AI-Data-Centre-Park-Phase-1/11477" target="_blank" rel="noreferrer">Wonder Valley project listing</a>.
+          </p>
         </>
       ),
     },
@@ -908,7 +968,7 @@ function Scrolly(props: {
   const step = steps[active];
   return (
     <section className="scrolly">
-      <div className={`scrolly-graphic ${step.wide ? "shift" : ""}`}>
+      <div className={`scrolly-graphic ${step.wide ? "shift" : ""} ${step.backdrop ? "has-backdrop" : ""}`}>
         <SvgMap
           boundaries={props.boundaries}
           powerLines={props.powerLines}
@@ -940,11 +1000,24 @@ function Scrolly(props: {
               stepRefs.current[index] = element;
             }}
             data-step={index}
-            className={`scrolly-step ${item.hero ? "hero" : ""} ${item.wide ? "wide" : ""} ${index === active ? "is-active" : ""}`}
+            className={`scrolly-step ${item.hero ? "hero" : ""} ${item.wide ? "wide" : ""} ${item.backdrop ? "has-backdrop" : ""} ${index === active ? "is-active" : ""}`}
           >
             <div className="step-card" id={index === 1 ? "story" : undefined}>
               {item.title && <h2 className="step-title">{item.title}</h2>}
               {item.body}
+              {item.mode === "grid" && (
+                <div className="story-map-key cover-legend" role="group" aria-label="Power infrastructure map legend">
+                  <p><span className="transmission-swatch" aria-hidden="true" />Power transmission lines</p>
+                  <p>Clean power generation</p>
+                  <div className="project-legend">
+                    {Object.entries(cleanColors).map(([label, color]) => (
+                      <span key={label}><i style={{ background: color, borderColor: color }} aria-hidden="true" />{label}</span>
+                    ))}
+                  </div>
+                  <small>Larger dots indicate higher generating capacity (MW). Stations: NRCan, compiled 2017; newer stations may be missing. Lines: NRCan CanVec. Proximity does not establish a data center’s power supply.</small>
+                </div>
+              )}
+              {item.backdrop && <div className="inline-story-chart">{item.backdrop}</div>}
             </div>
           </div>
         ))}
