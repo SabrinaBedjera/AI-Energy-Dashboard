@@ -2581,3 +2581,4 @@ rect.york-planned {
 .story-layer-key .map-legend i { width: 14px; height: 14px; }
 .story-layer-key .map-legend small { font-size: 13px; max-width: 820px; margin: 6px auto 0; display: block; }
 .map-legend p .fibre-swatch { display: inline-block; position: static; width: 11px; height: 11px; padding: 0; gap: 0; }
+.story-layer-key .power-legend, .story-layer-key .energy-legend { justify-content: center; display: flex; flex-wrap: wrap; gap: 6px 14px; }
