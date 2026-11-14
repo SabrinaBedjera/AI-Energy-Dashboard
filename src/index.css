@@ -2317,15 +2317,32 @@ rect.york-planned {
 .cover-legend .project-legend i { display: inline-block; width: 11px; height: 11px; border: 1.5px solid; flex: none; }
 .cover-legend small { display: block; margin-top: 8px; font-size: 13px; color: var(--muted); }
 
-/* Keep each story chart next to its text on wide monitors. */
+/* Shared columns keep story maps, charts and cards together on large screens. */
 @media (min-width: 1281px) {
-  .scrolly { --chart-gutter: max(6vw, calc((100vw - 1500px) / 2)); }
-  .scrolly-step.has-backdrop { padding-left: var(--chart-gutter); }
+  .scrolly {
+    --story-gutter: max(3vw, calc((100vw - 1900px) / 2));
+    --story-card-width: clamp(420px, 29vw, 560px);
+    --story-gap: 40px;
+    --story-figure-left: calc(var(--story-gutter) + var(--story-card-width) + var(--story-gap));
+    --story-figure-width: calc(100vw - var(--story-figure-left) - var(--story-gutter));
+  }
+  .scrolly-step:not(.hero) { padding-left: var(--story-gutter); }
+  .scrolly-step:not(.hero) .step-card {
+    width: var(--story-card-width);
+    max-width: var(--story-card-width);
+    padding: 24px 26px;
+    font-size: 20px;
+  }
+  .scrolly-step:not(.hero) .step-title { font-size: 26px; }
+  .scrolly-graphic:not(.is-cover) .svg-map {
+    left: var(--story-figure-left);
+    width: var(--story-figure-width);
+  }
   .scrolly-graphic.has-backdrop .scrolly-backdrop { padding: 0; justify-content: flex-start; }
   .scrolly-graphic.has-backdrop .iea-figure {
     position: relative;
-    left: calc(var(--chart-gutter) + 448px);
-    width: min(900px, 88vh, calc(100vw - var(--chart-gutter) - var(--chart-gutter) - 448px));
+    left: var(--story-figure-left);
+    width: min(1000px, 88vh, var(--story-figure-width));
   }
 }
 
