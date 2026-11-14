@@ -1434,7 +1434,7 @@ const rulesRows: [string, string, string][] = [
   ["Quebec", "A minister must authorize power for any data center of 5 MW or more (Bill 69).", "https://www.blg.com/en/insights/2026/07/data-centre-regulation-in-quebec-from-honeyed-promise-to-iron-control"],
   ["Ontario", "The government decides which large loads can connect, and weighs economic benefit (Bill 40).", "https://www.torys.com/en/our-latest-thinking/publications/2025/12/key-takeaways-and-next-steps-on-new-energy-law"],
   ["Manitoba", "Proposed a separate rate class for data centers (Bill 39). Not yet clear if it's in force.", "https://web2.gov.mb.ca/bills/43-3/pdf/b039.pdf"],
-  ["Saskatchewan", "No data center cap. Big projects can bring their own power.", "https://www.cp24.com/news/canada/2026/09/15/bell-ai-data-centre-project-near-regina-to-quadruple-in-size/"],
+  ["Saskatchewan", "New data center projects must supply their own power (Data Centre Framework, Aug 2026).", "https://www.saskatchewan.ca/government/news-and-media/2026/august/27/waiting-on-news-release"],
   ["Nova Scotia, New Brunswick", "Standard grid connection, no data center rules yet.", "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6464099"],
 ];
 
@@ -2231,6 +2231,7 @@ const sourceNames: Record<string, string> = {
   "blg.com": "BLG",
   "web2.gov.mb.ca": "Manitoba Bill 39",
   "alberta.ca": "Government of Alberta",
+  "saskatchewan.ca": "Government of Saskatchewan",
 };
 
 // Turns a source cell like "https://a.ca (Fig 3b) https://b.ca" into links.
