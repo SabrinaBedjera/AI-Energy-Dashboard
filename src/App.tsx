@@ -2015,26 +2015,13 @@ function ProvinceDetail({
         <SourceLine raw={province.planned_mw_source} label="York University (2026)" />
       </div>
       <div className="panel-block">
-        <h3>Main power source</h3>
-        <p>{province.main_power_source}</p>
-        <SourceLine raw={province.power_source_source} label="York University (2026)" />
-      </div>
-      <div className="panel-block">
         <h3>Grid rules</h3>
         <p>{province.grid_rules.replace(/centres/g, "centers").replace(/centre\b/g, "center")}</p>
         <SourceLine raw={province.grid_rules_sources} />
       </div>
-      <div className="panel-block">
-        <h3>Clean energy and openness to data centers</h3>
-        <p>
-          Clean energy: {province.clean_energy_level}. Openness: {province.openness}. This is York&apos;s
-          rating, not mine.
-        </p>
-        <SourceLine raw={province.levels_source} label="York University (2026)" />
-      </div>
       {energy && (
         <div className="panel-block mix-chart">
-          <h3>Where its electricity came from in 2025</h3>
+          <h3>Power Generation Sources</h3>
           {mixSources.map((source) => {
             const value = Number(energy[`${source} %`] || 0);
             return (
