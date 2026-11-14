@@ -2539,3 +2539,17 @@ rect.york-planned {
     max-height: var(--keyH);
   }
 }
+@media (min-width: 801px) and (max-width: 1280px) {
+  .scrolly-graphic .cover-map-key,
+  .scrolly-graphic .story-under-map-key {
+    bottom: auto; max-height: none;
+    top: calc(100% - ((100% - var(--mapH) - var(--keyH)) / 2 + var(--keyH)) + 4px);
+  }
+}
+/* Stronger break: full-width band for the interactive map intro */
+.section-break { display: none; }
+.explore-intro {
+  max-width: none; margin: 96px 0 0;
+  padding: 72px max(24px, calc((100% - 760px) / 2)) 56px;
+  background: #dcebe7; border-top: 4px solid var(--ink);
+}
