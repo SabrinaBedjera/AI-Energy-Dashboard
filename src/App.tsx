@@ -740,15 +740,15 @@ function Scrolly(props: {
         <>
           <p>
             AI is rapidly growing and being used in many aspects of everyday life, from writing
-            emails and searching for jobs to vibe coding a website or doing research. AI has
+            emails and searching for jobs to vibe coding websites or doing research. AI has
             experienced a boom over the last few years due to improvements in computing power (e.g.
             computer chips), and AI models.
           </p>
           <p>
-            A data center is a building full of computers and storage that AI companies use to train
-            their models and run their systems. Data centers
-            aren&apos;t just used for AI. They&apos;ve been around for years to run websites, email,
-            online banking, streaming and cloud storage.
+            A data center is a building full of computer servers that companies use to run their
+            systems. For instance, if you&apos;ve ever done a Google search, your computer would have
+            connected to a server in a data center. Companies use AI data centers to train and run
+            their AI models.
           </p>
         </>
       ),
