@@ -700,9 +700,9 @@ function Scrolly(props: {
       mode: "projects",
       hero: true,
       annotations: [
-        { lon: -114, lat: 56, dx: 40, dy: -200, anchor: "start", lines: ["Most planned data centers", "Alberta: 78% of planned sites"] },
-        { lon: -79.6, lat: 43.9, dx: -170, dy: 20, lines: ["Most running today", "Ontario: 41% of operating sites"] },
-        { lon: -73.6, lat: 45.6, dx: 60, dy: -170, anchor: "start", lines: ["Next most running today", "Quebec: 30% of operating sites"] },
+        { lon: -114, lat: 56, dx: 40, dy: -200, anchor: "start", lines: ["Majority of planned data centers", "Alberta: 78% of planned sites"] },
+        { lon: -79.6, lat: 43.9, dx: -170, dy: 20, lines: ["Largest share of operating data centers", "Ontario: 41% of operating sites"] },
+        { lon: -73.6, lat: 45.6, dx: 60, dy: -170, anchor: "start", lines: ["Large portion of operating data centers", "Quebec: 30% of operating sites"] },
       ],
       body: (
         <>
@@ -928,6 +928,7 @@ function Scrolly(props: {
           highlightProject={step.highlight}
           fadeAll={step.fadeAll}
           annotations={step.annotations}
+          fitStoryMap={!step.hero && !step.focus}
         />
         {step.backdrop && <div className="scrolly-backdrop">{step.backdrop}</div>}
       </div>
@@ -1386,8 +1387,10 @@ function SvgMap({
   fadeAll,
   zoomable,
   annotations,
+  fitStoryMap = false,
 }: {
   annotations?: Annotation[];
+  fitStoryMap?: boolean;
   focusProvince?: string;
   hideProjects?: boolean;
   highlightProject?: string;
@@ -1507,7 +1510,7 @@ function SvgMap({
     <svg
       ref={svgRef}
       className={`map-canvas svg-map ${zoomable ? "zoomable" : ""}`}
-      viewBox="0 0 1000 600"
+      viewBox={fitStoryMap ? "120 0 760 600" : "0 0 1000 600"}
       preserveAspectRatio="xMidYMid meet"
       role="img"
       aria-label="Interactive map of Canadian data center projects"
@@ -1699,9 +1702,12 @@ function SvgMap({
             const lx = px + note.dx;
             const ly = py + note.dy;
             const anchor = note.anchor ?? (note.dx < 0 ? "end" : "start");
+            const headingLines = note.lines[0].length > 35
+              ? [note.lines[0].replace(/ data centers$/, ""), "data centers"]
+              : [note.lines[0]];
             // hand-drawn feel: one loose arc that swings out to the side, with a quick pen-stroke head
             const sx = lx + (anchor === "end" ? -4 : 4);
-            const sy = ly + (note.dy < 0 ? 32 : -24);
+            const sy = ly + (note.dy < 0 ? 32 + (headingLines.length - 1) * 22 : -24);
             const ex = px - Math.sign(note.dx) * 9;
             const ey = py - Math.sign(note.dy) * 9;
             const vx = ex - sx;
@@ -1727,8 +1733,12 @@ function SvgMap({
               <g key={note.lines[0]}>
                 <path d={d} className="anno-line" />
                 <path d={h} className="anno-line anno-head-stroke" />
-                <text x={lx} y={ly} textAnchor={anchor} className="anno-head">{note.lines[0]}</text>
-                <text x={lx} y={ly + 20} textAnchor={anchor} className="anno-sub">{note.lines[1]}</text>
+                <text x={lx} y={ly} textAnchor={anchor} className="anno-head">
+                  {headingLines.map((line, index) => (
+                    <tspan key={line} x={lx} dy={index === 0 ? 0 : 22}>{line}</tspan>
+                  ))}
+                </text>
+                <text x={lx} y={ly + 20 + (headingLines.length - 1) * 22} textAnchor={anchor} className="anno-sub">{note.lines[1]}</text>
               </g>
             );
           })}
