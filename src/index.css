@@ -2582,3 +2582,16 @@ rect.york-planned {
 .story-layer-key .map-legend small { font-size: 13px; max-width: 820px; margin: 6px auto 0; display: block; }
 .map-legend p .fibre-swatch { display: inline-block; position: static; width: 11px; height: 11px; padding: 0; gap: 0; }
 .story-layer-key .power-legend, .story-layer-key .energy-legend { justify-content: center; display: flex; flex-wrap: wrap; gap: 6px 14px; }
+
+/* One story map stays on screen (Babs, Nov 14): the map shrinks to the space above its
+   measured legend (--keyH, set in Scrolly), so legends never sit on top of the map. */
+.scrolly-graphic .svg-provinces path { transition: fill 0.8s ease, opacity 0.6s ease; }
+.scrolly-graphic .svg-map { transition: left 0.4s ease, width 0.4s ease, height 0.4s ease, bottom 0.4s ease, top 0.4s ease; }
+@media (min-width: 1281px) {
+  .scrolly-graphic.is-cover .svg-map,
+  .scrolly-graphic.has-map-key .svg-map {
+    top: 24px; height: auto; bottom: calc(var(--keyH, 120px) + 32px);
+  }
+  .scrolly-graphic .cover-map-key,
+  .scrolly-graphic .story-under-map-key { bottom: 20px; }
+}

@@ -1078,9 +1078,22 @@ function Scrolly(props: {
   }, []);
 
   const phone = usePhoneLayout();
-  const renderStoryMap = (item: ScrollStep) => (
+  const graphicRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const graphic = graphicRef.current;
+    if (!graphic) return;
+    const key = graphic.querySelector<HTMLElement>(".cover-map-key, .story-under-map-key");
+    const update = () => graphic.style.setProperty("--keyH", `${key ? Math.ceil(key.getBoundingClientRect().height) : 0}px`);
+    update();
+    if (!key) return;
+    const observer = new ResizeObserver(update);
+    observer.observe(key);
+    return () => observer.disconnect();
+  }, [active, phone]);
+  // Desktop keeps ONE story map on screen and swaps its data as cards change (Babs, Nov 14).
+  const renderStoryMap = (item: ScrollStep, key = "story-map") => (
         <SvgMap
-          key={`${item.mode}-${item.title ?? ""}`}
+          key={key}
           boundaries={props.boundaries}
           powerLines={props.powerLines}
           cleanStations={props.cleanStations}
@@ -1106,8 +1119,8 @@ function Scrolly(props: {
   const renderStoryLegend = (item: ScrollStep) => (
     <>
 
-        {item.hero && (
-          <div className="cover-legend cover-map-key" role="group" aria-label="Cover map legend">
+        {(item.hero || (item.mode === "projects" && !item.hideProjects)) && (
+          <div className={`cover-legend ${item.hero ? "cover-map-key" : "story-under-map-key"}`} role="group" aria-label="Data center map legend">
             <div className="project-legend">
               {([
                 ["Operating", "Operational"],
@@ -1158,7 +1171,7 @@ function Scrolly(props: {
   const step = steps[active];
   return (
     <section className="scrolly">
-      {!phone && <div className={`scrolly-graphic ${step.wide ? "shift" : ""} ${step.backdrop ? "has-backdrop" : ""} ${step.hero ? "is-cover" : ""} ${["grid", "sitesPlanned", "sitesActive", "people", "stress", "fibre", "power", "clean"].includes(step.mode) ? "has-map-key" : ""}`}>
+      {!phone && <div className={`scrolly-graphic ${step.wide ? "shift" : ""} ${step.backdrop ? "has-backdrop" : ""} ${step.hero ? "is-cover" : ""} ${(["grid", "sitesPlanned", "sitesActive", "people", "stress", "fibre", "power", "clean"].includes(step.mode) || (step.mode === "projects" && !step.hero && !step.hideProjects)) ? "has-map-key" : ""}`} ref={graphicRef}>
         {renderStoryMap(step)}
         {renderStoryLegend(step)}
         {step.backdrop && <div className="scrolly-backdrop">{step.backdrop}</div>}
@@ -1180,7 +1193,7 @@ function Scrolly(props: {
             </div>
             {phone && !item.backdrop && (
               <div className="mobile-story-figure">
-                {renderStoryMap(item)}
+                {renderStoryMap(item, `story-map-${index}`)}
                 {renderStoryLegend(item)}
               </div>
             )}
