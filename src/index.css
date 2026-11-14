@@ -2497,7 +2497,7 @@ rect.york-planned {
 /* Visual break between the story and the interactive map */
 .section-break {
   border: 0; border-top: 2px dashed var(--navy, #1f2a44); opacity: 0.45;
-  width: min(1100px, calc(100% - 32px)); margin: 72px auto 8px;
+  width: min(1100px, calc(100% - 32px)); margin: 72px auto 56px;
 }
 @media (min-width: 801px) and (max-width: 1280px) {
   .scrolly-graphic.has-map-key .svg-map { height: calc(100% - 175px); bottom: 175px; }
