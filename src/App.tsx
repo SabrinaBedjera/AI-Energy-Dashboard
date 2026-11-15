@@ -2246,7 +2246,7 @@ function StressLegend() {
         ))}
       </div>
       <small>
-        How much of the available water is already being used. We dropped WRI's "Low" category because it covers most of Canada, so unshaded areas are low. Source:{" "}
+        Baseline water stress shows how much water is being used compared to how much is naturally available (WRI). WRI's "Low" category was dropped because it covers most of Canada, so unshaded areas are low. Source:{" "}
         <Citation href={mapSources.stress}>WRI Aqueduct 4.0</Citation>, baseline water stress, CC BY 4.0.
       </small>
     </div>
