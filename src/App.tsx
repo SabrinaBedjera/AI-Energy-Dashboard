@@ -837,7 +837,7 @@ function Scrolly(props: {
     },
     {
       mode: "projects",
-      title: "Summary of approach and findings",
+      title: "My approach",
       body: (
         <>
           <p>
@@ -850,6 +850,14 @@ function Scrolly(props: {
             sources (e.g. Canada&apos;s fibre backbone on the{" "}
             <a href="https://bbmaps.itu.int/bbmaps/" target="_blank" rel="noreferrer">ITU Broadband Map</a>).
           </p>
+        </>
+      ),
+    },
+    {
+      mode: "projects",
+      title: "What I found",
+      body: (
+        <>
           <p>
             This analysis, and other researchers, have found that Canada is experiencing a data center shift.
             Operating data centers are currently concentrated in Ontario and Quebec, located close to cities, and have
