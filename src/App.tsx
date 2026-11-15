@@ -808,7 +808,7 @@ function Scrolly(props: {
       body: (
         <>
           <h1 className="fun-title" data-text="Canada's AI Boom">Canada&apos;s AI Boom</h1>
-          <p className="hero-sub">An exploration of where Canada&apos;s AI will get its power</p>
+          <p className="hero-sub">An exploration of Canada&apos;s data center growth and where these will get their power.</p>
           <ul className="hero-findings">
             <li>
               <span className="finding-num">78%</span> of Canada&apos;s planned data centers are in
@@ -838,110 +838,51 @@ function Scrolly(props: {
     },
     {
       mode: "projects",
-      title: "Canada’s data center shift",
+      title: "Summary of approach and findings",
       body: (
         <>
           <p>
-            Canada is experiencing a data center shift. Operating data centers are concentrated in
-            Ontario and Quebec, are located close to cities, and have smaller reported power
-            capacities. Planned data center projects have larger reported power capacities and are
-            more concentrated in Alberta.
+            AI is being used in many parts of everyday life, from writing emails to vibe coding websites. It has
+            boomed over the last few years thanks to better computer chips and AI models. AI needs data centers but I
+            couldn&apos;t find a Canadian interactive map that pulled together all the data I wanted to explore, so I
+            decided to build one. My analysis brings together research articles, project announcements, provincial
+            strategies and electricity generation, infrastructure, and policy to explore that shift. My biggest
+            limitation was accessing open data. In places where I could not incorporate open data I linked to other
+            sources (e.g. Canada&apos;s fibre backbone on the{" "}
+            <a href="https://bbmaps.itu.int/bbmaps/" target="_blank" rel="noreferrer">ITU Broadband Map</a>).
           </p>
           <p>
-            However, planned projects are not built projects. Whether they proceed depends on access
-            to power, land, funding, water, regulatory approvals, and other factors. In areas with
-            limited grid connection capacity, some developers are looking to build their own power
-            generation. For example, Wonder Valley proposes on-site natural gas and geothermal power.
-          </p>
-          <p>
-            My analysis brings together project announcements, provincial electricity generation,
-            infrastructure, and policy to explore that shift.
-          </p>
-          <p className="hero-source">
-            Sources: <a href={yorkUrl} target="_blank" rel="noreferrer">York University (2026)</a>,{" "}
-            <a href="https://www.aeso.ca/grid/connecting-to-the-grid/large-load-projects" target="_blank" rel="noreferrer">AESO</a>,{" "}
-            <a href="https://majorprojects.alberta.ca/details/Wonder-Valley-AI-Data-Centre-Park-Phase-1/11477" target="_blank" rel="noreferrer">Wonder Valley project listing</a>.
+            This analysis, and other researchers, have found that Canada is experiencing a data center shift.
+            Operating data centers are currently concentrated in Ontario and Quebec, located close to cities, and have
+            smaller reported power capacities. However, these trends are changing, planned data center projects are
+            concentrated in Alberta, located further from cities, and have larger reported power capacities (
+            <Citation href={yorkUrl}>York University, 2026</Citation>). Note, planned projects are not built
+            projects. Whether these projects proceed depends on access to power, land, funding, water, regulatory
+            approvals, and many other factors.
           </p>
         </>
       ),
     },
     {
       mode: "projects",
-      title: "What is a data center?",
+      title: "What are data centers and why does AI need them?",
       body: (
         <>
           <p>
-            AI is being used in many parts of everyday life, from writing emails and searching for jobs to
-            vibe coding websites. It has boomed over the last few years thanks to better computer chips and AI
-            models.
+            A data center consists of computer servers, plus the power, cooling and network equipment that keeps them
+            running (<Citation href={ieaUrl}>IEA, 2025</Citation>). Initially it was hard for me to visualize what data
+            centers actually do, and why we need them. Picture that you&apos;re on Google and want to search up a new
+            dinner recipe. In order to do this, your computer will have to connect to a server in a data center to
+            access this information.
           </p>
           <p>
-            A data center is a building full of computer servers, plus the power, cooling and network equipment
-            that keeps them running (IEA, 2025). If you&apos;ve ever done a Google search, your computer connected
-            to a server in a data center. AI data centers train and run AI models.
+            Data centers aren&apos;t new. They&apos;ve run websites, email, online banking, streaming and cloud
+            storage for years, and most still do. AI data centers differ from other data centers in that they are
+            focused on training and running AI models. York University flags only 5 of the 194 data centers running
+            in Canada as AI-related, and 49 of the 213 planned ones, and calls this a lower bound (
+            <Citation href={yorkUrl}>York University, 2026</Citation>).
           </p>
         </>
-      ),
-    },
-    {
-      mode: "projects",
-      title: "Where data centers get built",
-      body: (
-        <>
-          <p>
-            Where a data center gets built depends on multiple factors such as land, energy, water and fast
-            internet (<Citation href={randUrl}>RAND, 2026</Citation>). I couldn&apos;t find a public map of
-            Canada&apos;s fibre lines, but you can explore them on the{" "}
-            <a href="https://bbmaps.itu.int/bbmaps/" target="_blank" rel="noreferrer">
-              ITU Broadband Map
-            </a>
-            .
-          </p>
-        </>
-      ),
-    },
-    {
-      mode: "people",
-      hideProjects: true,
-      title: "Land",
-      body: (
-        <p>
-          Data centers need available area to build. In Canada, operating data centers have been built close to
-          cities, which could have advantages like being closer to power resources, while planned centers are being
-          built in more remote locations (York University, 2026).
-        </p>
-      ),
-    },
-    {
-      mode: "power",
-      hideProjects: true,
-      title: "Power lines",
-      body: (
-        <p>
-          Data centers need power to run their servers, cool their systems, etc. Many plug into the grid through
-          power lines like these (NRCan).
-        </p>
-      ),
-    },
-    {
-      mode: "clean",
-      hideProjects: true,
-      title: "Clean power",
-      body: <p>
-          Some build their own power or partner with power plants, like Canada&apos;s clean power generation
-          stations, e.g. hydro and wind (NRCan).
-        </p>,
-    },
-    {
-      mode: "stress",
-      hideProjects: true,
-      title: "Water",
-      body: (
-        <p>
-          Many data centers use water for cooling, however some data centers don&apos;t need to use water at all
-          (e.g. closed loop systems). Darker areas on the map have higher water stress and are using a high portion
-          of their available water (WRI Aqueduct). A large portion of southern Alberta has high water stress.
-        </p>
       ),
     },
     {
@@ -953,131 +894,125 @@ function Scrolly(props: {
       body: (
         <>
           <p>
-            Data centers need electricity to run, which increases with the amount of servers that
-            they hold. The International Energy Agency found that data centers used{" "}
-            1.5% of the world&apos;s electricity in 2024 (
-            <a href={ieaUrl} target="_blank" rel="noreferrer">
-              IEA, 2025
-            </a>
-            ). It expects that to roughly double to about 3% by 2030, slightly more than{" "}
-            the whole country of Japan uses today.
+            Data centers need power to run their servers, cool their systems, IT equipment, etc. Larger data centers
+            (e.g. more servers) require more energy. The International Energy Agency (IEA) found that data centers
+            used 1.5%, 415 TWh, of the world&apos;s electricity in 2024 (<Citation href={ieaUrl}>IEA, 2025</Citation>),
+            and expects that to roughly double to about 3% by 2030, slightly more than the whole country of Japan uses
+            today. In 2024, the U.S. had the largest amount of data center electricity consumption (45%) followed by
+            China (25%).
           </p>
           <p>
-            In order to meet this demand, companies are exploring a range of energy sources such as
-            renewable energy (e.g. wind, solar, hydro), nuclear, natural gas, and coal. The IEA
-            expects renewable energy and natural gas will lead until 2035 due to their availability
-            and lower costs (
-            <a href="https://www.iea.org/news/ai-is-set-to-drive-surging-electricity-demand-from-data-centres-while-offering-the-potential-to-transform-how-the-energy-sector-works" target="_blank" rel="noreferrer">
-              IEA, 2025
-            </a>
-            ).
+            In order to meet this demand, companies are exploring a range of energy sources such as renewable energy
+            (e.g. wind, solar, hydro), nuclear, natural gas, and coal. The IEA expects renewable energy and natural gas
+            will lead in providing power for data centers due to their availability and lower costs (
+            <Citation href="https://www.iea.org/news/ai-is-set-to-drive-surging-electricity-demand-from-data-centres-while-offering-the-potential-to-transform-how-the-energy-sector-works">IEA, 2025</Citation>).
           </p>
         </>
       ),
     },
     {
       mode: "power",
-      title: "What the power is used for",
+      title: "What do data centers use this power for?",
       hideProjects: true,
       fadeAll: true,
       backdrop: <IeaEquipmentChart />,
       body: (
         <>
           <p>
-            So what is all that electricity used for? Most of it runs the servers, the computers
-            themselves. The IEA says servers use around 60% of the electricity in a modern data
-            center, and the rest goes to storage, network equipment, cooling and the building (
-            <a href="https://www.iea.org/reports/energy-and-ai/energy-demand-from-ai" target="_blank" rel="noreferrer">
-              IEA, 2025
-            </a>
-            ).
+            Most of the data center&apos;s power is used to run its servers. The IEA states that servers use around
+            60% of the electricity in a modern data center, and the rest goes to storage, network equipment, cooling
+            and the building (<Citation href="https://www.iea.org/reports/energy-and-ai/energy-demand-from-ai">IEA, 2025</Citation>).
           </p>
           <p>
-            The fastest-growing part is accelerated servers, the AI chips. The IEA expects their
-            electricity use to grow about 30% a year to 2030, compared with about 9% for regular
-            servers (
-            <a href="https://www.iea.org/reports/energy-and-ai/energy-demand-from-ai" target="_blank" rel="noreferrer">
-              IEA, 2025
-            </a>
-            ).
+            Accelerated servers (i.e. servers that have modifications that speed up computing tasks), are being used
+            frequently in AI data centers and consume more energy than other components. The IEA expects their
+            electricity use to grow about 30% a year to 2030, compared with about 9% for regular servers (
+            <Citation href="https://www.iea.org/reports/energy-and-ai/energy-demand-from-ai">IEA, 2025</Citation>).
           </p>
         </>
+      ),
+    },
+    {
+      mode: "projects",
+      title: "Data center locations",
+      body: (
+        <p>
+          Where a data center gets built depends on multiple factors such as land, energy, water and fast internet (
+          <Citation href={randUrl}>RAND, 2026</Citation>). Please explore the next couple of cards and maps to
+          visualize these different factors as map layers in Canada. Note, I couldn&apos;t find a public map of
+          Canada&apos;s fibre lines, but you can explore them on the{" "}
+          <a href="https://bbmaps.itu.int/bbmaps/" target="_blank" rel="noreferrer">ITU Broadband Map</a>.
+        </p>
+      ),
+    },
+    {
+      mode: "people",
+      hideProjects: true,
+      title: "Land",
+      body: (
+        <p>
+          Data centers like any other construction project need available land to build. In Canada, operating data
+          centers have typically been built close to cities, which could have advantages like being closer to power
+          resources, while planned centers are being built in more remote locations (
+          <Citation href={yorkUrl}>York University, 2026</Citation>).
+        </p>
       ),
     },
     {
       mode: "grid",
-      title: "Where data centers get their power",
       hideProjects: true,
+      title: "Power",
       body: (
         <>
           <p>
-            Companies have different approaches for sourcing their data center energy. Some will
-            choose to plug into the electricity grid if it&apos;s nearby and has power available.
-            Others might build their data centers in more remote locations and may have to build
-            their own power systems. For example:
+            Companies have different approaches for sourcing their data center energy. Many data centers plug directly
+            into the grid through power lines. Data centers that aren&apos;t close to a power line may build their own
+            power source (e.g. a solar or wind plant) or partner with a nearby power generation station. Please see
+            the map for a list of Canada&apos;s clean power generation projects.
           </p>
-          <ul className="step-list">
-            <li>
-              <strong>British Columbia:</strong> TELUS&apos; data centers have secured 85 MW of renewable power from
-              BC Hydro (
-              <a href="https://www.telus.com/en/about/news-and-events/media-releases/TELUS-and-Government-of-Canada-advance-work-to-scale-Canadas-sovereign-AI-infrastructure" target="_blank" rel="noreferrer">TELUS</a>
-              ).
-            </li>
-            <li>
-              <strong>Nova Scotia:</strong> EverWind is investing $2B in new wind projects to supply
-              energy to their data centers (
-              <a href="https://www.cp24.com/news/canada/2026/10/16/everwind-says-10b-ai-data-centre-proposal-largest-private-investment-in-ns-history/" target="_blank" rel="noreferrer">CP24</a>
-              ).
-            </li>
-          </ul>
+          <p>
+            For example, in British Columbia, TELUS&apos; data centers have secured 85 MW of renewable power from BC
+            Hydro (
+            <Citation href="https://www.telus.com/en/about/news-and-events/media-releases/TELUS-and-Government-of-Canada-advance-work-to-scale-Canadas-sovereign-AI-infrastructure">TELUS</Citation>).
+          </p>
         </>
       ),
     },
     {
-      mode: "capacity",
-      title: "Why Alberta?",
-      focus: "Alberta",
-      highlight: "Wonder Valley",
+      mode: "stress",
+      hideProjects: true,
+      title: "Water",
       body: (
-        <>
-          <p>
-            Overall, data centers are shifting to being built in Alberta. This is due to the
-            different regulations, incentives, and tools that the provinces and territories use.
-            Alberta is aiming to become the North American destination for AI data centers (
-            <a href="https://www.alberta.ca/artificial-intelligence-data-centres-strategy" target="_blank" rel="noreferrer">
-              Government of Alberta, AI Data Centres Strategy, 2024
-            </a>
-            ) by pointing to its power supply and cold climate, low corporate taxes, a data centre
-            concierge program, and regulatory changes to make it easier to build data centers.
-          </p>
-          <p>
-            Alberta&apos;s grid only had room for 1,200 MW of big new loads, and
-            that&apos;s taken (
-            <a href="https://www.aeso.ca/grid/connecting-to-the-grid/large-load-projects" target="_blank" rel="noreferrer">
-              AESO
-            </a>
-            ), so projects like Wonder Valley plan to build their
-            own power plants. Other provinces are more careful with their power: BC caps how much
-            goes to data centers (<Citation href="https://news.gov.bc.ca/releases/2026ECS0005-000095">Government of BC, 2026</Citation>),
-            and Quebec needs a minister to sign off (<Citation href="https://www.blg.com/en/insights/2026/07/data-centre-regulation-in-quebec-from-honeyed-promise-to-iron-control">Bill 69</Citation>). The full rules by
-            province are at the bottom of the page.
-          </p>
-        </>
+        <p>
+          Many data centers use water for cooling, however some data centers don&apos;t need to use water at all (e.g.
+          closed loop systems). A large portion of southern Alberta and Saskatchewan has medium to high water stress
+          in comparison to other regions in Canada (<Citation href={mapSources.stress}>WRI Aqueduct</Citation>).
+        </p>
       ),
     },
     {
       mode: "sitesPlanned",
-      title: "Today vs planned",
+      title: "Data center expansion",
       hideProjects: true,
       wide: true,
       body: (
         <>
           <TodayVsPlanned />
           <p>
-            Today&apos;s data centers are close to cities, where people live and the grid is
-            strong. The planned ones show a shift: they&apos;re mostly in Alberta, farther from
-            cities where there is likely more room to build, but where getting power can be harder
-            and they might have to build their own. They&apos;re also much bigger.
+            Operating data centers are located closer to cities but future data centers are being built mostly in
+            Alberta, farther away from cities, and are bigger in size. So why are data centers being built in Alberta?
+            This is likely due to the different regulations, incentives, and tools that the provinces and territories
+            use. Alberta is aiming to become the North American destination for AI data centers (
+            <Citation href="https://www.alberta.ca/artificial-intelligence-data-centres-strategy">Government of Alberta, AI Data Centres Strategy, 2024</Citation>)
+            by pointing to its power supply, colder climate, low corporate taxes, a data centre concierge program, and
+            regulatory changes to make it easier to build data centers.
+          </p>
+          <p>
+            An interesting finding is that Alberta&apos;s grid only has room for 1,200 MW of big new loads, and
+            that&apos;s taken (<Citation href="https://www.aeso.ca/grid/connecting-to-the-grid/large-load-projects">AESO</Citation>),
+            so new projects may need to build their own power plants. Other provinces have different approaches, for
+            example British Columbia caps the power that can go into data centers (
+            <Citation href="https://news.gov.bc.ca/releases/2026ECS0005-000095">Government of BC, 2026</Citation>).
           </p>
         </>
       ),
@@ -1491,7 +1426,7 @@ function TodayVsPlanned() {
       <thead>
         <tr>
           <th />
-          <th>Running today</th>
+          <th>Operating</th>
           <th className="planned">Planned</th>
         </tr>
       </thead>
@@ -1509,8 +1444,9 @@ function TodayVsPlanned() {
         <a href={yorkUrl} target="_blank" rel="noreferrer">
           Carlo &amp; Rolheiser, York University (2026)
         </a>
-        , Tables A1 and A2, Figure 3b, so these are different from my own list. Planned = announced
-        or under construction. Over 100 MW is what the <Citation href={ieaUrl}>IEA</Citation> calls hyperscale.
+        , Tables A1 and A2, Figure 3b. Note, this table is based on a study that includes more data centers
+        than my analysis, since I was limited to publicly available information. Planned = announced or under
+        construction. Over 100 MW is what the <Citation href={ieaUrl}>IEA</Citation> calls hyperscale.
       </caption>
     </table>
   );
@@ -2246,7 +2182,7 @@ function StressLegend() {
         ))}
       </div>
       <small>
-        Baseline water stress visualizes water use in comparison to how much is available (WRI). WRI's "Low" category was dropped because it covers most of Canada, so unshaded areas are low. Source:{" "}
+        Darker areas on the map have higher water stress and are using a high portion of their available water. Baseline water stress visualizes water use in comparison to how much is available (WRI). WRI's "Low" category was dropped because it covers most of Canada, so unshaded areas are low. Source:{" "}
         <Citation href={mapSources.stress}>WRI Aqueduct 4.0</Citation>, baseline water stress, CC BY 4.0.
       </small>
     </div>
