@@ -1057,7 +1057,8 @@ function Scrolly(props: {
             </a>
             ), so projects like Wonder Valley plan to build their
             own power plants. Other provinces are more careful with their power: BC caps how much
-            goes to data centers, and Quebec needs a minister to sign off. The full rules by
+            goes to data centers (<Citation href="https://news.gov.bc.ca/releases/2026ECS0005-000095">Government of BC, 2026</Citation>),
+            and Quebec needs a minister to sign off (<Citation href="https://www.blg.com/en/insights/2026/07/data-centre-regulation-in-quebec-from-honeyed-promise-to-iron-control">Bill 69</Citation>). The full rules by
             province are at the bottom of the page.
           </p>
         </>
