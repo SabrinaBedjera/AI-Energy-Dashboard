@@ -272,7 +272,7 @@ const regionColors: Record<string, string> = {
   "Cordillera": "#e0457b",
   "Interior Plains": "#0b5f57",
   "Great Lakes - St. Lawrence Lowlands": "#2a9d8f",
-  "Canadian Shield": "#5b6e8c",
+  "Canadian Shield": "#172d49",
   "Hudson Bay Lowland": "#6fb3a9",
   "Appalachian Uplands": "#8a3b6e",
   "Arctic Lands": "#97a3b3",
