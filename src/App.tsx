@@ -250,12 +250,14 @@ function useGeo(file: string, enabled: boolean) {
   }, [file, enabled]);
   return data;
 }
-const stressColors: Record<number, string> = { 1: "#cfe5e1", 2: "#8fc4bb", 3: "#3f8f84", 4: "#0b5f57" };
+const stressColors: Record<number, string> = { 1: "#cfe5e1", 2: "#8fc4bb", 3: "#3f8f84", 4: "#0b5f57", [-1]: "#c9b48a", [-9999]: "#b9b6b0" };
 const stressLabels: [number, string][] = [
   [1, "Low to medium"],
   [2, "Medium to high"],
   [3, "High"],
   [4, "Extremely high"],
+  [-1, "Arid and low water use"],
+  [-9999, "No data"],
 ];
 const mapSources = {
   generation: "https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=2510001501",
@@ -2244,7 +2246,7 @@ function StressLegend() {
         ))}
       </div>
       <small>
-        How much of the available water is already being used. Unshaded areas are low or have no data. Source:{" "}
+        How much of the available water is already being used. We dropped WRI's "Low" category because it covers most of Canada, so unshaded areas are low. Source:{" "}
         <Citation href={mapSources.stress}>WRI Aqueduct 4.0</Citation>, baseline water stress, CC BY 4.0.
       </small>
     </div>
