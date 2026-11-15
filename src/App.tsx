@@ -807,7 +807,7 @@ function Scrolly(props: {
       body: (
         <>
           <h1 className="fun-title" data-text="Canada's AI Boom">Canada&apos;s AI Boom</h1>
-          <p className="hero-sub">An exploration of Canada&apos;s data center growth and where these will get their power.</p>
+          <p className="hero-sub">Where Canada&apos;s data centers are being built, and where they&apos;ll get their power.</p>
           <ul className="hero-findings">
             <li>
               <span className="finding-num">78%</span> of Canada&apos;s planned data centers are in
