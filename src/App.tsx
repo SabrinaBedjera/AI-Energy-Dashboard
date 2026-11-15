@@ -44,7 +44,6 @@ type MapMode =
   | "clean"
   | "water"
   | "stress"
-  | "fibre"
   | "people"
   | "grid"
   | "projects"
@@ -55,8 +54,8 @@ type MapMode =
 type Annotation = { lon: number; lat: number; dx: number; dy: number; lines: [string, string]; anchor?: "start" | "end" };
 
 type FillMode = "none" | "capacity" | "energy" | "people" | "price" | "sitesActive" | "sitesPlanned";
-type Layers = { people: boolean; lines: boolean; clean: boolean; water: boolean; stress: boolean; fibre: boolean };
-const noLayers: Layers = { people: false, lines: false, clean: false, water: false, stress: false, fibre: false };
+type Layers = { people: boolean; lines: boolean; clean: boolean; stress: boolean; regions: boolean };
+const noLayers: Layers = { people: false, lines: false, clean: false, stress: false, regions: false };
 
 // Scrolly steps still describe one "mode"; turn it into a fill + overlays
 function viewFor(mode: MapMode): { fill: FillMode; layers: Layers } {
@@ -64,10 +63,8 @@ function viewFor(mode: MapMode): { fill: FillMode; layers: Layers } {
   if (mode === "clean") return { fill: "none", layers: { ...noLayers, clean: true } };
   if (mode === "projects") return { fill: "none", layers: noLayers };
   if (mode === "grid") return { fill: "none", layers: { ...noLayers, lines: true, clean: true } };
-  if (mode === "people") return { fill: "none", layers: { ...noLayers, people: true } };
-  if (mode === "water") return { fill: "none", layers: { ...noLayers, water: true } };
+  if (mode === "people") return { fill: "none", layers: { ...noLayers, people: true, regions: true } };
   if (mode === "stress") return { fill: "none", layers: { ...noLayers, stress: true } };
-  if (mode === "fibre") return { fill: "none", layers: { ...noLayers, fibre: true } };
   return { fill: mode as FillMode, layers: noLayers };
 }
 
@@ -268,8 +265,18 @@ const mapSources = {
   water: "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NRCAN/AtlasWatershedsEN/MapServer",
   prices: "https://www.hydroquebec.com/data/documents-donnees/pdf/comparaison-prix-2025-en.pdf",
   stress: "https://www.wri.org/data/aqueduct-global-maps-40-data",
-  fibre: "https://open.canada.ca/data/en/dataset/00a331db-121b-445d-b119-35dbbe3eedd9",
+  regions: "https://open.canada.ca/data/dataset/a3dfbaf4-1b20-4061-aa0a-e7a79953f52d",
 };
+// Label spots for NRCan's region names (display only; shapes are NRCan's, unchanged)
+const regionLabels: [string, number, number][] = [
+  ["Cordillera", -126.5, 56.5],
+  ["Interior Plains", -113.5, 57.5],
+  ["Canadian Shield", -94, 59],
+  ["Hudson Bay Lowland", -86.5, 53.6],
+  ["Great Lakes - St. Lawrence Lowlands", -77.5, 43.4],
+  ["Appalachian Uplands", -66.5, 47.6],
+  ["Arctic Lands", -102, 74.5],
+];
 const randUrl = "https://www.rand.org/pubs/tools/TLA4617-1.html";
 function Citation({ href, children }: { href: string; children: React.ReactNode }) {
   return <a href={href} target="_blank" rel="noreferrer">{children}</a>;
@@ -308,7 +315,7 @@ function App() {
   const [boundaries, setBoundaries] = useState<any>(null);
   const [powerLines, setPowerLines] = useState<any>(null);
   const [cleanStations, setCleanStations] = useState<any>(null);
-  const [drainage, setDrainage] = useState<any>(null);
+  const drainage = null; // watersheds layer removed Nov 15 (water stress covers water)
   const [population, setPopulation] = useState<any>(null);
   const [prices, setPrices] = useState<PriceRow[]>([]);
   const [fill, setFill] = useState<FillMode>("none");
@@ -337,14 +344,12 @@ function App() {
       fetch(dataUrl("canada-provinces.geojson")).then((response) => response.json()),
       fetch(dataUrl("power-lines.geojson")).then((response) => response.json()),
       fetch(dataUrl("clean-power-stations.geojson")).then((response) => response.json()),
-      fetch(dataUrl("drainage-areas.geojson")).then((response) => response.json()),
       fetch(dataUrl("population-density.geojson")).then((response) => response.json()),
       fetch(dataUrl("electricity_prices_2025.csv")).then((response) => response.text()),
-    ]).then(([projectText, provinceText, energyText, boundaryData, powerLineData, cleanData, drainageData, populationData, priceText]) => {
+    ]).then(([projectText, provinceText, energyText, boundaryData, powerLineData, cleanData, populationData, priceText]) => {
       setPopulation(populationData);
       setPrices(parseCsv(priceText) as PriceRow[]);
       setCleanStations(cleanData);
-      setDrainage(drainageData);
       setProjects(parseCsv(projectText) as Project[]);
       setProvinces(parseCsv(provinceText) as Province[]);
       setEnergy(parseCsv(energyText) as EnergyMix[]);
@@ -547,9 +552,8 @@ function App() {
                 ["lines", "Power lines"],
                 ["clean", "Clean power generation"],
                 ["people", "Population spread"],
-                ["water", "Watersheds"],
                 ["stress", "Water stress"],
-                ["fibre", "No fibre backbone nearby"],
+                ["regions", "Landform regions"],
               ] as [keyof Layers, string][]
             ).map(([key, label]) => (
               <label key={key} className="check">
@@ -565,7 +569,7 @@ function App() {
               className="link-button"
               onClick={() => {
                 const allOn = Object.values(layers).every(Boolean);
-                setLayers({ lines: !allOn, clean: !allOn, people: !allOn, water: !allOn, stress: !allOn, fibre: !allOn });
+                setLayers({ lines: !allOn, clean: !allOn, people: !allOn, stress: !allOn, regions: !allOn });
               }}
             >
               {Object.values(layers).every(Boolean) ? "Hide all layers" : "Show all layers"}
@@ -733,7 +737,7 @@ function App() {
             <a href="https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=9810000701" target="_blank" rel="noreferrer">Statistics Canada, 2021 Census population, Table 98-10-0007-01</a>
             <a href="https://open.canada.ca/data/en/dataset/92dbea79-f644-4a62-b25e-8eb993ca0264" target="_blank" rel="noreferrer">NRCan CanVec, power lines</a>
             <a href="https://geoappext.nrcan.gc.ca/arcgis/rest/services/Energy/CERP_EN/MapServer" target="_blank" rel="noreferrer">NRCan, Clean Energy Resources and Projects</a>
-            <a href="https://geoappext.nrcan.gc.ca/arcgis/rest/services/NRCAN/AtlasWatershedsEN/MapServer" target="_blank" rel="noreferrer">NRCan Atlas of Canada, drainage areas</a>
+            <a href="https://open.canada.ca/data/dataset/a3dfbaf4-1b20-4061-aa0a-e7a79953f52d" target="_blank" rel="noreferrer">NRCan, Physiographic Regions of Canada (2019)</a>
           </div>
           <span>Each data center&apos;s own source is linked on the map.</span>
         </div>
@@ -1134,7 +1138,7 @@ function Scrolly(props: {
           fadeAll={item.fadeAll}
           annotations={phone ? undefined : item.annotations}
           fitStoryMap={!item.focus && (phone || !item.hero)}
-          alignBottom={["grid", "sitesPlanned", "sitesActive", "people", "stress", "fibre", "power", "clean"].includes(item.mode) || (item.mode === "projects" && !item.hero)}
+          alignBottom={["grid", "sitesPlanned", "sitesActive", "people", "stress", "power", "clean"].includes(item.mode) || (item.mode === "projects" && !item.hero)}
         />
   );
   const renderStoryLegend = (item: ScrollStep) => (
@@ -1170,7 +1174,7 @@ function Scrolly(props: {
                   <small>Larger dots indicate higher generating capacity (MW). Stations: <Citation href={mapSources.clean}>NRCan</Citation>, a list compiled in 2017. Some stations have since closed and newer ones may be missing. Lines: <Citation href={mapSources.lines}>NRCan CanVec</Citation>. Proximity does not establish a data center’s power supply.</small>
                 </div>
               )}
-        {["people", "stress", "fibre", "power", "clean"].includes(item.mode) && (
+        {["people", "stress", "power", "clean"].includes(item.mode) && (
           <div className="cover-legend story-under-map-key story-layer-key" role="group" aria-label="Map legend">
             <MapLegend fill="none" layers={viewFor(item.mode).layers} />
           </div>
@@ -1192,7 +1196,7 @@ function Scrolly(props: {
   const step = steps[active];
   return (
     <section className="scrolly">
-      {!phone && <div className={`scrolly-graphic ${step.wide ? "shift" : ""} ${step.backdrop ? "has-backdrop" : ""} ${step.hero ? "is-cover" : ""} ${(["grid", "sitesPlanned", "sitesActive", "people", "stress", "fibre", "power", "clean"].includes(step.mode) || (step.mode === "projects" && !step.hero && !step.hideProjects)) ? "has-map-key" : ""}`} ref={graphicRef}>
+      {!phone && <div className={`scrolly-graphic ${step.wide ? "shift" : ""} ${step.backdrop ? "has-backdrop" : ""} ${step.hero ? "is-cover" : ""} ${(["grid", "sitesPlanned", "sitesActive", "people", "stress", "power", "clean"].includes(step.mode) || (step.mode === "projects" && !step.hero && !step.hideProjects)) ? "has-map-key" : ""}`} ref={graphicRef}>
         {renderStoryMap(step)}
         {renderStoryLegend(step)}
         {step.backdrop && <div className="scrolly-backdrop">{step.backdrop}</div>}
@@ -1684,7 +1688,7 @@ function SvgMap({
   onSelectPowerLine: (line: PowerLine) => void;
 }) {
   const waterStress = useGeo("water-stress.geojson", layers.stress);
-  const noFibre = useGeo("no-fibre-backbone.geojson", layers.fibre);
+  const regions = useGeo("physiographic-regions.geojson", layers.regions);
   const phone = usePhoneLayout();
   const projection = useMemo(() => {
     const nextProjection = geoConicEqualArea().parallels([50, 70]).rotate([96, 0]).center([0, 62]);
@@ -1895,21 +1899,22 @@ function SvgMap({
           ))}
         </g>
       )}
-      {layers.water && (
-        <g className="svg-drainage">
-          {drainage?.features?.map((feature: any) => (
-            <path key={feature.properties.name} d={pathGenerator(feature) ?? undefined}>
-              <title>{feature.properties.name}</title>
+      {layers.regions && (
+        <g className="svg-regions">
+          {regions?.features?.map((feature: any) => (
+            <path key={feature.properties.RegionEn} d={pathGenerator(feature) ?? undefined}>
+              <title>{`${feature.properties.RegionEn} (NRCan physiographic region)`}</title>
             </path>
           ))}
-          {drainage?.features?.map((feature: any) => {
-            const [x, y] = pathGenerator.centroid(feature);
-            return (
-              <text key={feature.properties.name} x={x} y={y} style={{ fontSize: 8 / Math.sqrt(scale) }}>
-                {feature.properties.name}
-              </text>
-            );
-          })}
+          {regions &&
+            regionLabels.map(([name, lon, lat]) => {
+              const [x, y] = projection([lon, lat]) ?? [0, 0];
+              return (
+                <text key={name} x={x} y={y} style={{ fontSize: 11 / Math.sqrt(scale) }}>
+                  {name}
+                </text>
+              );
+            })}
         </g>
       )}
       {layers.lines && (
@@ -1948,19 +1953,6 @@ function SvgMap({
                 </circle>
               );
             })}
-        </g>
-      )}
-      {layers.fibre && (
-        <g className="svg-fibre">
-          {(noFibre?.features ?? []).map((feature: any, index: number) => {
-            const point = projection(feature.geometry.coordinates);
-            if (!point) return null;
-            return (
-              <circle key={index} cx={point[0]} cy={point[1]} r={r(2.2)}>
-                <title>{`${feature.properties.name}: no fibre backbone nearby`}</title>
-              </circle>
-            );
-          })}
         </g>
       )}
       <g className={`svg-projects ${hideProjects ? "hidden" : ""}`}>
@@ -2205,13 +2197,11 @@ function MapLegend({ fill, layers }: { fill: FillMode; layers: Layers }) {
         </div>
       )}
       {layers.stress && <StressLegend />}
-      {layers.fibre && <FibreLegend />}
-      {layers.water && (
+      {layers.regions && (
         <div className="legend-block">
-          <p>Watersheds</p>
+          <p><span className="regions-swatch" aria-hidden="true" />Landform regions</p>
           <small>
-            Major drainage areas, <Citation href={mapSources.water}>NRCan Atlas of Canada</Citation>. Shows which river system an area drains
-            into, not water use or stress.
+            Borders and names as published in <Citation href={mapSources.regions}>NRCan, Physiographic Regions of Canada (2019)</Citation>.
           </small>
         </div>
       )}
@@ -2234,21 +2224,6 @@ function StressLegend() {
       <small>
         How much of the available water is already being used. Unshaded areas are low or have no data. Source:{" "}
         <Citation href={mapSources.stress}>WRI Aqueduct 4.0</Citation>, baseline water stress, CC BY 4.0.
-      </small>
-    </div>
-  );
-}
-
-function FibreLegend() {
-  return (
-    <div className="legend-block">
-      <p>
-        <span className="fibre-swatch" aria-hidden="true" />
-        Communities with no fibre backbone nearby
-      </p>
-      <small>
-        661 of about 13,000 communities. Source: <Citation href={mapSources.fibre}>ISED, National Broadband Data</Citation>, Open
-        Government Licence – Canada.
       </small>
     </div>
   );
