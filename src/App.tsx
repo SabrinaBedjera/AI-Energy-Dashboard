@@ -743,7 +743,6 @@ function App() {
             <a href="https://www.hydroquebec.com/data/documents-donnees/pdf/comparaison-prix-2025-en.pdf" target="_blank" rel="noreferrer">Hydro-Québec, Comparison of Electricity Prices 2025</a>
             <a href="https://www.telus.com/en/about/news-and-events/media-releases/TELUS-and-Government-of-Canada-advance-work-to-scale-Canadas-sovereign-AI-infrastructure" target="_blank" rel="noreferrer">TELUS, sovereign AI infrastructure</a>
             <a href="https://cfjctoday.com/2025/05/28/bell-announces-plans-to-open-six-ai-data-centres-in-b-c-as-part-of-bell-ai-fabric/" target="_blank" rel="noreferrer">CFJC Today, Bell AI Fabric in BC</a>
-            <a href="https://www.cp24.com/news/canada/2026/10/16/everwind-says-10b-ai-data-centre-proposal-largest-private-investment-in-ns-history/" target="_blank" rel="noreferrer">CP24, EverWind data center proposal</a>
           </div>
           <div className="sources-col">
             <p className="sources-group">Maps and data</p>
