@@ -63,7 +63,7 @@ function viewFor(mode: MapMode): { fill: FillMode; layers: Layers } {
   if (mode === "clean") return { fill: "none", layers: { ...noLayers, clean: true } };
   if (mode === "projects") return { fill: "none", layers: noLayers };
   if (mode === "grid") return { fill: "none", layers: { ...noLayers, lines: true, clean: true } };
-  if (mode === "people") return { fill: "none", layers: { ...noLayers, people: true, regions: true } };
+  if (mode === "people") return { fill: "none", layers: { ...noLayers, people: true } };
   if (mode === "stress") return { fill: "none", layers: { ...noLayers, stress: true } };
   return { fill: mode as FillMode, layers: noLayers };
 }
@@ -906,8 +906,7 @@ function Scrolly(props: {
         <p>
           Data centers need available area to build. In Canada, operating data centers have been built close to
           cities, which could have advantages like being closer to power resources, while planned centers are being
-          built in more remote locations (York University, 2026). Darker areas have more people per km² (Statistics
-          Canada, 2021 Census).
+          built in more remote locations (York University, 2026).
         </p>
       ),
     },
@@ -2169,7 +2168,7 @@ function MapLegend({ fill, layers }: { fill: FillMode; layers: Layers }) {
               </span>
             ))}
           </div>
-          <small>All 293 census divisions, <Citation href={mapSources.population}>Statistics Canada 2021 Census</Citation>. Hover an area for its number.</small>
+          <small>Darker areas have more people per km². All 293 census divisions, <Citation href={mapSources.population}>Statistics Canada 2021 Census</Citation>. Hover an area for its number.</small>
         </div>
       )}
       {fill === "price" && (

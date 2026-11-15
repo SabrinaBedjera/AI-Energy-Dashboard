@@ -2608,3 +2608,5 @@ rect.york-planned {
 .regions-legend { justify-content: center; flex-wrap: wrap; display: flex; gap: 6px 14px; }
 .map-legend .regions-legend i { display: inline-block; width: 14px; height: 14px; border: 3px solid; background: transparent; border-radius: 2px; margin-right: 6px; vertical-align: -2px; }
 .svg-regions path { stroke-width: 3.4; }
+/* Nov 15: thinner borders so regions sit with the other layers (Babs) */
+.svg-regions path { stroke-width: 1.5; }
