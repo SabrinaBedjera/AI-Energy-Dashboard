@@ -267,6 +267,16 @@ const mapSources = {
   stress: "https://www.wri.org/data/aqueduct-global-maps-40-data",
   regions: "https://open.canada.ca/data/dataset/a3dfbaf4-1b20-4061-aa0a-e7a79953f52d",
 };
+// One colour per NRCan region (teal/pink/navy family)
+const regionColors: Record<string, string> = {
+  "Cordillera": "#e0457b",
+  "Interior Plains": "#0b5f57",
+  "Great Lakes - St. Lawrence Lowlands": "#2a9d8f",
+  "Canadian Shield": "#5b6e8c",
+  "Hudson Bay Lowland": "#6fb3a9",
+  "Appalachian Uplands": "#8a3b6e",
+  "Arctic Lands": "#97a3b3",
+};
 // Label spots for NRCan's region names (display only; shapes are NRCan's, unchanged)
 const regionLabels: [string, number, number][] = [
   ["Cordillera", -126.5, 56.5],
@@ -1901,16 +1911,24 @@ function SvgMap({
       )}
       {layers.regions && (
         <g className="svg-regions">
-          {regions?.features?.map((feature: any) => (
-            <path key={feature.properties.RegionEn} d={pathGenerator(feature) ?? undefined}>
-              <title>{`${feature.properties.RegionEn} (NRCan physiographic region)`}</title>
-            </path>
-          ))}
+          {regions?.features?.map((feature: any, index: number) => {
+            // Each border is clipped to its own region, so neighbours sit side by side instead of on top of each other
+            const d = pathGenerator(feature) ?? undefined;
+            const name = feature.properties.RegionEn;
+            return (
+              <g key={name}>
+                <clipPath id={`region-clip-${index}`}><path d={d} /></clipPath>
+                <path d={d} clipPath={`url(#region-clip-${index})`} style={{ stroke: regionColors[name] }}>
+                  <title>{`${name} (NRCan physiographic region)`}</title>
+                </path>
+              </g>
+            );
+          })}
           {regions &&
             regionLabels.map(([name, lon, lat]) => {
               const [x, y] = projection([lon, lat]) ?? [0, 0];
               return (
-                <text key={name} x={x} y={y} style={{ fontSize: 11 / Math.sqrt(scale) }}>
+                <text key={name} x={x} y={y} style={{ fontSize: 13 / Math.sqrt(scale), fill: regionColors[name] }}>
                   {name}
                 </text>
               );
@@ -2199,7 +2217,7 @@ function MapLegend({ fill, layers }: { fill: FillMode; layers: Layers }) {
       {layers.stress && <StressLegend />}
       {layers.regions && (
         <div className="legend-block">
-          <p><span className="regions-swatch" aria-hidden="true" />Landform regions</p>
+          <p>Landform regions (coloured borders, names on the map)</p>
           <small>
             Borders and names as published in <Citation href={mapSources.regions}>NRCan, Physiographic Regions of Canada (2019)</Citation>.
           </small>
