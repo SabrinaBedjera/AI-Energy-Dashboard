@@ -250,7 +250,7 @@ function useGeo(file: string, enabled: boolean) {
   }, [file, enabled]);
   return data;
 }
-const stressColors: Record<number, string> = { 1: "#cfe5e1", 2: "#8fc4bb", 3: "#3f8f84", 4: "#0b5f57", [-1]: "#c9b48a", [-9999]: "#b9b6b0" };
+const stressColors: Record<number, string> = { 1: "#cfe5e1", 2: "#8fc4bb", 3: "#3f8f84", 4: "#0b5f57", [-1]: "#c9b48a", [-9999]: "#6b4a2b" };
 const stressLabels: [number, string][] = [
   [1, "Low to medium"],
   [2, "Medium to high"],
@@ -307,6 +307,18 @@ function dominantEnergy(mix?: EnergyMix) {
 }
 
 // Keep phone layouts in normal document flow; desktop retains the sticky story.
+// Half-screen laptop windows: crop the explorer map's empty edges so it fills more (Babs, Nov 16)
+function useNarrowLayout() {
+  const [narrow, setNarrow] = useState(() => window.matchMedia("(max-width: 1279px)").matches);
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 1279px)");
+    const update = () => setNarrow(query.matches);
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+  return narrow;
+}
+
 function usePhoneLayout() {
   const [phone, setPhone] = useState(() => window.matchMedia("(max-width: 800px)").matches);
   useEffect(() => {
@@ -320,6 +332,7 @@ function usePhoneLayout() {
 
 function App() {
   const phone = usePhoneLayout();
+  const narrow = useNarrowLayout();
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [provinces, setProvinces] = useState<Province[]>([]);
@@ -625,7 +638,7 @@ function App() {
               fill={fill}
               layers={layers}
               zoomable
-              fitStoryMap={phone && provinceFilter === "All"}
+              fitStoryMap={(phone || narrow) && provinceFilter === "All"}
               selectedProject={selectedProject}
               onSelectProject={selectProject}
               onSelectProvince={selectProvince}
@@ -877,17 +890,13 @@ function Scrolly(props: {
         <>
           <p>
             A data center consists of computer servers, plus the power, cooling and network equipment that keeps them
-            running (<Citation href={ieaUrl}>IEA, 2025</Citation>). Initially it was hard for me to visualize what data
-            centers actually do, and why we need them. Picture that you&apos;re on Google and want to search up a new
-            dinner recipe. In order to do this, your computer will have to connect to a server in a data center to
-            access this information.
+            running (<Citation href={ieaUrl}>IEA, 2025</Citation>). Picture that you&apos;re on Google and want to
+            search up a new dinner recipe. Your computer will connect to a server in a data center to access this
+            information.
           </p>
           <p>
-            Data centers aren&apos;t new. They&apos;ve run websites, email, online banking, streaming and cloud
-            storage for years, and most still do. AI data centers differ from other data centers in that they are
-            focused on training and running AI models. York University flags only 5 of the 194 data centers running
-            in Canada as AI-related, and 49 of the 213 planned ones, and calls this a lower bound (
-            <Citation href={yorkUrl}>York University, 2026</Citation>).
+            Data centers aren&apos;t new. They&apos;ve run websites, email, online banking and streaming for years. AI
+            data centers differ in that they are focused on training and running AI models.
           </p>
         </>
       ),

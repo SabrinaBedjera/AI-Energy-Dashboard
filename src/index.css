@@ -2610,3 +2610,9 @@ rect.york-planned {
 .svg-regions path { stroke-width: 3.4; }
 /* Nov 15: thinner borders so regions sit with the other layers (Babs) */
 .svg-regions path { stroke-width: 1.5; }
+
+/* Nov 16: explorer map fills the stage height and sits in the middle (half-screen windows) */
+@media (min-width: 801px) and (max-width: 1279px) {
+  .explorer.side-layout .explorer-stage:not(.with-panel) .svg-map { aspect-ratio: 760 / 600; }
+  .explorer.side-layout .explorer-map { justify-content: center; }
+}
