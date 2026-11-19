@@ -896,7 +896,7 @@ function Scrolly(props: {
             Data centers need power to run their servers, cool their systems, IT equipment, etc. The International
             Energy Agency (IEA) found that data centers used 1.5% of the world&apos;s electricity in 2024 (
             <Citation href={ieaUrl}>IEA, 2025</Citation>). The IEA expects this to roughly double to about 3% by 2030,
-            slightly more than the whole country of Japan uses today.
+            slightly more than the whole country of Japan uses today (<Citation href={ieaUrl}>IEA, 2025</Citation>).
           </p>
           <p>
             To meet this demand, companies are exploring energy sources such as renewable energy (e.g. wind, solar,
