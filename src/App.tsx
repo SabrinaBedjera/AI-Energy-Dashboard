@@ -893,17 +893,15 @@ function Scrolly(props: {
       body: (
         <>
           <p>
-            Data centers need power to run their servers, cool their systems, IT equipment, etc. Larger data centers
-            (e.g. more servers) require more energy. The International Energy Agency (IEA) found that data centers
-            used 1.5%, 415 TWh, of the world&apos;s electricity in 2024 (<Citation href={ieaUrl}>IEA, 2025</Citation>),
-            and expects that to roughly double to about 3% by 2030, slightly more than the whole country of Japan uses
-            today. In 2024, the U.S. had the largest amount of data center electricity consumption (45%) followed by
-            China (25%).
+            Data centers need power to run their servers, cool their systems, IT equipment, etc. The International
+            Energy Agency (IEA) found that data centers used 1.5%, 415 TWh, of the world&apos;s electricity in 2024, and
+            expects that to roughly double to about 3% by 2030, slightly more than the whole country of Japan uses
+            today (<Citation href={ieaUrl}>IEA, 2025</Citation>).
           </p>
           <p>
-            In order to meet this demand, companies are exploring a range of energy sources such as renewable energy
-            (e.g. wind, solar, hydro), nuclear, natural gas, and coal. The IEA expects renewable energy and natural gas
-            will lead in providing power for data centers due to their availability and lower costs (
+            To meet this demand, companies are exploring energy sources such as renewable energy (e.g. wind, solar,
+            hydro), nuclear, natural gas, and coal. The IEA expects renewable energy and natural gas will lead due to
+            their availability and lower costs (
             <Citation href="https://www.iea.org/news/ai-is-set-to-drive-surging-electricity-demand-from-data-centres-while-offering-the-potential-to-transform-how-the-energy-sector-works">IEA, 2025</Citation>).
           </p>
         </>
