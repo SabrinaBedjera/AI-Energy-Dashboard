@@ -969,11 +969,6 @@ function Scrolly(props: {
             power source (e.g. a solar or wind plant) or partner with a nearby power generation station. Please see
             the map for a list of Canada&apos;s clean power generation projects.
           </p>
-          <p>
-            For example, in British Columbia, TELUS&apos; data centers have secured 85 MW of renewable power from BC
-            Hydro (
-            <Citation href="https://www.telus.com/en/about/news-and-events/media-releases/TELUS-and-Government-of-Canada-advance-work-to-scale-Canadas-sovereign-AI-infrastructure">TELUS</Citation>).
-          </p>
         </>
       ),
     },
@@ -1005,10 +1000,7 @@ function Scrolly(props: {
             regulatory changes to make it easier to build data centers.
           </p>
           <p>
-            An interesting finding is that Alberta&apos;s grid only has room for 1,200 MW of big new loads, and
-            that&apos;s taken (<Citation href="https://www.aeso.ca/grid/connecting-to-the-grid/large-load-projects">AESO</Citation>),
-            so new projects may need to build their own power plants. Other provinces have different approaches, for
-            example British Columbia caps the power that can go into data centers (
+            Other provinces have different approaches, for example British Columbia caps the power that can go into data centers (
             <Citation href="https://news.gov.bc.ca/releases/2026ECS0005-000095">Government of BC, 2026</Citation>).
           </p>
         </>
