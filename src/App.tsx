@@ -737,25 +737,13 @@ function App() {
             <a href="https://www.iea.org/data-and-statistics/charts/sources-of-global-electricity-generation-for-data-centres-base-case-2020-2035" target="_blank" rel="noreferrer">IEA, Sources of global electricity generation for data centres (chart, CC BY 4.0)</a>
             <a href="https://www.iea.org/data-and-statistics/charts/global-data-centre-electricity-consumption-by-equipment-base-case-2020-2030" target="_blank" rel="noreferrer">IEA, Global data centre electricity consumption, by equipment (chart, CC BY 4.0)</a>
             <a href="https://www.iea.org/news/ai-is-set-to-drive-surging-electricity-demand-from-data-centres-while-offering-the-potential-to-transform-how-the-energy-sector-works" target="_blank" rel="noreferrer">IEA news release on Energy and AI (2025)</a>
-            <a href="https://angusreid.org/wp-content/uploads/2026/06/2026.06.01_AI_Policy_data_centres.pdf" target="_blank" rel="noreferrer">Angus Reid Institute, AI policy and data centres (2026)</a>
           </div>
           <div className="sources-col">
-            <p className="sources-group">Government strategies and rules</p>
-            <a href="https://ised-isde.canada.ca/site/ised/en/data-centres-powering-canadas-digital-future-responsibly/canadas-responsible-data-centre-development-principles" target="_blank" rel="noreferrer">Government of Canada, Responsible Data Centre Development Principles (signed by 45 companies)</a>
+            <p className="sources-group">Also cited in the text</p>
             <a href="https://www.alberta.ca/artificial-intelligence-data-centres-strategy" target="_blank" rel="noreferrer">Government of Alberta, AI Data Centres Strategy</a>
-            <a href="https://majorprojects.alberta.ca/" target="_blank" rel="noreferrer">Government of Alberta, Major Projects</a>
-            <a href="https://majorprojects.alberta.ca/details/Wonder-Valley-AI-Data-Centre-Park-Phase-1/11477" target="_blank" rel="noreferrer">Government of Alberta, Major Projects: Wonder Valley AI Data Centre Park</a>
             <a href="https://news.gov.bc.ca/releases/2026ECS0005-000095" target="_blank" rel="noreferrer">Government of BC, power for AI and data centers</a>
-            <a href="https://www.blg.com/en/insights/2026/07/data-centre-regulation-in-quebec-from-honeyed-promise-to-iron-control" target="_blank" rel="noreferrer">Quebec, Bill 69 (BLG summary)</a>
-            <a href="https://www.torys.com/en/our-latest-thinking/publications/2025/12/key-takeaways-and-next-steps-on-new-energy-law" target="_blank" rel="noreferrer">Ontario, Bill 40 (Torys summary)</a>
-            <a href="https://web2.gov.mb.ca/bills/43-3/pdf/b039.pdf" target="_blank" rel="noreferrer">Manitoba, Bill 39</a>
-          </div>
-          <div className="sources-col">
-            <p className="sources-group">Utilities and companies</p>
             <a href="https://www.aeso.ca/grid/connecting-to-the-grid/large-load-projects" target="_blank" rel="noreferrer">AESO, large load projects</a>
-            <a href="https://www.hydroquebec.com/data/documents-donnees/pdf/comparaison-prix-2025-en.pdf" target="_blank" rel="noreferrer">Hydro-Québec, Comparison of Electricity Prices 2025</a>
             <a href="https://www.telus.com/en/about/news-and-events/media-releases/TELUS-and-Government-of-Canada-advance-work-to-scale-Canadas-sovereign-AI-infrastructure" target="_blank" rel="noreferrer">TELUS, sovereign AI infrastructure</a>
-            <a href="https://cfjctoday.com/2025/05/28/bell-announces-plans-to-open-six-ai-data-centres-in-b-c-as-part-of-bell-ai-fabric/" target="_blank" rel="noreferrer">CFJC Today, Bell AI Fabric in BC</a>
           </div>
           <div className="sources-col">
             <p className="sources-group">Maps and data</p>
@@ -767,7 +755,7 @@ function App() {
             <a href="https://www.wri.org/data/aqueduct-global-maps-40-data" target="_blank" rel="noreferrer">WRI, Aqueduct 4.0 water risk data (CC BY 4.0)</a>
             <a href="https://bbmaps.itu.int/bbmaps/" target="_blank" rel="noreferrer">ITU, Broadband Map</a>
           </div>
-          <span>Each data center&apos;s own source is linked on the map.</span>
+          <span>Each data center&apos;s own source, and the sources for each province&apos;s rules and power prices, are linked on the map.</span>
         </div>
         <footer>
           <span>Personal project, views my own.</span>
