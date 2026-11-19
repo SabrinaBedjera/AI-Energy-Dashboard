@@ -737,13 +737,8 @@ function App() {
             <a href="https://www.iea.org/data-and-statistics/charts/sources-of-global-electricity-generation-for-data-centres-base-case-2020-2035" target="_blank" rel="noreferrer">IEA, Sources of global electricity generation for data centres (chart, CC BY 4.0)</a>
             <a href="https://www.iea.org/data-and-statistics/charts/global-data-centre-electricity-consumption-by-equipment-base-case-2020-2030" target="_blank" rel="noreferrer">IEA, Global data centre electricity consumption, by equipment (chart, CC BY 4.0)</a>
             <a href="https://www.iea.org/news/ai-is-set-to-drive-surging-electricity-demand-from-data-centres-while-offering-the-potential-to-transform-how-the-energy-sector-works" target="_blank" rel="noreferrer">IEA news release on Energy and AI (2025)</a>
-          </div>
-          <div className="sources-col">
-            <p className="sources-group">Also cited in the text</p>
             <a href="https://www.alberta.ca/artificial-intelligence-data-centres-strategy" target="_blank" rel="noreferrer">Government of Alberta, AI Data Centres Strategy</a>
             <a href="https://news.gov.bc.ca/releases/2026ECS0005-000095" target="_blank" rel="noreferrer">Government of BC, power for AI and data centers</a>
-            <a href="https://www.aeso.ca/grid/connecting-to-the-grid/large-load-projects" target="_blank" rel="noreferrer">AESO, large load projects</a>
-            <a href="https://www.telus.com/en/about/news-and-events/media-releases/TELUS-and-Government-of-Canada-advance-work-to-scale-Canadas-sovereign-AI-infrastructure" target="_blank" rel="noreferrer">TELUS, sovereign AI infrastructure</a>
           </div>
           <div className="sources-col">
             <p className="sources-group">Maps and data</p>
