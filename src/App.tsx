@@ -754,7 +754,7 @@ function App() {
         </div>
         <footer>
           <span>Personal project, views my own.</span>
-          <span>Data prepared November 10–12, 2026</span>
+          <span>Last updated {__LAST_UPDATED__} · Data prepared November 10–12, 2026</span>
         </footer>
       </section>
     </main>
