@@ -1015,9 +1015,7 @@ function Scrolly(props: {
         <>
           <TodayVsPlanned />
           <p>
-            Operating data centers are located closer to cities but future data centers are being built mostly in
-            Alberta, farther away from cities, and are bigger in size. So why are data centers being built in Alberta?
-            This is likely due to the different regulations, incentives, and tools that the provinces and territories
+            So why are data centers being built in Alberta? This is likely due to the different regulations, incentives, and tools that the provinces and territories
             use. Alberta is aiming to become the North American destination for AI data centers (
             <Citation href="https://www.alberta.ca/artificial-intelligence-data-centres-strategy">Government of Alberta, AI Data Centres Strategy, 2024</Citation>)
             by pointing to its power supply, colder climate, low corporate taxes, a data centre concierge program, and
@@ -1434,8 +1432,6 @@ function TodayVsPlanned() {
     ["Data centers", "194", "213"],
     ["Power", "1.6 GW", "22.2 GW (14×)"],
     ["Where", "Ontario 41%, Quebec 30%, BC 14%", "Alberta 78%"],
-    ["Distance to a downtown (half of sites)", "Within about 4 km", "More than 48 km"],
-    ["Over 100 MW", "None", "116"],
   ];
   return (
     <table className="today-planned">
@@ -1462,7 +1458,7 @@ function TodayVsPlanned() {
         </a>
         , Tables A1 and A2, Figure 3b. Note, this table is based on a study that includes more data centers
         than my analysis, since I was limited to publicly available information. Planned = announced or under
-        construction. Over 100 MW is what the <Citation href={ieaUrl}>IEA</Citation> calls hyperscale.
+        construction.
       </caption>
     </table>
   );
