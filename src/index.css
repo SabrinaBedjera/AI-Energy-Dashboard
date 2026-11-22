@@ -2626,3 +2626,12 @@ rect.york-planned {
 /* Nov 22: explorer layer notes use the full width under the map (Babs) */
 .explorer.side-layout .map-legend .legend-block { min-width: 260px; max-width: none; flex: 1 1 420px; }
 .explorer.side-layout .map-legend .legend-block small, .explorer.side-layout .map-legend .legend-block p { max-width: 900px; }
+
+/* Nov 22 QA: table headers sentence case (no all caps), never split a word on phones */
+.today-planned thead th { text-transform: none; letter-spacing: 0; font-size: 0.95rem; white-space: nowrap; overflow-wrap: normal; word-break: normal; }
+@media (max-width: 700px) {
+  .grid-key-row .grid-key-divider { display: none; }
+  .grid-key-row .grid-key-lines { flex-basis: 100%; justify-content: center; }
+  .grid-key-row .grid-key-title { flex-basis: 100%; text-align: center; }
+}
+.capacity-label { text-transform: none; letter-spacing: 0; font-size: 15px; }
