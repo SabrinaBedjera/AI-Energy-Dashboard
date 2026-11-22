@@ -2354,6 +2354,13 @@ const sourceNames: Record<string, string> = {
   "web2.gov.mb.ca": "Manitoba Bill 39",
   "alberta.ca": "Government of Alberta",
   "saskatchewan.ca": "Government of Saskatchewan",
+  "gnb.ca": "Government of New Brunswick",
+  "novascotia.ca": "Government of Nova Scotia",
+  "qec.nu.ca": "Qulliq Energy Corporation",
+  "ola.org": "Legislative Assembly of Ontario",
+  "ontario.ca": "Government of Ontario",
+  "news.hydroquebec.com": "Hydro-Québec",
+  "regie-energie.qc.ca": "Régie de l'énergie",
 };
 
 // Turns a source cell like "https://a.ca (Fig 3b) https://b.ca" into links.
