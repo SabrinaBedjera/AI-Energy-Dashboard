@@ -2225,7 +2225,7 @@ function ProjectDetail({ project, onProvince }: { project: Project; onProvince: 
       <h2>{project.name}</h2>
       <p className="operator">{project.operator}</p>
       <strong className="capacity-number">{formatMw(project.reported_mw)}</strong>
-      <span className="capacity-label">Reported capacity{project.mw_kind ? ` · ${project.mw_kind}` : ""}</span>
+      <span className="capacity-label">Reported capacity</span>
       <dl>
         {project.reported_mw && (
           <div>

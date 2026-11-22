@@ -2622,3 +2622,7 @@ rect.york-planned {
 .grid-key-row .grid-key-title { font-weight: 700; }
 .grid-key-row .grid-key-lines { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; }
 .grid-key-row .grid-key-divider { width: 1px; height: 18px; background: var(--line); }
+
+/* Nov 22: explorer layer notes use the full width under the map (Babs) */
+.explorer.side-layout .map-legend .legend-block { min-width: 260px; max-width: none; flex: 1 1 420px; }
+.explorer.side-layout .map-legend .legend-block small, .explorer.side-layout .map-legend .legend-block p { max-width: 900px; }
