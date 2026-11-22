@@ -713,8 +713,8 @@ function App() {
           </p>
           <p>
             A few notes on the data. Each map layer has its own notes and sources under its legend.
-            Reported capacity of the data centers is measured in MW and they don&apos;t always measure
-            the same thing (e.g. some sources count the whole project while others only focus on their
+            Reported capacity of the data centers is measured in MW, but sources don&apos;t always
+            measure the same thing (e.g. some count the whole project while others only focus on their
             power generating plant). Planned projects may change or never be built. All pins are
             approximate.
           </p>
