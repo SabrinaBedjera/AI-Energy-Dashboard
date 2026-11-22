@@ -837,7 +837,10 @@ function Scrolly(props: {
             AI is being used in many parts of everyday life, from writing emails to vibe coding websites. It has
             boomed over the last few years thanks to better computer chips and AI models. AI needs data centers but I
             couldn&apos;t find a Canadian interactive map that pulled together all the data I wanted to explore, so I
-            decided to build one. My analysis brings together research articles, project announcements, provincial
+            decided to build one.
+          </p>
+          <p>
+            My analysis brings together research articles, project announcements, provincial
             strategies and electricity generation, infrastructure, and policy to explore that shift. My biggest
             limitation was accessing open data. In places where I could not incorporate open data I linked to other
             sources (e.g. Canada&apos;s fibre backbone on the{" "}
@@ -854,7 +857,10 @@ function Scrolly(props: {
           <p>
             This analysis, and other researchers, have found that Canada is experiencing a data center shift.
             Operating data centers are currently concentrated in Ontario and Quebec, located close to cities, and have
-            smaller reported power capacities. However, these trends are changing, planned data center projects are
+            smaller reported power capacities.
+          </p>
+          <p>
+            However, these trends are changing, planned data center projects are
             concentrated in Alberta, located further from cities, and have larger reported power capacities (
             <Citation href={yorkUrl}>York University, 2026</Citation>). Note, planned projects are not built
             projects. Whether these projects proceed depends on access to power, land, funding, water, regulatory
