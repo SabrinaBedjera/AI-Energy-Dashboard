@@ -2589,7 +2589,7 @@ rect.york-planned {
 .scrolly-graphic .svg-map { transition: left 0.4s ease, width 0.4s ease, height 0.4s ease, bottom 0.4s ease, top 0.4s ease; }
 @media (min-width: 1281px) {
   .scrolly-graphic.has-map-key .svg-map {
-    top: 24px; height: auto; bottom: calc(var(--keyH, 120px) + 32px);
+    top: 16px; height: auto; bottom: calc(var(--keyH, 120px) + 64px);
   }
   .scrolly-graphic .cover-map-key,
   .scrolly-graphic .story-under-map-key { bottom: 20px; }
@@ -2616,3 +2616,9 @@ rect.york-planned {
   .explorer.side-layout .explorer-stage:not(.with-panel) .svg-map { aspect-ratio: 760 / 600; }
   .explorer.side-layout .explorer-map { justify-content: center; }
 }
+
+/* Nov 22: power map key on one tidy row, lines then clean power dots (Babs) */
+.grid-key-row { align-items: center; }
+.grid-key-row .grid-key-title { font-weight: 700; }
+.grid-key-row .grid-key-lines { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; }
+.grid-key-row .grid-key-divider { width: 1px; height: 18px; background: var(--line); }

@@ -1037,8 +1037,8 @@ function Scrolly(props: {
       const mapBottom = map.getBoundingClientRect().bottom - box.top;
       const keyHeight = key.getBoundingClientRect().height;
       // The cover keeps its own spot so the curvy arrow labels stay clear
-      if (key.classList.contains("story-under-map-key") && mapBottom + 12 + keyHeight <= box.height - 8) {
-        key.style.top = `${Math.round(mapBottom + 12)}px`;
+      if (key.classList.contains("story-under-map-key") && mapBottom + 36 + keyHeight <= box.height - 8) {
+        key.style.top = `${Math.round(mapBottom + 36)}px`;
         key.style.bottom = "auto";
       }
     };
@@ -1103,9 +1103,10 @@ function Scrolly(props: {
         )}
               {item.mode === "grid" && (
                 <div className="story-map-key cover-legend story-under-map-key" role="group" aria-label="Power infrastructure map legend">
-                  <p><span className="transmission-swatch" aria-hidden="true" />Power transmission lines</p>
-                  <p>Clean power generation</p>
-                  <div className="project-legend">
+                  <div className="project-legend grid-key-row">
+                    <span className="grid-key-lines"><span className="transmission-swatch" aria-hidden="true" />Power transmission lines</span>
+                    <span className="grid-key-divider" aria-hidden="true" />
+                    <span className="grid-key-title">Clean power generation</span>
                     {Object.entries(cleanColors).map(([label, color]) => (
                       <span key={label}><i style={{ background: color, borderColor: color }} aria-hidden="true" />{label}</span>
                     ))}
