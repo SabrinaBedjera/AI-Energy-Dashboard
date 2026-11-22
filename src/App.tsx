@@ -726,8 +726,7 @@ function App() {
           </p>
           <p>
             I used Claude to help find data center projects and build the maps. I reviewed the data, checked the
-            large projects against their sources, and added to it myself. Every project links to its source so you
-            can check it too.
+            large projects against their sources, and added to it myself.
           </p>
         </div>
         <div className="sources">
