@@ -2229,51 +2229,45 @@ function ProjectDetail({ project, onProvince }: { project: Project; onProvince: 
       <strong className="capacity-number">{formatMw(project.reported_mw)}</strong>
       <span className="capacity-label">Reported capacity{project.mw_kind ? ` · ${project.mw_kind}` : ""}</span>
       <dl>
-        {project.status !== "Operating" && project.stage && (
-          <div>
-            <dt>Stage</dt>
-            <dd>{project.stage}</dd>
-          </div>
-        )}
-        <div>
-          <dt>Location</dt>
-          <dd>
-            {project.city}, {project.province}
-          </dd>
-        </div>
         {project.reported_mw && (
           <div>
             <dt>What the MW measures</dt>
             <dd>{project.what_the_mw_measures}</dd>
           </div>
         )}
-        <div>
-          <dt>Location precision</dt>
-          <dd>{project.location_precision}</dd>
-        </div>
-        {project.ai_use && (
+        {(project.status !== "Operating" && project.stage) || project.notes ? (
           <div>
-            <dt>What it is for</dt>
+            <dt>Description</dt>
             <dd>
-              {project.ai_use === "Not stated" ? "Not stated publicly" : project.ai_use}
-              {project.ai_use_link && (
-                <>
-                  {" "}
-                  <a href={project.ai_use_link} target="_blank" rel="noreferrer">
-                    source ↗
-                  </a>
-                </>
-              )}
+              {project.status !== "Operating" && project.stage
+                ? `${project.stage.replace(/\.$/, "")}.${project.notes ? " " : ""}`
+                : ""}
+              {project.notes}
             </dd>
           </div>
-        )}
+        ) : null}
+        <div>
+          <dt>Location</dt>
+          <dd>
+            {project.city}, {project.province}
+            {/^(Approximate|Estimated|Gov of AB)/.test(project.location_precision)
+              ? project.location_precision.startsWith("Estimated")
+                ? " (estimated, no address found)"
+                : " (estimated)"
+              : ""}
+          </dd>
+        </div>
+        <div>
+          <dt>Source</dt>
+          <dd>
+            <a href={project.source.split(";")[0].trim().split(" ")[0]} target="_blank" rel="noreferrer">
+              Primary source ↗
+            </a>
+          </dd>
+        </div>
       </dl>
-      {project.notes && <p className="detail-note">{project.notes}</p>}
-      <a className="primary-link" href={project.source} target="_blank" rel="noreferrer">
-        View primary source ↗
-      </a>
       <button className="province-context" onClick={onProvince}>
-        Why {codeToProvince[project.province]}? <span>View province context →</span>
+        View province context →
       </button>
     </>
   );
