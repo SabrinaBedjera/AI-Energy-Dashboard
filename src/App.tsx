@@ -483,7 +483,7 @@ function App() {
         <h2>Try out the map</h2>
         <p>
           Explore the data center projects and clean power. Click a province for its
-          rules, energy mix and power prices. Use the buttons to filter the dots or add layers.
+          strategy, rules and energy mix. Use the buttons to filter the dots or add layers.
         </p>
       </div>
 
@@ -747,7 +747,7 @@ function App() {
             <a href="https://www.wri.org/data/aqueduct-global-maps-40-data" target="_blank" rel="noreferrer">WRI, Aqueduct 4.0 water risk data (CC BY 4.0)</a>
             <a href="https://bbmaps.itu.int/bbmaps/" target="_blank" rel="noreferrer">ITU, Broadband Map</a>
           </div>
-          <span>Each data center&apos;s own source, and the sources for each province&apos;s rules and power prices, are linked on the map.</span>
+          <span>Each data center&apos;s own source, and the sources for each province&apos;s strategy and rules, are linked on the map.</span>
         </div>
         <footer>
           <span>Personal project, views my own.</span>
@@ -800,7 +800,7 @@ function Scrolly(props: {
       body: (
         <>
           <h1 className="fun-title" data-text="Canada's AI Boom">Canada&apos;s AI Boom</h1>
-          <p className="hero-sub">Where Canada&apos;s data centers are being built, and where they&apos;ll get their power.</p>
+          <p className="hero-sub">Most of Canada&apos;s planned data centers are in one province. Here is where all of Canada&apos;s data centers are today and where they are headed.</p>
           <ul className="hero-findings">
             <li>
               <span className="finding-num">78%</span> of Canada&apos;s planned data centers are in
@@ -2325,18 +2325,6 @@ function ProvinceDetail({
             );
           })}
           <SourceLine raw="https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=2510001501" label="Statistics Canada, Table 25-10-0015-01" />
-        </div>
-      )}
-      {prices.length > 0 && (
-        <div className="panel-block price-detail">
-          <h3>What a large customer pays for power, April 2025</h3>
-          {prices.map((row) => (
-            <div key={row.city}>
-              <span>{row.city}</span>
-              <strong>{Number(row.cents_per_kwh_50mw).toFixed(2)}¢/kWh</strong>
-            </div>
-          ))}
-          <SourceLine raw={prices[0].source} label="Hydro-Québec, Comparison of Electricity Prices 2025, p.17" />
         </div>
       )}
     </>
