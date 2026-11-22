@@ -2589,7 +2589,7 @@ rect.york-planned {
 .scrolly-graphic .svg-map { transition: left 0.4s ease, width 0.4s ease, height 0.4s ease, bottom 0.4s ease, top 0.4s ease; }
 @media (min-width: 1281px) {
   .scrolly-graphic.has-map-key .svg-map {
-    top: 16px; height: auto; bottom: calc(var(--keyH, 120px) + 90px);
+    top: 16px; bottom: auto; height: calc(100% - var(--keyH, 120px) - 106px);
   }
   .scrolly-graphic .cover-map-key,
   .scrolly-graphic .story-under-map-key { bottom: 20px; }
@@ -2635,3 +2635,9 @@ rect.york-planned {
   .grid-key-row .grid-key-title { flex-basis: 100%; text-align: center; }
 }
 .capacity-label { text-transform: none; letter-spacing: 0; font-size: 15px; }
+
+/* Nov 22: bigger title (Babs asked for 1.5 to 2 times), outline and shadow scaled to match */
+@media (min-width: 701px) {
+  .scrolly-step.hero h1.fun-title { font-size: clamp(64px, 6.2vw, 104px); line-height: 1.02; -webkit-text-stroke-width: 4px; white-space: pre-line; overflow: visible; width: max-content; max-width: none; }
+  .scrolly-step.hero h1.fun-title::before { left: 8px; top: 8px; right: -8px; -webkit-text-stroke-width: 4px; white-space: pre-line; }
+}

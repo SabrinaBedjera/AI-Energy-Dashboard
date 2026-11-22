@@ -799,7 +799,7 @@ function Scrolly(props: {
       ],
       body: (
         <>
-          <h1 className="fun-title" data-text="Canada's AI Boom">Canada&apos;s AI Boom</h1>
+          <h1 className="fun-title" data-text={"Canada's\nAI Boom"}>{"Canada's\nAI Boom"}</h1>
           <p className="hero-sub">Mapping where Canada&apos;s data centers are, where they are headed, and where their power comes from.</p>
           <ul className="hero-findings">
             <li>
