@@ -2261,9 +2261,12 @@ function ProjectDetail({ project, onProvince }: { project: Project; onProvince: 
         <div>
           <dt>Source</dt>
           <dd>
-            <a href={project.source.split(";")[0].trim().split(" ")[0]} target="_blank" rel="noreferrer">
-              Primary source ↗
-            </a>
+            {(() => {
+              const url = project.source.split(";")[0].trim().split(" ")[0];
+              let label = url;
+              try { label = new URL(url).hostname.replace(/^www\./, ""); } catch { /* keep raw */ }
+              return <a href={url} target="_blank" rel="noreferrer">{label}</a>;
+            })()}
           </dd>
         </div>
       </dl>
