@@ -710,8 +710,7 @@ function App() {
             finding is that a decent amount of data center information is behind paywalls, either
             through a private data firm or a news article. Of the 124 sites I found (includes distinct sites and grouped projects), 84 are already
             running, mostly small buildings listed on the operators&apos; own websites. Key information gaps were water use and
-            power sources. For example, only 12 of the 124 sites I found share anything about cooling
-            or water. For 97 of the 124 mapped sites, a power source was not identified in the public
+            power sources. For 97 of the 124 mapped sites, a power source was not identified in the public
             sources reviewed.
           </p>
           <p>
