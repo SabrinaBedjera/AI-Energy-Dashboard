@@ -15,6 +15,7 @@ type Project = {
   what_the_mw_measures: string;
   notes: string;
   stage: string;
+  mw_kind?: string;
   source: string;
   source_2: string;
   check_status: string;
@@ -2226,7 +2227,7 @@ function ProjectDetail({ project, onProvince }: { project: Project; onProvince: 
       <h2>{project.name}</h2>
       <p className="operator">{project.operator}</p>
       <strong className="capacity-number">{formatMw(project.reported_mw)}</strong>
-      <span className="capacity-label">Reported capacity</span>
+      <span className="capacity-label">Reported capacity{project.mw_kind ? ` · ${project.mw_kind}` : ""}</span>
       <dl>
         {project.status !== "Operating" && project.stage && (
           <div>
