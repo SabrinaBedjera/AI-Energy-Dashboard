@@ -14,6 +14,7 @@ type Project = {
   reported_mw: string;
   what_the_mw_measures: string;
   notes: string;
+  stage: string;
   source: string;
   source_2: string;
   check_status: string;
@@ -2227,6 +2228,12 @@ function ProjectDetail({ project, onProvince }: { project: Project; onProvince: 
       <strong className="capacity-number">{formatMw(project.reported_mw)}</strong>
       <span className="capacity-label">Reported capacity</span>
       <dl>
+        {project.status !== "Operating" && project.stage && (
+          <div>
+            <dt>Stage</dt>
+            <dd>{project.stage}</dd>
+          </div>
+        )}
         <div>
           <dt>Location</dt>
           <dd>
