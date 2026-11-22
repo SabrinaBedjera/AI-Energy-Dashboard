@@ -142,7 +142,7 @@ const drainageColors = ["#d7e6ef", "#c4d9e6", "#b1cbdc", "#e2ecf2"];
 const capacityColors = ["#d4ebe6", "#94cdc2", "#3f9e8f", "#0b5f57"];
 
 // Share of York's data center sites (Appendix Table A2), used in the story only
-const siteShareColors = ["#e8e5df", "#f6d3df", "#ec97b5", "#d6457b", "#8f1f4f"];
+const siteShareColors = ["#e8e5df", ...capacityColors];
 const siteShareColor = (share: number) =>
   siteShareColors[share === 0 ? 0 : share < 5 ? 1 : share < 15 ? 2 : share < 35 ? 3 : 4];
 
@@ -1114,7 +1114,7 @@ function Scrolly(props: {
                       <span key={label}><i style={{ background: color, borderColor: color }} aria-hidden="true" />{label}</span>
                     ))}
                   </div>
-                  <small>Larger dots indicate higher generating capacity (MW). Stations: <Citation href={mapSources.clean}>NRCan</Citation>, a list compiled in 2017. Some stations have since closed and newer ones may be missing. Lines: <Citation href={mapSources.lines}>NRCan CanVec</Citation>. Proximity does not establish a data center’s power supply.</small>
+                  <small>Larger dots indicate higher generating capacity (MW). Stations source: <Citation href={mapSources.clean}>NRCan</Citation>, a list compiled in 2017. Some stations have since closed and newer ones may be missing. Lines source: <Citation href={mapSources.lines}>NRCan CanVec</Citation>. Proximity does not establish a data center’s power supply.</small>
                 </div>
               )}
         {["people", "stress", "power", "clean"].includes(item.mode) && (
@@ -1130,7 +1130,7 @@ function Scrolly(props: {
                 <span key={color}><i style={{ background: color, borderColor: color }} aria-hidden="true" />{["None", "Under 5%", "5 to 15%", "15 to 35%", "Over 35%"][index]}</span>
               ))}
             </div>
-            <small>Darker pink = a larger share of sites, not MW. Source: <Citation href={yorkUrl}>York University (2026), Appendix Table A2</Citation>.</small>
+            <small>Darker shading = a larger share of data center sites, does not indicate a higher capacity. Source: <Citation href={yorkUrl}>York University (2026), Appendix Table A2</Citation>.</small>
           </div>
         )}
 
@@ -1434,9 +1434,9 @@ function TodayVsPlanned() {
         <a href={yorkUrl} target="_blank" rel="noreferrer">
           Carlo &amp; Rolheiser, York University (2026)
         </a>
-        , Tables A1 and A2, Figure 3b. Note, this table is based on a study that includes more data centers
-        than my analysis, since I was limited to publicly available information. Planned = announced or under
-        construction.
+        , Tables A1 and A2, Figure 3b. Note, I chose to base this on the York University study because it includes
+        more data centers than my analysis (I was limited to publicly available information). Planned = announced or
+        under construction.
       </caption>
     </table>
   );
@@ -2096,7 +2096,7 @@ function MapLegend({ fill, layers }: { fill: FillMode; layers: Layers }) {
               </span>
             ))}
           </div>
-          <small>Darker areas have more people per km². All 293 census divisions, <Citation href={mapSources.population}>Statistics Canada 2021 Census</Citation>. Hover an area for its number.</small>
+          <small>Darker areas have more people per km². <Citation href={mapSources.population}>Statistics Canada 2021 Census</Citation>. Hover an area for its number.</small>
         </div>
       )}
       {fill === "price" && (
@@ -2302,8 +2302,8 @@ function ProvinceDetail({
         <SourceLine raw={province.planned_mw_source} label="York University (2026)" />
       </div>
       <div className="panel-block">
-        <h3>Grid rules</h3>
-        <p>{province.grid_rules.replace(/centres/g, "centers").replace(/centre\b/g, "center")}</p>
+        <h3>Grid strategy and rules</h3>
+        <p>{linkify(province.grid_rules)}</p>
         <SourceLine raw={province.grid_rules_sources} />
       </div>
       {energy && (
@@ -2341,6 +2341,21 @@ function ProvinceDetail({
       )}
     </>
   );
+}
+
+// Turns [text](url) in a data cell into links (Babs: link the source right where it is mentioned).
+function linkify(text: string) {
+  const parts: React.ReactNode[] = [];
+  const re = /\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g;
+  let last = 0;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text)) !== null) {
+    if (m.index > last) parts.push(text.slice(last, m.index));
+    parts.push(<a key={m.index} href={m[2]} target="_blank" rel="noreferrer">{m[1]}</a>);
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) parts.push(text.slice(last));
+  return parts;
 }
 
 const sourceNames: Record<string, string> = {
