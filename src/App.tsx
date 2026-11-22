@@ -800,7 +800,7 @@ function Scrolly(props: {
       body: (
         <>
           <h1 className="fun-title" data-text="Canada's AI Boom">Canada&apos;s AI Boom</h1>
-          <p className="hero-sub">Most of Canada&apos;s planned data centers are in one province. This is my investigation of Canada&apos;s data center trends.</p>
+          <p className="hero-sub">Mapping where Canada&apos;s data centers are, where they are headed, and where their power comes from.</p>
           <ul className="hero-findings">
             <li>
               <span className="finding-num">78%</span> of Canada&apos;s planned data centers are in
