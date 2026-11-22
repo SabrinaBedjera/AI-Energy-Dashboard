@@ -710,9 +710,9 @@ function App() {
             In my analysis, I pull together publicly accessible data from research papers, news
             articles, government sources, utility websites, company websites and more! An interesting
             finding is that a decent amount of data center information is behind paywalls, either
-            through a private data firm or a news article. Of the 137 sites I found (includes distinct sites and grouped projects), 85 are already
+            through a private data firm or a news article. Of the 136 sites I found (includes distinct sites and grouped projects), 85 are already
             running, mostly small buildings listed on the operators&apos; own websites. Key information gaps were water use and
-            power sources. For 97 of the 137 mapped sites, a power source was not identified in the public
+            power sources. For 96 of the 136 mapped sites, a power source was not identified in the public
             sources reviewed.
           </p>
           <p>
@@ -725,7 +725,7 @@ function App() {
           </p>
           <p>
             Each project includes links to its sources. This dataset may not capture every data center
-            in Canada. The map uses my 137-site project list; the headline statistics and selected charts
+            in Canada. The map uses my 136-site project list; the headline statistics and selected charts
             use <Citation href={yorkUrl}>York University&apos;s separate dataset</Citation> of 194 operating and 213 planned sites.
           </p>
         </div>
