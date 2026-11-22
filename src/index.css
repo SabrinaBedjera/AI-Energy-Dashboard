@@ -2589,7 +2589,7 @@ rect.york-planned {
 .scrolly-graphic .svg-map { transition: left 0.4s ease, width 0.4s ease, height 0.4s ease, bottom 0.4s ease, top 0.4s ease; }
 @media (min-width: 1281px) {
   .scrolly-graphic.has-map-key .svg-map {
-    top: 16px; height: auto; bottom: calc(var(--keyH, 120px) + 64px);
+    top: 16px; height: auto; bottom: calc(var(--keyH, 120px) + 90px);
   }
   .scrolly-graphic .cover-map-key,
   .scrolly-graphic .story-under-map-key { bottom: 20px; }

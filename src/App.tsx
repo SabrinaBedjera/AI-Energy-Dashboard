@@ -1030,7 +1030,8 @@ function Scrolly(props: {
       key.style.top = "";
       key.style.bottom = "";
       const box = graphic.getBoundingClientRect();
-      const mapBottom = map.getBoundingClientRect().bottom - box.top;
+      const drawn = map.querySelector<SVGGraphicsElement>(".svg-provinces");
+      const mapBottom = Math.max(map.getBoundingClientRect().bottom, drawn ? drawn.getBoundingClientRect().bottom : 0) - box.top;
       const keyHeight = key.getBoundingClientRect().height;
       // The cover keeps its own spot so the curvy arrow labels stay clear
       if (key.classList.contains("story-under-map-key") && mapBottom + 36 + keyHeight <= box.height - 8) {
