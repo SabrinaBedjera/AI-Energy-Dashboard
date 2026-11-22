@@ -694,39 +694,35 @@ function App() {
         <div className="about-copy">
           <p>
             AI is everywhere. It&apos;s in almost every news source I read, and people have so many
-            questions. How is AI being used? How do we regulate it? Why are data centers being built
-            everywhere, and where do they get their power? I&apos;m a scientist and engineer who loves
-            data and making complex topics accessible, and I had my own questions. What does the data
-            center ecosystem look like in Canada? Where do these data centers get their energy? How do
+            questions. How is AI being used? Why are data centers being built everywhere, and where
+            do they get their power? I have a science and engineering background and love data and
+            making complex topics accessible. I had my own questions. What does the data center
+            ecosystem look like in Canada? Where do these data centers get their energy? How do
             trends differ across provinces and territories?
           </p>
           <p>
             I found a lot of resources that looked at these questions, but I couldn&apos;t find an
             interactive map that pulled it all together, so I decided to build one! I stuck to
-            public information that isn&apos;t behind a paywall, so anyone can explore my data and
-            fact-check my sources.
+            public information that isn&apos;t behind a paywall, so anyone can explore my data.
           </p>
           <p>
             In my analysis, I pull together publicly accessible data from research papers, news
             articles, government sources, utility websites, company websites and more! An interesting
             finding is that a decent amount of data center information is behind paywalls, either
-            through a private data firm or a news article. Of the 135 sites I found (includes distinct sites and grouped projects), 85 are already
-            running, mostly small buildings listed on the operators&apos; own websites. Key information gaps were water use and
-            power sources. For 95 of the 135 mapped sites, a power source was not identified in the public
-            sources reviewed.
+            through a private data firm or a news article.
           </p>
           <p>
             A few notes on the data. Each map layer has its own notes and sources under its legend.
-            Sizes (MW) are what each source reports, and they don&apos;t always measure the same thing.
-            Some count only the computers, some the whole site, some the power plant next door, and
-            some only the first phase. These reported capacities are not measurements of actual
-            electricity use. Provincial generation mixes do not establish the power supply of an
-            individual facility. Planned projects may change or never be built. All pins are approximate.
+            Reported capacity of the data centers is measured in MW and they don&apos;t always measure
+            the same thing (e.g. some sources count the whole project while others only focus on their
+            power generating plant). Planned projects may change or never be built. All pins are
+            approximate.
           </p>
           <p>
-            Each project includes links to its sources. This dataset may not capture every data center
-            in Canada. The map uses my 135-site project list; the headline statistics and selected charts
-            use <Citation href={yorkUrl}>York University&apos;s separate dataset</Citation> of 194 operating and 213 planned sites.
+            My dataset does not identify every data center in Canada. The map uses my project list.
+            The headline statistics and a few visuals are taken from the International Energy Agency
+            and <Citation href={yorkUrl}>York University&apos;s separate dataset</Citation> of 194 operating and 213
+            planned sites.
           </p>
         </div>
         <div className="sources">
