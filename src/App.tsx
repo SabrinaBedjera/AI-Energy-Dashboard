@@ -36,6 +36,9 @@ type Province = {
   power_source_source?: string;
   grid_rules_sources?: string;
   levels_source?: string;
+  generation_2021_twh?: string;
+  generation_share_of_canada?: string;
+  generation_source?: string;
 };
 
 type EnergyMix = Record<string, string> & { Province: string };
@@ -2319,17 +2322,17 @@ function ProvinceDetail({
         <p>{linkify(province.grid_rules)}</p>
         <SourceLine raw={province.grid_rules_sources} />
       </div>
+      {province.generation_2021_twh && (
+        <div className="panel-block">
+          <h3>Electricity generated in 2021</h3>
+          <p className="capacity-number">{province.generation_2021_twh} TWh</p>
+          <p>{`${province.generation_share_of_canada} of Canada's total generation`}</p>
+          <SourceLine raw={province.generation_source} label="Canada Energy Regulator" />
+        </div>
+      )}
       {energy && (
         <div className="panel-block mix-chart">
           <h3>Power Generation Sources</h3>
-          {energy["Total generation 2025 (GWh)"] && (
-            <section className="gen-total">
-              <strong className="capacity-number">
-                {Number(energy["Total generation 2025 (GWh)"]).toLocaleString("en-CA")} GWh
-              </strong>
-              <span>of electricity generated in 2025</span>
-            </section>
-          )}
           {mixSources.map((source) => {
             const value =
               source === "Combustible fuels"
