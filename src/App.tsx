@@ -856,7 +856,7 @@ function Scrolly(props: {
           </p>
           <p>
             My analysis brings together research articles, project announcements, provincial
-            strategies and electricity generation, infrastructure, and policy to explore that shift. My biggest
+            strategies, electricity generation, infrastructure, and policy to explore that shift. My biggest
             limitation was accessing open data. In places where I could not incorporate open data I linked to other
             sources (e.g. Canada&apos;s fibre backbone on the{" "}
             <a href="https://bbmaps.itu.int/bbmaps/" target="_blank" rel="noreferrer">ITU Broadband Map</a>).
