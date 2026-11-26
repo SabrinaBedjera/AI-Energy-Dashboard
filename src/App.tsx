@@ -1449,7 +1449,7 @@ function TodayVsPlanned() {
         <a href={yorkUrl} target="_blank" rel="noreferrer">
           Carlo &amp; Rolheiser, York University (2026)
         </a>
-        , Tables A1 and A2, Figure 3b. Note, I chose to base this on the York University study because it includes
+        , Tables A1 and A2, Figure 3b. Note, I chose to base this table on the York University study because it includes
         more data centers than my analysis (I was limited to publicly available information). Planned = announced or
         under construction.
       </caption>
