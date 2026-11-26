@@ -732,9 +732,8 @@ function App() {
             planned sites.
           </p>
           <p>
-            I prototyped the site in Figma and Lovable, and coded it with Claude and ChatGPT. I used Claude to help
-            find data center projects and build the maps. I reviewed the data, checked the large projects against
-            their sources, and added to it myself.
+            I used Claude to find data center projects and build the maps. I prototyped the site in Figma and Lovable,
+            and coded it with Claude and ChatGPT. I reviewed the data and added to it myself.
           </p>
         </div>
         <div className="sources">
