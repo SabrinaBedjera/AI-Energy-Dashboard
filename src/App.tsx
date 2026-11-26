@@ -108,6 +108,13 @@ const provinceCodes: Record<string, string> = {
   Nunavut: "NU",
 };
 
+// Label nudges (map units) so the small Atlantic provinces stay readable. PEI sits just off the coast.
+const smallProvinceNudge: Record<string, [number, number]> = {
+  PE: [14, -9],
+  NS: [8, 8],
+  NB: [-6, 0],
+};
+
 const codeToProvince = Object.fromEntries(
   Object.entries(provinceCodes).map(([name, code]) => [code, name]),
 );
@@ -1810,11 +1817,12 @@ function SvgMap({
       {fill !== "price" && !layers.people && (
         <g className="svg-province-labels" aria-hidden="true">
           {boundaries?.features
-            ?.filter((feature: any) =>
-              ["BC", "AB", "SK", "MB", "ON", "QC"].includes(provinceCodes[feature.properties.name]),
-            )
+            ?.filter((feature: any) => provinceCodes[feature.properties.name])
             .map((feature: any) => {
-              const [x, y] = pathGenerator.centroid(feature);
+              const [cx, cy] = pathGenerator.centroid(feature);
+              const [offX, offY] = smallProvinceNudge[provinceCodes[feature.properties.name]] ?? [0, 0];
+              const x = cx + offX / Math.sqrt(scale);
+              const y = cy + offY / Math.sqrt(scale);
               const share =
                 fill === "sitesActive" || fill === "sitesPlanned"
                   ? siteShare(feature.properties.name, fill)
