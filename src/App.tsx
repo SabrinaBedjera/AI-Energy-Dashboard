@@ -2315,7 +2315,9 @@ function ProvinceDetail({
       </div>
       <div className="panel-block">
         <h3>Grid strategy and rules</h3>
-        <p>{linkify(province.grid_rules)}</p>
+        {province.grid_rules.split("\n\n").map((paragraph, i) => (
+          <p key={i}>{linkify(paragraph)}</p>
+        ))}
         <SourceLine raw={province.grid_rules_sources} />
       </div>
       {province.generation_2021_twh && (

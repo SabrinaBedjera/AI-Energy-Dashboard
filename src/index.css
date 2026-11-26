@@ -2641,3 +2641,5 @@ rect.york-planned {
   .scrolly-step.hero h1.fun-title { font-size: clamp(64px, 6.2vw, 104px); line-height: 1.02; -webkit-text-stroke-width: 4px; white-space: pre-line; overflow: visible; width: max-content; max-width: none; }
   .scrolly-step.hero h1.fun-title::before { left: 8px; top: 8px; right: -8px; -webkit-text-stroke-width: 4px; white-space: pre-line; }
 }
+
+.explorer .detail-drawer .panel-block p + p { margin-top: 10px; }
