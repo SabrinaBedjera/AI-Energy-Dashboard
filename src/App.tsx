@@ -810,7 +810,7 @@ function Scrolly(props: {
       annotations: [
         { lon: -114, lat: 56, dx: 40, dy: -200, anchor: "start", lines: ["Majority of planned data centers", "Alberta: 78% of planned sites"] },
         { lon: -79.6, lat: 43.9, dx: -170, dy: 20, lines: ["Largest share of operating data centers", "Ontario: 41% of operating sites"] },
-        { lon: -73.6, lat: 45.6, dx: 60, dy: -170, anchor: "start", lines: ["Large portion of operating data centers", "Quebec: 30% of operating sites"] },
+        { lon: -73.6, lat: 45.6, dx: 60, dy: -170, anchor: "start", lines: ["2nd largest share of operating data centers", "Quebec: 30% of operating sites"] },
       ],
       body: (
         <>
