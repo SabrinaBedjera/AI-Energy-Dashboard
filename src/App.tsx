@@ -953,8 +953,8 @@ function Scrolly(props: {
       body: (
         <p>
           Where a data center gets built depends on multiple factors such as land, energy, water and fast internet (
-          <Citation href={randUrl}>RAND, 2026</Citation>). Please explore the next couple of cards and maps to
-          visualize these different factors as map layers in Canada. Note, I couldn&apos;t find a public map of
+          <Citation href={randUrl}>RAND, 2026</Citation>). Please explore the following maps to see these
+          factors across Canada. Note, I couldn&apos;t find a public map of
           Canada&apos;s fibre lines, but you can explore them on the{" "}
           <a href="https://bbmaps.itu.int/bbmaps/" target="_blank" rel="noreferrer">ITU Broadband Map</a>.
         </p>
