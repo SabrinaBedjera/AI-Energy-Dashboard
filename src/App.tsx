@@ -2322,6 +2322,14 @@ function ProvinceDetail({
       {energy && (
         <div className="panel-block mix-chart">
           <h3>Power Generation Sources</h3>
+          {energy["Total generation 2025 (GWh)"] && (
+            <section className="gen-total">
+              <strong className="capacity-number">
+                {Number(energy["Total generation 2025 (GWh)"]).toLocaleString("en-CA")} GWh
+              </strong>
+              <span>of electricity generated in 2025</span>
+            </section>
+          )}
           {mixSources.map((source) => {
             const value =
               source === "Combustible fuels"
