@@ -717,16 +717,13 @@ function App() {
           </p>
           <p>
             In my analysis, I pull together publicly accessible data from research papers, news
-            articles, government sources, utility websites, company websites and more! An interesting
-            finding is that a decent amount of data center information is behind paywalls, either
-            through a private data firm or a news article.
+            articles, government sources, utility websites, company websites and more!
           </p>
           <p>
             A few notes on the data. Each map layer has its own notes and sources under its legend.
             Reported capacity of the data centers is measured in MW, but sources don&apos;t always
             measure the same thing (e.g. some count the whole project while others only focus on their
-            power generating plant). Planned projects may change or never be built. All pins are
-            approximate.
+            power generating plant).
           </p>
           <p>
             My dataset does not identify every data center in Canada. The map uses my project list.
