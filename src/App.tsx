@@ -983,7 +983,7 @@ function Scrolly(props: {
             Companies have different approaches for sourcing their data center energy. Many data centers plug directly
             into the grid through power lines. Data centers that aren&apos;t close to a power line may build their own
             power source (e.g. a solar or wind plant) or partner with a nearby power generation station. Please see
-            the map for a list of Canada&apos;s clean power generation projects.
+            the map for a visual of power transmission lines and a list of Canada&apos;s clean power generation projects.
           </p>
         </>
       ),
