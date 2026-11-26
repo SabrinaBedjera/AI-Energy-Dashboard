@@ -870,7 +870,7 @@ function Scrolly(props: {
       body: (
         <>
           <p>
-            This analysis, and other researchers, have found that Canada is experiencing a data center shift.
+            Both my analysis and other researchers&apos; work show that Canada&apos;s data centers are shifting toward Alberta.
             Operating data centers are currently concentrated in Ontario and Quebec, located close to cities, and have
             smaller reported power capacities.
           </p>
