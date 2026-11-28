@@ -1925,6 +1925,11 @@ function SvgMap({
             project.reported_mw ? 3.2 + Math.min(Number(project.reported_mw) / 230, 5.8) : 3.2,
           );
           const lowerConfidence = project.check_status === "From tracker, not yet opened by me";
+          // Phones: invisible ~48px tap target so dots win over the province underneath (Babs, Nov 28)
+          const svgBox = svgRef.current?.getBoundingClientRect();
+          const vbW = fitStoryMap ? 760 : 1000;
+          const pxPerUnit = svgBox && svgBox.width ? Math.min(svgBox.width / vbW, svgBox.height / 600) : 0.35;
+          const hitRadius = Math.max(radius, 24 / (pxPerUnit * view.k));
           return (
             <g
               key={project.id}
@@ -1940,6 +1945,7 @@ function SvgMap({
               {lowerConfidence && (
                 <circle cx={point[0]} cy={point[1]} r={radius + r(2.5)} className="confidence-ring" />
               )}
+              {phone && zoomable && <circle cx={point[0]} cy={point[1]} r={hitRadius} className="dot-hit" />}
               <circle
                 cx={point[0]}
                 cy={point[1]}

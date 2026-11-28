@@ -129,6 +129,13 @@
   vector-effect: non-scaling-stroke;
 }
 
+.svg-projects .dot-hit {
+  fill: transparent;
+  stroke: none;
+  opacity: 1;
+  pointer-events: all;
+}
+
 .svg-projects .confidence-ring {
   fill: transparent;
   stroke: var(--ink);
