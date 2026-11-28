@@ -1421,7 +1421,7 @@ function TodayVsPlanned() {
   const rows: [string, string, string][] = [
     ["Data centers", "194", "213"],
     ["Power", "1.6 GW", "22.2 GW (14×)"],
-    ["Where", "Ontario 41%, Quebec 30%, BC 14%", "Alberta 78%"],
+    ["Where", "Ontario 41%, Quebec 30%, BC 14%, Alberta 10%", "Alberta 78%"],
   ];
   return (
     <table className="today-planned">

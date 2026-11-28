@@ -2427,6 +2427,7 @@ rect.york-planned {
   .mobile-story-figure .story-under-map-key {
     position: static; width: 100%; margin-top: 12px; padding: 0;
   }
+  .mobile-story-figure .story-layer-key .map-legend { height: auto; }
   .mobile-story-figure .project-legend { gap: 8px 12px; }
   .mobile-story-figure .cover-legend { font-size: 13px; }
   .mobile-story-figure .cover-legend small { font-size: 12px; }
